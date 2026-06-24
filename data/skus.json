@@ -1,0 +1,530 @@
+[
+  {
+    "sku": "SKU-5000",
+    "product_id": 1000,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5001",
+    "product_id": 1000,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5002",
+    "product_id": 1000,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5003",
+    "product_id": 1001,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5004",
+    "product_id": 1001,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5005",
+    "product_id": 1001,
+    "size": "L",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5006",
+    "product_id": 1002,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5007",
+    "product_id": 1002,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5008",
+    "product_id": 1002,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5009",
+    "product_id": 1003,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5010",
+    "product_id": 1003,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5011",
+    "product_id": 1003,
+    "size": "L",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5012",
+    "product_id": 1004,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5013",
+    "product_id": 1004,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5014",
+    "product_id": 1005,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5015",
+    "product_id": 1005,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5016",
+    "product_id": 1005,
+    "size": "L",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5017",
+    "product_id": 1006,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5018",
+    "product_id": 1006,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5019",
+    "product_id": 1006,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5020",
+    "product_id": 1007,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5021",
+    "product_id": 1008,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5022",
+    "product_id": 1008,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5023",
+    "product_id": 1009,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5024",
+    "product_id": 1009,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5025",
+    "product_id": 1010,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5026",
+    "product_id": 1011,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5027",
+    "product_id": 1011,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5028",
+    "product_id": 1011,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5029",
+    "product_id": 1012,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5030",
+    "product_id": 1012,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5031",
+    "product_id": 1013,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5032",
+    "product_id": 1014,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5033",
+    "product_id": 1014,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5034",
+    "product_id": 1015,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5035",
+    "product_id": 1015,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5036",
+    "product_id": 1016,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5037",
+    "product_id": 1016,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5038",
+    "product_id": 1016,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5039",
+    "product_id": 1017,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5040",
+    "product_id": 1017,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5041",
+    "product_id": 1018,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5042",
+    "product_id": 1018,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5043",
+    "product_id": 1018,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5044",
+    "product_id": 1019,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5045",
+    "product_id": 1020,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5046",
+    "product_id": 1020,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5047",
+    "product_id": 1020,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5048",
+    "product_id": 1021,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5049",
+    "product_id": 1021,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5050",
+    "product_id": 1021,
+    "size": "L",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5051",
+    "product_id": 1022,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5052",
+    "product_id": 1023,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5053",
+    "product_id": 1024,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5054",
+    "product_id": 1024,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5055",
+    "product_id": 1025,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5056",
+    "product_id": 1025,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5057",
+    "product_id": 1026,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5058",
+    "product_id": 1026,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5059",
+    "product_id": 1026,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5060",
+    "product_id": 1027,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5061",
+    "product_id": 1028,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5062",
+    "product_id": 1028,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5063",
+    "product_id": 1028,
+    "size": "L",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5064",
+    "product_id": 1029,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5065",
+    "product_id": 1029,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5066",
+    "product_id": 1030,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5067",
+    "product_id": 1030,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5068",
+    "product_id": 1030,
+    "size": "L",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5069",
+    "product_id": 1031,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5070",
+    "product_id": 1031,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5071",
+    "product_id": 1032,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5072",
+    "product_id": 1032,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5073",
+    "product_id": 1032,
+    "size": "L",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5074",
+    "product_id": 1033,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5075",
+    "product_id": 1033,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5076",
+    "product_id": 1033,
+    "size": "L",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5077",
+    "product_id": 1034,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5078",
+    "product_id": 1035,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5079",
+    "product_id": 1036,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5080",
+    "product_id": 1037,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5081",
+    "product_id": 1037,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5082",
+    "product_id": 1037,
+    "size": "L",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5083",
+    "product_id": 1038,
+    "size": "S",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5084",
+    "product_id": 1038,
+    "size": "M",
+    "color": "Solid"
+  },
+  {
+    "sku": "SKU-5085",
+    "product_id": 1039,
+    "size": "S",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5086",
+    "product_id": 1039,
+    "size": "M",
+    "color": "Patterned"
+  },
+  {
+    "sku": "SKU-5087",
+    "product_id": 1039,
+    "size": "L",
+    "color": "Patterned"
+  }
+]

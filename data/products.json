@@ -1,0 +1,362 @@
+[
+  {
+    "product_id": 1000,
+    "product_name": "Sports Velvet Sports Jacket (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Jacketsz",
+    "color_type": "Cor Unica",
+    "description_en": "Sports Velvet Sports Jacket",
+    "image_url": "https://picsum.photos/300/300?random=1000"
+  },
+  {
+    "product_id": 1001,
+    "product_name": "Luxurious Pink Denim Jeans (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Jeans",
+    "color_type": "Multi Color",
+    "description_en": "Luxurious Pink Denim Jeans",
+    "image_url": "https://picsum.photos/300/300?random=1001"
+  },
+  {
+    "product_id": 1002,
+    "product_name": "Classic Cotton White Tee (3 variants)",
+    "category": "Clothing",
+    "sub_category": "T-Shirts",
+    "color_type": "Cor Unica",
+    "description_en": "Classic Cotton White Tee",
+    "image_url": "https://picsum.photos/300/300?random=1002"
+  },
+  {
+    "product_id": 1003,
+    "product_name": "Elegant Summer Floral Dress (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Dresses",
+    "color_type": "Multi Color",
+    "description_en": "Elegant Summer Floral Dress",
+    "image_url": "https://picsum.photos/300/300?random=1003"
+  },
+  {
+    "product_id": 1004,
+    "product_name": "Warm Cashmere Winter Sweater (2 variants)",
+    "category": "Clothing",
+    "sub_category": "Sweaters",
+    "color_type": "Cor Unica",
+    "description_en": "Warm Cashmere Winter Sweater",
+    "image_url": "https://picsum.photos/300/300?random=1004"
+  },
+  {
+    "product_id": 1005,
+    "product_name": "Urban Streetwear Sneakers (3 variants)",
+    "category": "Shoes",
+    "sub_category": "Sneakers",
+    "color_type": "Multi Color",
+    "description_en": "Urban Streetwear Sneakers",
+    "image_url": "https://picsum.photos/300/300?random=1005"
+  },
+  {
+    "product_id": 1006,
+    "product_name": "Premium Leather Ankle Boots (3 variants)",
+    "category": "Shoes",
+    "sub_category": "Boots",
+    "color_type": "Cor Unica",
+    "description_en": "Premium Leather Ankle Boots",
+    "image_url": "https://picsum.photos/300/300?random=1006"
+  },
+  {
+    "product_id": 1007,
+    "product_name": "Minimalist Travel Backpack (1 variants)",
+    "category": "Accessories",
+    "sub_category": "Bags",
+    "color_type": "Cor Unica",
+    "description_en": "Minimalist Travel Backpack",
+    "image_url": "https://picsum.photos/300/300?random=1007"
+  },
+  {
+    "product_id": 1008,
+    "product_name": "Vintage Wool Fedora Hat (2 variants)",
+    "category": "Accessories",
+    "sub_category": "Hats",
+    "color_type": "Cor Unica",
+    "description_en": "Vintage Wool Fedora Hat",
+    "image_url": "https://picsum.photos/300/300?random=1008"
+  },
+  {
+    "product_id": 1009,
+    "product_name": "Sports Velvet Sports Jacket (2 variants)",
+    "category": "Clothing",
+    "sub_category": "Jackets",
+    "color_type": "Cor Unica",
+    "description_en": "Sports Velvet Sports Jacket",
+    "image_url": "https://picsum.photos/300/300?random=1009"
+  },
+  {
+    "product_id": 1010,
+    "product_name": "Luxurious Pink Denim Jeans (1 variants)",
+    "category": "Clothing",
+    "sub_category": "Jeans",
+    "color_type": "Multi Color",
+    "description_en": "Luxurious Pink Denim Jeans",
+    "image_url": "https://picsum.photos/300/300?random=1010"
+  },
+  {
+    "product_id": 1011,
+    "product_name": "Classic Cotton White Tee (3 variants)",
+    "category": "Clothing",
+    "sub_category": "T-Shirts",
+    "color_type": "Cor Unica",
+    "description_en": "Classic Cotton White Tee",
+    "image_url": "https://picsum.photos/300/300?random=1011"
+  },
+  {
+    "product_id": 1012,
+    "product_name": "Elegant Summer Floral Dress (2 variants)",
+    "category": "Clothing",
+    "sub_category": "Dresses",
+    "color_type": "Multi Color",
+    "description_en": "Elegant Summer Floral Dress",
+    "image_url": "https://picsum.photos/300/300?random=1012"
+  },
+  {
+    "product_id": 1013,
+    "product_name": "Warm Cashmere Winter Sweater (1 variants)",
+    "category": "Clothing",
+    "sub_category": "Sweaters",
+    "color_type": "Cor Unica",
+    "description_en": "Warm Cashmere Winter Sweater",
+    "image_url": "https://picsum.photos/300/300?random=1013"
+  },
+  {
+    "product_id": 1014,
+    "product_name": "Urban Streetwear Sneakers (2 variants)",
+    "category": "Shoes",
+    "sub_category": "Sneakers",
+    "color_type": "Multi Color",
+    "description_en": "Urban Streetwear Sneakers",
+    "image_url": "https://picsum.photos/300/300?random=1014"
+  },
+  {
+    "product_id": 1015,
+    "product_name": "Premium Leather Ankle Boots (2 variants)",
+    "category": "Shoes",
+    "sub_category": "Boots",
+    "color_type": "Cor Unica",
+    "description_en": "Premium Leather Ankle Boots",
+    "image_url": "https://picsum.photos/300/300?random=1015"
+  },
+  {
+    "product_id": 1016,
+    "product_name": "Minimalist Travel Backpack (3 variants)",
+    "category": "Accessories",
+    "sub_category": "Bags",
+    "color_type": "Cor Unica",
+    "description_en": "Minimalist Travel Backpack",
+    "image_url": "https://picsum.photos/300/300?random=1016"
+  },
+  {
+    "product_id": 1017,
+    "product_name": "Vintage Wool Fedora Hat (2 variants)",
+    "category": "Accessories",
+    "sub_category": "Hats",
+    "color_type": "Cor Unica",
+    "description_en": "Vintage Wool Fedora Hat",
+    "image_url": "https://picsum.photos/300/300?random=1017"
+  },
+  {
+    "product_id": 1018,
+    "product_name": "Sports Velvet Sports Jacket (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Jackets",
+    "color_type": "Cor Unica",
+    "description_en": "Sports Velvet Sports Jacket",
+    "image_url": "https://picsum.photos/300/300?random=1018"
+  },
+  {
+    "product_id": 1019,
+    "product_name": "Luxurious Pink Denim Jeans (1 variants)",
+    "category": "Clothing",
+    "sub_category": "Jeans",
+    "color_type": "Multi Color",
+    "description_en": "Luxurious Pink Denim Jeans",
+    "image_url": "https://picsum.photos/300/300?random=1019"
+  },
+  {
+    "product_id": 1020,
+    "product_name": "Classic Cotton White Tee (3 variants)",
+    "category": "Clothing",
+    "sub_category": "T-Shirts",
+    "color_type": "Cor Unica",
+    "description_en": "Classic Cotton White Tee",
+    "image_url": "https://picsum.photos/300/300?random=1020"
+  },
+  {
+    "product_id": 1021,
+    "product_name": "Elegant Summer Floral Dress (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Dresses",
+    "color_type": "Multi Color",
+    "description_en": "Elegant Summer Floral Dress",
+    "image_url": "https://picsum.photos/300/300?random=1021"
+  },
+  {
+    "product_id": 1022,
+    "product_name": "Warm Cashmere Winter Sweater (1 variants)",
+    "category": "Clothing",
+    "sub_category": "Sweaters",
+    "color_type": "Cor Unica",
+    "description_en": "Warm Cashmere Winter Sweater",
+    "image_url": "https://picsum.photos/300/300?random=1022"
+  },
+  {
+    "product_id": 1023,
+    "product_name": "Urban Streetwear Sneakers (1 variants)",
+    "category": "Shoes",
+    "sub_category": "Sneakers",
+    "color_type": "Multi Color",
+    "description_en": "Urban Streetwear Sneakers",
+    "image_url": "https://picsum.photos/300/300?random=1023"
+  },
+  {
+    "product_id": 1024,
+    "product_name": "Premium Leather Ankle Boots (2 variants)",
+    "category": "Shoes",
+    "sub_category": "Boots",
+    "color_type": "Cor Unica",
+    "description_en": "Premium Leather Ankle Boots",
+    "image_url": "https://picsum.photos/300/300?random=1024"
+  },
+  {
+    "product_id": 1025,
+    "product_name": "Minimalist Travel Backpack (2 variants)",
+    "category": "Accessories",
+    "sub_category": "Bags",
+    "color_type": "Cor Unica",
+    "description_en": "Minimalist Travel Backpack",
+    "image_url": "https://picsum.photos/300/300?random=1025"
+  },
+  {
+    "product_id": 1026,
+    "product_name": "Vintage Wool Fedora Hat (3 variants)",
+    "category": "Accessories",
+    "sub_category": "Hats",
+    "color_type": "Cor Unica",
+    "description_en": "Vintage Wool Fedora Hat",
+    "image_url": "https://picsum.photos/300/300?random=1026"
+  },
+  {
+    "product_id": 1027,
+    "product_name": "Sports Velvet Sports Jacket (1 variants)",
+    "category": "Clothing",
+    "sub_category": "Jackets",
+    "color_type": "Cor Unica",
+    "description_en": "Sports Velvet Sports Jacket",
+    "image_url": "https://picsum.photos/300/300?random=1027"
+  },
+  {
+    "product_id": 1028,
+    "product_name": "Luxurious Pink Denim Jeans (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Jeans",
+    "color_type": "Multi Color",
+    "description_en": "Luxurious Pink Denim Jeans",
+    "image_url": "https://picsum.photos/300/300?random=1028"
+  },
+  {
+    "product_id": 1029,
+    "product_name": "Classic Cotton White Tee (2 variants)",
+    "category": "Clothing",
+    "sub_category": "T-Shirts",
+    "color_type": "Cor Unica",
+    "description_en": "Classic Cotton White Tee",
+    "image_url": "https://picsum.photos/300/300?random=1029"
+  },
+  {
+    "product_id": 1030,
+    "product_name": "Elegant Summer Floral Dress (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Dresses",
+    "color_type": "Multi Color",
+    "description_en": "Elegant Summer Floral Dress",
+    "image_url": "https://picsum.photos/300/300?random=1030"
+  },
+  {
+    "product_id": 1031,
+    "product_name": "Warm Cashmere Winter Sweater (2 variants)",
+    "category": "Clothing",
+    "sub_category": "Sweaters",
+    "color_type": "Cor Unica",
+    "description_en": "Warm Cashmere Winter Sweater",
+    "image_url": "https://picsum.photos/300/300?random=1031"
+  },
+  {
+    "product_id": 1032,
+    "product_name": "Urban Streetwear Sneakers (3 variants)",
+    "category": "Shoes",
+    "sub_category": "Sneakers",
+    "color_type": "Multi Color",
+    "description_en": "Urban Streetwear Sneakers",
+    "image_url": "https://picsum.photos/300/300?random=1032"
+  },
+  {
+    "product_id": 1033,
+    "product_name": "Premium Leather Ankle Boots (3 variants)",
+    "category": "Shoes",
+    "sub_category": "Boots",
+    "color_type": "Cor Unica",
+    "description_en": "Premium Leather Ankle Boots",
+    "image_url": "https://picsum.photos/300/300?random=1033"
+  },
+  {
+    "product_id": 1034,
+    "product_name": "Minimalist Travel Backpack (1 variants)",
+    "category": "Accessories",
+    "sub_category": "Bags",
+    "color_type": "Cor Unica",
+    "description_en": "Minimalist Travel Backpack",
+    "image_url": "https://picsum.photos/300/300?random=1034"
+  },
+  {
+    "product_id": 1035,
+    "product_name": "Vintage Wool Fedora Hat (1 variants)",
+    "category": "Accessories",
+    "sub_category": "Hats",
+    "color_type": "Cor Unica",
+    "description_en": "Vintage Wool Fedora Hat",
+    "image_url": "https://picsum.photos/300/300?random=1035"
+  },
+  {
+    "product_id": 1036,
+    "product_name": "Sports Velvet Sports Jacket (1 variants)",
+    "category": "Clothing",
+    "sub_category": "Jackets",
+    "color_type": "Cor Unica",
+    "description_en": "Sports Velvet Sports Jacket",
+    "image_url": "https://picsum.photos/300/300?random=1036"
+  },
+  {
+    "product_id": 1037,
+    "product_name": "Luxurious Pink Denim Jeans (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Jeans",
+    "color_type": "Multi Color",
+    "description_en": "Luxurious Pink Denim Jeans",
+    "image_url": "https://picsum.photos/300/300?random=1037"
+  },
+  {
+    "product_id": 1038,
+    "product_name": "Classic Cotton White Tee (2 variants)",
+    "category": "Clothing",
+    "sub_category": "T-Shirts",
+    "color_type": "Cor Unica",
+    "description_en": "Classic Cotton White Tee",
+    "image_url": "https://picsum.photos/300/300?random=1038"
+  },
+  {
+    "product_id": 1039,
+    "product_name": "Elegant Summer Floral Dress (3 variants)",
+    "category": "Clothing",
+    "sub_category": "Dresses",
+    "color_type": "Multi Color",
+    "description_en": "Elegant Summer Floral Dress",
+    "image_url": "https://picsum.photos/300/300?random=1039"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "username": "director",
+    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
+    "role": "Director",
+    "store_id": null
+  },
+  {
+    "id": 2,
+    "username": "manager1",
+    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
+    "role": "Store Manager",
+    "store_id": 1
+  },
+  {
+    "id": 3,
+    "username": "manager2",
+    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
+    "role": "Store Manager",
+    "store_id": 2
+  },
+  {
+    "id": 4,
+    "username": "sales1",
+    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
+    "role": "Sales Staff",
+    "store_id": 1
+  },
+  {
+    "id": 5,
+    "username": "sales2",
+    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
+    "role": "Sales Staff",
+    "store_id": 2
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "store_id": 1,
+    "store_name": "New York flagship",
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "country": "United States",
+    "num_distinct_skus": 150,
+    "num_distinct_products": 45
+  },
+  {
+    "store_id": 2,
+    "store_name": "Beijing Central",
+    "latitude": 39.9042,
+    "longitude": 116.4074,
+    "country": "China",
+    "num_distinct_skus": 120,
+    "num_distinct_products": 38
+  },
+  {
+    "store_id": 3,
+    "store_name": "Berlin Kurfürstendamm",
+    "latitude": 52.52,
+    "longitude": 13.405,
+    "country": "Germany",
+    "num_distinct_skus": 95,
+    "num_distinct_products": 30
+  },
+  {
+    "store_id": 4,
+    "store_name": "London Oxford St",
+    "latitude": 51.5074,
+    "longitude": -0.1278,
+    "country": "United Kingdom",
+    "num_distinct_skus": 140,
+    "num_distinct_products": 42
+  },
+  {
+    "store_id": 5,
+    "store_name": "Paris Champs-Élysées",
+    "latitude": 48.8566,
+    "longitude": 2.3522,
+    "country": "France",
+    "num_distinct_skus": 160,
+    "num_distinct_products": 48
+  },
+  {
+    "store_id": 6,
+    "store_name": "Madrid Gran Vía",
+    "latitude": 40.4168,
+    "longitude": -3.7038,
+    "country": "Spain",
+    "num_distinct_skus": 110,
+    "num_distinct_products": 35
+  },
+  {
+    "store_id": 7,
+    "store_name": "Lisbon Chiado",
+    "latitude": 38.7223,
+    "longitude": -9.1393,
+    "country": "Portugal",
+    "num_distinct_skus": 85,
+    "num_distinct_products": 28
+  },
+  {
+    "store_id": 8,
+    "store_name": "Los Angeles Fashion District",
+    "latitude": 34.0522,
+    "longitude": -118.2437,
+    "country": "United States",
+    "num_distinct_skus": 130,
+    "num_distinct_products": 40
+  },
+  {
+    "store_id": 9,
+    "store_name": "Shanghai Nanjing Rd",
+    "latitude": 31.2304,
+    "longitude": 121.4737,
+    "country": "China",
+    "num_distinct_skus": 145,
+    "num_distinct_products": 44
+  },
+  {
+    "store_id": 10,
+    "store_name": "Munich Marienplatz",
+    "latitude": 48.1351,
+    "longitude": 11.582,
+    "country": "Germany",
+    "num_distinct_skus": 90,
+    "num_distinct_products": 29
+  }
+]
