@@ -1,37 +1,83 @@
 [
   {
     "id": 1,
-    "username": "director",
-    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
-    "role": "Director",
-    "store_id": null
+    "username": "admin",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "role": "IT Admin",
+    "store_id": null,
+    "mfa_enabled": false,
+    "mfa_secret": null
   },
   {
     "id": 2,
-    "username": "manager1",
-    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
-    "role": "Store Manager",
-    "store_id": 1
+    "username": "director",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "role": "Director",
+    "store_id": null,
+    "mfa_enabled": false,
+    "mfa_secret": null
   },
   {
     "id": 3,
-    "username": "manager2",
-    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
-    "role": "Store Manager",
-    "store_id": 2
+    "username": "finance",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "role": "Finance/Auditor",
+    "store_id": null,
+    "mfa_enabled": false,
+    "mfa_secret": null
   },
   {
     "id": 4,
-    "username": "sales1",
-    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
-    "role": "Sales Staff",
-    "store_id": 1
+    "username": "inventory",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "role": "Inventory Manager",
+    "store_id": null,
+    "mfa_enabled": false,
+    "mfa_secret": null
   },
   {
     "id": 5,
-    "username": "sales2",
-    "password": "$2a$10$/eVB3qWI6idgtQtyPlPZeOefdg5WTQo0FXOkVlhrWy6YSnx9PmE1C",
+    "username": "marketing",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "role": "Marketing Manager",
+    "store_id": null,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 6,
+    "username": "manager1",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "role": "Store Manager",
+    "store_id": 1,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 7,
+    "username": "sales1",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
     "role": "Sales Staff",
-    "store_id": 2
+    "store_id": 1,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 8,
+    "username": "manager2",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "role": "Store Manager",
+    "store_id": 2,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 9,
+    "username": "sales2",
+    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "role": "Sales Staff",
+    "store_id": 2,
+    "mfa_enabled": false,
+    "mfa_secret": null
   }
 ]

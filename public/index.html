@@ -38,17 +38,28 @@
       
       <!-- Login Form -->
       <form id="login-form" class="auth-form">
-        <div class="form-group">
-          <label for="username"><i class="fa-solid fa-user"></i> Tên đăng nhập</label>
-          <input type="text" id="username" required placeholder="Nhập tên đăng nhập (ví dụ: director)">
+        <div id="credentials-group">
+          <div class="form-group">
+            <label for="username"><i class="fa-solid fa-user"></i> Tên đăng nhập</label>
+            <input type="text" id="username" placeholder="Nhập tên đăng nhập (ví dụ: director)">
+          </div>
+          <div class="form-group">
+            <label for="password"><i class="fa-solid fa-lock"></i> Mật khẩu</label>
+            <input type="password" id="password" placeholder="Nhập mật khẩu (password123)">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="password"><i class="fa-solid fa-lock"></i> Mật khẩu</label>
-          <input type="password" id="password" required placeholder="Nhập mật khẩu (password123)">
+        
+        <div id="mfa-group" class="hidden">
+          <div class="form-group">
+            <label for="otp-code"><i class="fa-solid fa-key"></i> Mã xác thực OTP (MFA)</label>
+            <input type="text" id="otp-code" placeholder="Nhập mã 6 chữ số từ app Authenticator" maxlength="6" pattern="[0-9]{6}">
+            <p class="form-help" style="font-size: 11px; color: var(--text-dark); margin-top: 5px;">Mở ứng dụng Google Authenticator trên điện thoại để lấy mã.</p>
+          </div>
         </div>
+
         <div id="login-error" class="login-error-msg"></div>
         <button type="submit" id="btn-login" class="btn-primary">
-          <span>Đăng Nhập</span> <i class="fa-solid fa-right-to-bracket"></i>
+          <span id="btn-login-text">Đăng Nhập</span> <i class="fa-solid fa-right-to-bracket"></i>
         </button>
       </form>
       
@@ -96,12 +107,23 @@
           <li class="nav-item" data-tab="transactions" id="nav-transactions">
             <i class="fa-solid fa-receipt"></i> <span>Giao dịch</span>
           </li>
+          
+          <!-- IT Admin Tabs -->
+          <li class="nav-item admin-only hidden" data-tab="admin-users" id="nav-admin-users" style="border-top: 1px solid rgba(255,255,255,0.05); margin-top: 10px; padding-top: 10px;">
+            <i class="fa-solid fa-users-gear"></i> <span>Quản lý User</span>
+          </li>
+          <li class="nav-item admin-only hidden" data-tab="admin-permissions" id="nav-admin-permissions">
+            <i class="fa-solid fa-shield-halved"></i> <span>Phân quyền Vai trò</span>
+          </li>
+          <li class="nav-item admin-only hidden" data-tab="admin-logs" id="nav-admin-logs">
+            <i class="fa-solid fa-clock-rotate-left"></i> <span>Nhật ký Hoạt động</span>
+          </li>
         </ul>
       </nav>
       
       <!-- User Profile Card -->
       <div class="user-profile-card">
-        <div class="user-avatar">
+        <div class="user-avatar" id="btn-user-profile" title="Cài đặt Bảo mật / MFA" style="cursor: pointer;">
           <i class="fa-solid fa-user-gear"></i>
         </div>
         <div class="user-info">
@@ -404,6 +426,95 @@
         </div>
       </section>
 
+      <!-- ================= TAB CONTENT: ADMIN USERS ================= -->
+      <section id="tab-admin-users" class="tab-content">
+        <div class="filter-bar">
+          <h3 style="margin: 0; color: var(--primary-light);"><i class="fa-solid fa-users-gear"></i> Quản lý Tài khoản Hệ thống</h3>
+          <button id="btn-admin-add-user" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-user-plus"></i> Thêm Tài Khoản</button>
+        </div>
+        <div class="table-card full-width">
+          <table class="data-table" id="admin-users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tên Đăng Nhập</th>
+                <th>Vai trò</th>
+                <th>Cửa hàng phụ trách</th>
+                <th>Trạng thái MFA</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= TAB CONTENT: ADMIN PERMISSIONS ================= -->
+      <section id="tab-admin-permissions" class="tab-content">
+        <div class="filter-bar">
+          <h3 style="margin: 0; color: var(--primary-light);"><i class="fa-solid fa-shield-halved"></i> Thiết lập Phân quyền (Vai trò x Quyền hạn)</h3>
+          <button id="btn-save-permissions" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-floppy-disk"></i> Lưu Cấu Hình Phân Quyền</button>
+        </div>
+        <div class="table-card full-width" style="overflow-x: auto;">
+          <table class="data-table" id="admin-permissions-table">
+            <thead>
+              <tr id="permissions-table-header">
+                <th>Quyền Hạn / Vai trò</th>
+              </tr>
+            </thead>
+            <tbody id="permissions-table-body">
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= TAB CONTENT: ADMIN LOGS ================= -->
+      <section id="tab-admin-logs" class="tab-content">
+        <div class="filter-bar">
+          <h3 style="margin: 0; color: var(--primary-light);"><i class="fa-solid fa-clock-rotate-left"></i> Nhật ký Hoạt động (Audit Logs)</h3>
+          <div class="filter-group" style="margin-left: auto;">
+            <label>Lọc hành động:</label>
+            <select id="admin-logs-action-filter" class="select-control">
+              <option value="">Tất cả</option>
+              <option value="LOGIN">Đăng nhập (Thường)</option>
+              <option value="LOGIN_MFA">Đăng nhập (MFA)</option>
+              <option value="CUSTOMER_CREATE">Tạo KH</option>
+              <option value="CUSTOMER_DELETE">Xóa KH</option>
+              <option value="DISCOUNT_CREATE">Tạo Khuyến mãi</option>
+              <option value="DISCOUNT_UPDATE">Sửa Khuyến mãi</option>
+              <option value="DISCOUNT_DELETE">Xóa Khuyến mãi</option>
+              <option value="EMPLOYEE_CREATE">Thêm Nhân viên</option>
+              <option value="EMPLOYEE_UPDATE">Sửa Nhân viên</option>
+              <option value="EMPLOYEE_DELETE">Xóa Nhân viên</option>
+              <option value="PRODUCT_CREATE">Tạo Sản phẩm</option>
+              <option value="PRODUCT_UPDATE">Sửa Sản phẩm</option>
+              <option value="PRODUCT_DELETE">Xóa Sản phẩm</option>
+              <option value="USER_CREATE">Tạo User</option>
+              <option value="USER_UPDATE">Sửa User</option>
+              <option value="USER_DELETE">Xóa User</option>
+              <option value="MFA_ENABLE">Bật MFA</option>
+              <option value="MFA_DISABLE">Tắt MFA</option>
+            </select>
+          </div>
+          <button id="btn-refresh-admin-logs" class="btn-secondary" style="height: 42px; margin-left: 10px;"><i class="fa-solid fa-rotate"></i> Tải lại</button>
+        </div>
+        <div class="table-card full-width">
+          <table class="data-table" id="admin-logs-table">
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Người dùng</th>
+                <th>Vai trò</th>
+                <th>Hành động</th>
+                <th>Chi tiết hoạt động</th>
+                <th>Địa chỉ IP</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -538,10 +649,95 @@
           <input type="url" id="product-image-input" class="select-control" placeholder="Bỏ trống để tự động sinh ảnh...">
         </div>
         <div class="modal-actions">
-          <button type="submit" id="btn-save-product-submit" class="btn-primary">Lưu</button>
+          <button type="submit" id="btn-save-product-submit" class="btn-primary">Lưu thay đổi</button>
           <button type="button" id="btn-cancel-product" class="btn-secondary">Hủy</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- IT Admin: Add/Edit User Modal -->
+  <div id="admin-user-modal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+      <h3 id="admin-user-modal-title">Thêm Tài Khoản Mới</h3>
+      <form id="admin-user-form">
+        <input type="hidden" id="admin-user-id-input">
+        <div class="form-group">
+          <label for="admin-user-username-input">Tên đăng nhập:</label>
+          <input type="text" id="admin-user-username-input" required class="select-control" placeholder="Nhập tên đăng nhập...">
+        </div>
+        <div class="form-group" id="admin-user-password-container">
+          <label for="admin-user-password-input">Mật khẩu:</label>
+          <input type="password" id="admin-user-password-input" class="select-control" placeholder="Nhập mật khẩu...">
+        </div>
+        <div class="form-group">
+          <label for="admin-user-role-input">Vai trò:</label>
+          <select id="admin-user-role-input" required class="select-control">
+            <option value="IT Admin">IT Admin (Quản trị viên)</option>
+            <option value="Director">Director (Giám đốc)</option>
+            <option value="Finance/Auditor">Finance/Auditor (Kế toán)</option>
+            <option value="Inventory Manager">Inventory Manager (Quản lý Kho)</option>
+            <option value="Marketing Manager">Marketing Manager (Quản lý Marketing)</option>
+            <option value="Store Manager">Store Manager (Quản lý Cửa hàng)</option>
+            <option value="Sales Staff">Sales Staff (Nhân viên bán hàng)</option>
+          </select>
+        </div>
+        <div class="form-group" id="admin-user-store-container">
+          <label for="admin-user-store-input">Cửa hàng được gán (Nếu có):</label>
+          <select id="admin-user-store-input" class="select-control">
+            <option value="">Không gán (Global)</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" id="btn-save-admin-user" class="btn-primary">Lưu</button>
+          <button type="button" id="btn-cancel-admin-user" class="btn-secondary">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- User Self-Service MFA Security Setup Modal -->
+  <div id="mfa-setup-modal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+      <h3>Thiết lập Xác thực 2 lớp (MFA)</h3>
+      <div id="mfa-status-view" class="mfa-status-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+        <p style="margin: 0; font-size: 15px;">Trạng thái hiện tại: <strong id="mfa-current-status-text" style="color: var(--danger-color);">Đã Tắt</strong></p>
+      </div>
+      
+      <!-- Enable MFA Panel -->
+      <div id="mfa-enable-panel" class="hidden">
+        <p style="margin-bottom:15px; font-size:13px; color:#9ca3af; line-height: 1.4;">Hãy nhập mã khóa bên dưới vào ứng dụng Google Authenticator trên điện thoại để lấy mã xác nhận.</p>
+        <div class="mfa-setup-box" style="margin-bottom: 20px;">
+          <div class="form-group">
+            <label>Khóa bí mật (Secret Key):</label>
+            <div style="display:flex; gap: 8px;">
+              <input type="text" id="mfa-secret-key" readonly class="select-control" style="font-family: monospace; font-size: 15px; text-align: center; letter-spacing: 1px; background: rgba(0,0,0,0.2);">
+              <button type="button" id="btn-copy-mfa-secret" class="btn-secondary" style="white-space:nowrap; padding: 0 15px;"><i class="fa-solid fa-copy"></i> Copy</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="mfa-verify-code">Nhập mã OTP xác thực (6 chữ số):</label>
+          <input type="text" id="mfa-verify-code" class="select-control" placeholder="Ví dụ: 123456" maxlength="6" style="text-align: center; font-size:18px; letter-spacing: 4px;">
+        </div>
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button type="button" id="btn-confirm-enable-mfa" class="btn-primary" style="width: 100%;">Xác nhận Bật</button>
+          <button type="button" id="btn-close-mfa-setup" class="btn-secondary" style="width: 100%;">Hủy</button>
+        </div>
+      </div>
+
+      <!-- Disable MFA Panel -->
+      <div id="mfa-disable-panel" class="hidden">
+        <p style="margin-bottom:15px; font-size:13px; color:#9ca3af; line-height: 1.4;">Nhập mã OTP hiện tại từ điện thoại để hủy kích hoạt bảo mật MFA.</p>
+        <div class="form-group">
+          <label for="mfa-disable-code">Nhập mã OTP xác thực (6 chữ số):</label>
+          <input type="text" id="mfa-disable-code" class="select-control" placeholder="Ví dụ: 123456" maxlength="6" style="text-align: center; font-size:18px; letter-spacing: 4px;">
+        </div>
+        <div class="modal-actions" style="margin-top: 20px;">
+          <button type="button" id="btn-confirm-disable-mfa" class="btn-primary" style="background-color: var(--danger-color); width: 100%;">Hủy kích hoạt</button>
+          <button type="button" id="btn-close-mfa-disable" class="btn-secondary" style="width: 100%;">Hủy</button>
+        </div>
+      </div>
     </div>
   </div>
 

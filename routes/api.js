@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
-const { authenticateToken, authorizeRoles } = require('../middleware/auth');
+const { authenticateToken, authorizePermission } = require('../middleware/auth');
 
 // GET /api/config
 router.get('/config', authenticateToken, (req, res) => {
@@ -11,61 +11,39 @@ router.get('/config', authenticateToken, (req, res) => {
   });
 });
 
-// POST /api/customers (Authorized create customer)
-router.post('/customers', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
-  const { customer_name, age, gender, country } = req.body;
-
-  if (!customer_name || !age || !gender || !country) {
-    return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
-  }
-
-  try {
-    const newCustomer = await db.addCustomer({ customer_name, age, gender, country });
-    res.status(201).json({
-      message: 'Thêm khách hàng mới thành công!',
-      customer: newCustomer
-    });
-  } catch (err) {
-    console.error('Error adding customer:', err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// DELETE /api/customers/:id (Director only)
-router.delete('/customers/:id', authenticateToken, authorizeRoles('Director'), async (req, res) => {
-  try {
-    const success = await db.deleteCustomer(req.params.id);
-    if (success) {
-      res.json({ message: 'Đã xóa khách hàng thành công!' });
-    } else {
-      res.status(404).json({ message: 'Không tìm thấy khách hàng' });
-    }
-  } catch (err) {
-    console.error('Error deleting customer:', err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
 // --- Helper: Validate Store Access ---
 // Ensures Store Managers and Sales Staff can only query their assigned store
-function checkStoreAccess(req, res, storeId) {
-  if (req.user.role !== 'Director' && req.user.store_id !== parseInt(storeId)) {
-    res.status(403).json({ message: `Access denied. You do not have permissions for store ID ${storeId}.` });
-    return false;
+async function checkStoreAccess(req, res, storeId) {
+  const rolePermissions = await db.getRolePermissions();
+  const userPermissions = rolePermissions[req.user.role] || [];
+  
+  if (userPermissions.includes('view_all_stores')) {
+    return true;
   }
-  return true;
+  
+  if (userPermissions.includes('view_own_store') && req.user.store_id === parseInt(storeId)) {
+    return true;
+  }
+  
+  res.status(403).json({ message: `Access denied. You do not have permissions for store ID ${storeId}.` });
+  return false;
 }
 
 // 1. GET /api/stores
 // Director sees all stores; Managers/Staff only see their assigned store.
 router.get('/stores', authenticateToken, async (req, res) => {
   try {
-    if (req.user.role === 'Director') {
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+    
+    if (userPermissions.includes('view_all_stores')) {
       const stores = await db.getStores();
       return res.json(stores);
-    } else {
+    } else if (userPermissions.includes('view_own_store')) {
       const store = await db.getStoreById(req.user.store_id);
       return res.json(store ? [store] : []);
+    } else {
+      return res.json([]);
     }
   } catch (err) {
     console.error('Error fetching stores:', err);
@@ -74,8 +52,8 @@ router.get('/stores', authenticateToken, async (req, res) => {
 });
 
 // 2. GET /api/customers
-// Access: Director, Store Manager. (Sales Staff forbidden)
-router.get('/customers', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+// Access: view_customers permission.
+router.get('/customers', authenticateToken, authorizePermission('view_customers'), async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -90,12 +68,72 @@ router.get('/customers', authenticateToken, authorizeRoles('Director', 'Store Ma
   }
 });
 
-// 3. GET /api/discounts
-// Access: Director, Store Manager.
-router.get('/discounts', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+// POST /api/customers
+router.post('/customers', authenticateToken, authorizePermission('create_customer'), async (req, res) => {
+  const { customer_name, age, gender, country } = req.body;
+
+  if (!customer_name || !age || !gender || !country) {
+    return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
+  }
+
   try {
-    // If Store Manager, force filter by their store_id
-    const targetStoreId = req.user.role === 'Director' ? req.query.store_id : req.user.store_id;
+    const newCustomer = await db.addCustomer({ customer_name, age, gender, country });
+    
+    // Log
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'CUSTOMER_CREATE',
+      details: `Thêm khách hàng mới: ${customer_name} (#ID: ${newCustomer.customer_id})`,
+      ip: req.ip || '127.0.0.1'
+    });
+
+    res.status(201).json({
+      message: 'Thêm khách hàng mới thành công!',
+      customer: newCustomer
+    });
+  } catch (err) {
+    console.error('Error adding customer:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// DELETE /api/customers/:id
+router.delete('/customers/:id', authenticateToken, authorizePermission('delete_customer'), async (req, res) => {
+  try {
+    const success = await db.deleteCustomer(req.params.id);
+    if (success) {
+      await db.addAuditLog({
+        username: req.user.username,
+        role: req.user.role,
+        action: 'CUSTOMER_DELETE',
+        details: `Xóa khách hàng #ID: ${req.params.id}`,
+        ip: req.ip || '127.0.0.1'
+      });
+      res.json({ message: 'Đã xóa khách hàng thành công!' });
+    } else {
+      res.status(404).json({ message: 'Không tìm thấy khách hàng' });
+    }
+  } catch (err) {
+    console.error('Error deleting customer:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// 3. GET /api/discounts
+// Access: view_discounts.
+router.get('/discounts', authenticateToken, authorizePermission('view_discounts'), async (req, res) => {
+  try {
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+    
+    let targetStoreId = null;
+    if (userPermissions.includes('view_all_stores')) {
+      targetStoreId = req.query.store_id ? parseInt(req.query.store_id) : null;
+    } else {
+      targetStoreId = req.user.store_id;
+    }
+
     const discounts = await db.getDiscounts(targetStoreId);
     res.json(discounts);
   } catch (err) {
@@ -105,8 +143,8 @@ router.get('/discounts', authenticateToken, authorizeRoles('Director', 'Store Ma
 });
 
 // PUT /api/discounts/:id
-// Access: Director, Store Manager (must match store).
-router.put('/discounts/:id', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+// Access: edit_discounts.
+router.put('/discounts/:id', authenticateToken, authorizePermission('edit_discounts'), async (req, res) => {
   try {
     const discountId = req.params.id;
     const { total_discount_avg } = req.body;
@@ -115,9 +153,10 @@ router.put('/discounts/:id', authenticateToken, authorizeRoles('Director', 'Stor
       return res.status(400).json({ message: 'Invalid discount value' });
     }
 
-    // In a real app we verify if this discount belongs to the manager's store
-    // Let's get discounts first
-    if (req.user.role !== 'Director') {
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+
+    if (!userPermissions.includes('view_all_stores')) {
       const discounts = await db.getDiscounts(req.user.store_id);
       const hasDiscount = discounts.some(d => d.discount_id === parseInt(discountId));
       if (!hasDiscount) {
@@ -127,6 +166,13 @@ router.put('/discounts/:id', authenticateToken, authorizeRoles('Director', 'Stor
 
     const success = await db.updateDiscountAvg(discountId, total_discount_avg);
     if (success) {
+      await db.addAuditLog({
+        username: req.user.username,
+        role: req.user.role,
+        action: 'DISCOUNT_UPDATE',
+        details: `Cập nhật chiết khấu trung bình của khuyến mãi #ID: ${discountId} thành ${total_discount_avg * 100}%`,
+        ip: req.ip || '127.0.0.1'
+      });
       res.json({ message: 'Discount updated successfully' });
     } else {
       res.status(404).json({ message: 'Discount not found' });
@@ -138,7 +184,7 @@ router.put('/discounts/:id', authenticateToken, authorizeRoles('Director', 'Stor
 });
 
 // POST /api/discounts
-router.post('/discounts', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+router.post('/discounts', authenticateToken, authorizePermission('edit_discounts'), async (req, res) => {
   try {
     const { store_id, season_name, total_discount_avg, start_date, end_date } = req.body;
 
@@ -146,11 +192,23 @@ router.post('/discounts', authenticateToken, authorizeRoles('Director', 'Store M
       return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
     }
 
-    if (req.user.role !== 'Director' && req.user.store_id !== parseInt(store_id)) {
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+
+    if (!userPermissions.includes('view_all_stores') && req.user.store_id !== parseInt(store_id)) {
       return res.status(403).json({ message: 'Access denied. You cannot create discounts for other stores.' });
     }
 
     const newDiscount = await db.addDiscount({ store_id, season_name, total_discount_avg, start_date, end_date });
+
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'DISCOUNT_CREATE',
+      details: `Tạo khuyến mãi mới: ${season_name} (Store: ${store_id}, Chiết khấu: ${total_discount_avg * 100}%)`,
+      ip: req.ip || '127.0.0.1'
+    });
+
     res.status(201).json({ message: 'Tạo khuyến mãi mới thành công!', discount: newDiscount });
   } catch (err) {
     console.error('Error creating discount:', err);
@@ -159,11 +217,13 @@ router.post('/discounts', authenticateToken, authorizeRoles('Director', 'Store M
 });
 
 // DELETE /api/discounts/:id
-router.delete('/discounts/:id', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+router.delete('/discounts/:id', authenticateToken, authorizePermission('edit_discounts'), async (req, res) => {
   try {
     const discountId = req.params.id;
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
 
-    if (req.user.role !== 'Director') {
+    if (!userPermissions.includes('view_all_stores')) {
       const discounts = await db.getDiscounts(req.user.store_id);
       const hasDiscount = discounts.some(d => d.discount_id === parseInt(discountId));
       if (!hasDiscount) {
@@ -173,6 +233,13 @@ router.delete('/discounts/:id', authenticateToken, authorizeRoles('Director', 'S
 
     const success = await db.deleteDiscount(discountId);
     if (success) {
+      await db.addAuditLog({
+        username: req.user.username,
+        role: req.user.role,
+        action: 'DISCOUNT_DELETE',
+        details: `Xóa khuyến mãi #ID: ${discountId}`,
+        ip: req.ip || '127.0.0.1'
+      });
       res.json({ message: 'Đã xóa khuyến mãi thành công!' });
     } else {
       res.status(404).json({ message: 'Không tìm thấy khuyến mãi' });
@@ -184,10 +251,19 @@ router.delete('/discounts/:id', authenticateToken, authorizeRoles('Director', 'S
 });
 
 // 4. GET /api/employees
-// Access: Director, Store Manager.
-router.get('/employees', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+// Access: view_employees.
+router.get('/employees', authenticateToken, authorizePermission('view_employees'), async (req, res) => {
   try {
-    const targetStoreId = req.user.role === 'Director' ? req.query.store_id : req.user.store_id;
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+
+    let targetStoreId = null;
+    if (userPermissions.includes('view_all_stores')) {
+      targetStoreId = req.query.store_id ? parseInt(req.query.store_id) : null;
+    } else {
+      targetStoreId = req.user.store_id;
+    }
+
     const employees = await db.getEmployees(targetStoreId);
     res.json(employees);
   } catch (err) {
@@ -197,7 +273,7 @@ router.get('/employees', authenticateToken, authorizeRoles('Director', 'Store Ma
 });
 
 // PUT /api/employees/:id
-router.put('/employees/:id', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+router.put('/employees/:id', authenticateToken, authorizePermission('edit_employees'), async (req, res) => {
   try {
     const employeeId = req.params.id;
     const { name, role } = req.body;
@@ -206,7 +282,10 @@ router.put('/employees/:id', authenticateToken, authorizeRoles('Director', 'Stor
       return res.status(400).json({ message: 'Name and role are required' });
     }
 
-    if (req.user.role !== 'Director') {
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+
+    if (!userPermissions.includes('view_all_stores')) {
       const employees = await db.getEmployees(req.user.store_id);
       const hasEmployee = employees.some(e => e.employee_id === parseInt(employeeId));
       if (!hasEmployee) {
@@ -216,6 +295,13 @@ router.put('/employees/:id', authenticateToken, authorizeRoles('Director', 'Stor
 
     const success = await db.updateEmployee(employeeId, name, role);
     if (success) {
+      await db.addAuditLog({
+        username: req.user.username,
+        role: req.user.role,
+        action: 'EMPLOYEE_UPDATE',
+        details: `Cập nhật nhân viên #ID: ${employeeId} (Tên: ${name}, Chức vụ: ${role})`,
+        ip: req.ip || '127.0.0.1'
+      });
       res.json({ message: 'Employee updated successfully' });
     } else {
       res.status(404).json({ message: 'Employee not found' });
@@ -227,7 +313,7 @@ router.put('/employees/:id', authenticateToken, authorizeRoles('Director', 'Stor
 });
 
 // POST /api/employees
-router.post('/employees', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+router.post('/employees', authenticateToken, authorizePermission('edit_employees'), async (req, res) => {
   try {
     const { store_id, name, role } = req.body;
 
@@ -235,11 +321,23 @@ router.post('/employees', authenticateToken, authorizeRoles('Director', 'Store M
       return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
     }
 
-    if (req.user.role !== 'Director' && req.user.store_id !== parseInt(store_id)) {
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+
+    if (!userPermissions.includes('view_all_stores') && req.user.store_id !== parseInt(store_id)) {
       return res.status(403).json({ message: 'Access denied. You cannot create employees for other stores.' });
     }
 
     const newEmployee = await db.addEmployee({ store_id, name, role });
+
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'EMPLOYEE_CREATE',
+      details: `Thêm nhân sự mới: ${name} (Store: ${store_id}, Vai trò: ${role})`,
+      ip: req.ip || '127.0.0.1'
+    });
+
     res.status(201).json({ message: 'Thêm nhân viên mới thành công!', employee: newEmployee });
   } catch (err) {
     console.error('Error creating employee:', err);
@@ -248,11 +346,13 @@ router.post('/employees', authenticateToken, authorizeRoles('Director', 'Store M
 });
 
 // DELETE /api/employees/:id
-router.delete('/employees/:id', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+router.delete('/employees/:id', authenticateToken, authorizePermission('edit_employees'), async (req, res) => {
   try {
     const employeeId = req.params.id;
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
 
-    if (req.user.role !== 'Director') {
+    if (!userPermissions.includes('view_all_stores')) {
       const employees = await db.getEmployees(req.user.store_id);
       const hasEmployee = employees.some(e => e.employee_id === parseInt(employeeId));
       if (!hasEmployee) {
@@ -262,6 +362,13 @@ router.delete('/employees/:id', authenticateToken, authorizeRoles('Director', 'S
 
     const success = await db.deleteEmployee(employeeId);
     if (success) {
+      await db.addAuditLog({
+        username: req.user.username,
+        role: req.user.role,
+        action: 'EMPLOYEE_DELETE',
+        details: `Xóa nhân sự #ID: ${employeeId}`,
+        ip: req.ip || '127.0.0.1'
+      });
       res.json({ message: 'Đã xóa nhân viên thành công!' });
     } else {
       res.status(404).json({ message: 'Không tìm thấy nhân viên' });
@@ -273,16 +380,16 @@ router.delete('/employees/:id', authenticateToken, authorizeRoles('Director', 'S
 });
 
 // 5. GET /api/products
-// Access: All roles (Director, Store Manager, Sales Staff)
-router.get('/products', authenticateToken, async (req, res) => {
+// Access: view_products.
+router.get('/products', authenticateToken, authorizePermission('view_products'), async (req, res) => {
   try {
     const category = req.query.category || '';
     const search = req.query.search || '';
     
-    // Store constraint: Staff/Manager only see products (in a strict scenario we might filter, 
-    // but the plan says "Products thuộc phạm vi cửa hàng được chỉ định". 
-    // In our mock, all products are globally visible but we pass store_id constraint for completeness)
-    const storeId = req.user.role === 'Director' ? null : req.user.store_id;
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+
+    const storeId = userPermissions.includes('view_all_stores') ? null : req.user.store_id;
 
     const products = await db.getProducts({ storeId, category, search });
     res.json(products);
@@ -293,7 +400,7 @@ router.get('/products', authenticateToken, async (req, res) => {
 });
 
 // POST /api/products
-router.post('/products', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+router.post('/products', authenticateToken, authorizePermission('edit_products'), async (req, res) => {
   try {
     const { product_name, category, sub_category, color_type, description_en, image_url } = req.body;
 
@@ -302,6 +409,15 @@ router.post('/products', authenticateToken, authorizeRoles('Director', 'Store Ma
     }
 
     const newProduct = await db.addProduct({ product_name, category, sub_category, color_type, description_en, image_url });
+
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'PRODUCT_CREATE',
+      details: `Tạo sản phẩm mới: ${product_name} (#ID: ${newProduct.product_id})`,
+      ip: req.ip || '127.0.0.1'
+    });
+
     res.status(201).json({ message: 'Thêm sản phẩm mới thành công!', product: newProduct });
   } catch (err) {
     console.error('Error creating product:', err);
@@ -310,7 +426,7 @@ router.post('/products', authenticateToken, authorizeRoles('Director', 'Store Ma
 });
 
 // PUT /api/products/:id
-router.put('/products/:id', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+router.put('/products/:id', authenticateToken, authorizePermission('edit_products'), async (req, res) => {
   try {
     const productId = req.params.id;
     const { product_name, category, sub_category, color_type, description_en, image_url } = req.body;
@@ -321,6 +437,13 @@ router.put('/products/:id', authenticateToken, authorizeRoles('Director', 'Store
 
     const updatedProduct = await db.updateProduct(productId, { product_name, category, sub_category, color_type, description_en, image_url });
     if (updatedProduct) {
+      await db.addAuditLog({
+        username: req.user.username,
+        role: req.user.role,
+        action: 'PRODUCT_UPDATE',
+        details: `Cập nhật sản phẩm #ID: ${productId} (Tên: ${product_name})`,
+        ip: req.ip || '127.0.0.1'
+      });
       res.json({ message: 'Cập nhật sản phẩm thành công!', product: updatedProduct });
     } else {
       res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
@@ -332,11 +455,18 @@ router.put('/products/:id', authenticateToken, authorizeRoles('Director', 'Store
 });
 
 // DELETE /api/products/:id
-router.delete('/products/:id', authenticateToken, authorizeRoles('Director', 'Store Manager'), async (req, res) => {
+router.delete('/products/:id', authenticateToken, authorizePermission('edit_products'), async (req, res) => {
   try {
     const productId = req.params.id;
     const success = await db.deleteProduct(productId);
     if (success) {
+      await db.addAuditLog({
+        username: req.user.username,
+        role: req.user.role,
+        action: 'PRODUCT_DELETE',
+        details: `Xóa sản phẩm #ID: ${productId}`,
+        ip: req.ip || '127.0.0.1'
+      });
       res.json({ message: 'Đã xóa sản phẩm thành công!' });
     } else {
       res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
@@ -348,16 +478,17 @@ router.delete('/products/:id', authenticateToken, authorizeRoles('Director', 'St
 });
 
 // 6. GET /api/transactions
-// Access: All roles.
-// Director sees all (or filtered by store_id); Managers/Staff are strictly locked to their store_id.
-router.get('/transactions', authenticateToken, async (req, res) => {
+// Access: view_transactions.
+router.get('/transactions', authenticateToken, authorizePermission('view_transactions'), async (req, res) => {
   try {
-    let targetStoreId = null;
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
 
-    if (req.user.role === 'Director') {
+    let targetStoreId = null;
+    if (userPermissions.includes('view_all_stores')) {
       targetStoreId = req.query.store_id ? parseInt(req.query.store_id) : null;
     } else {
-      targetStoreId = req.user.store_id; // Strictly lock to their store
+      targetStoreId = req.user.store_id;
     }
 
     const paymentMethod = req.query.payment_method || '';
@@ -373,24 +504,20 @@ router.get('/transactions', authenticateToken, async (req, res) => {
 });
 
 // 7. GET /api/predict
-// Access: All roles. 
-// Serves demand forecasts. Connects to Lambda in Phase 3, currently serves from DB/Mock files.
-router.get('/predict', authenticateToken, async (req, res) => {
+// Access: view_dashboard.
+router.get('/predict', authenticateToken, authorizePermission('view_dashboard'), async (req, res) => {
   try {
     const storeId = req.query.store_id;
     if (!storeId) {
       return res.status(400).json({ message: 'Store ID is required' });
     }
 
-    // Role security check
-    if (!checkStoreAccess(req, res, storeId)) {
-      return; // Error message already sent by checkStoreAccess
+    if (!(await checkStoreAccess(req, res, storeId))) {
+      return;
     }
 
-    // Serve forecasts (in Phase 3, this will call AWS API Gateway using axios/fetch)
     const forecasts = await db.getForecasts(storeId);
     
-    // Group forecasts by SKU to make it easy to draw time series for each item
     const formattedForecasts = {};
     forecasts.forEach(f => {
       if (!formattedForecasts[f.sku]) {
@@ -415,6 +542,168 @@ router.get('/predict', authenticateToken, async (req, res) => {
     });
   } catch (err) {
     console.error('Error serving predictions:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// ================= IT ADMIN ENDPOINTS =================
+
+// --- ADMIN USER CRUD ---
+router.get('/admin/users', authenticateToken, authorizePermission('manage_users'), async (req, res) => {
+  try {
+    const users = await db.getUsers();
+    res.json(users);
+  } catch (err) {
+    console.error('Error fetching admin users:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.post('/admin/users', authenticateToken, authorizePermission('manage_users'), async (req, res) => {
+  const { username, password, role, store_id } = req.body;
+  if (!username || !password || !role) {
+    return res.status(400).json({ message: 'Username, password and role are required' });
+  }
+  try {
+    const existing = await db.getUserByUsername(username);
+    if (existing) {
+      return res.status(400).json({ message: 'Tên tài khoản đã tồn tại' });
+    }
+    const bcrypt = require('bcryptjs');
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+    const newUser = await db.addUser({ username, password: passwordHash, role, store_id });
+    
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'USER_CREATE',
+      details: `Tạo tài khoản mới: ${username} (Vai trò: ${role})`,
+      ip: req.ip || '127.0.0.1'
+    });
+    
+    res.status(201).json({ message: 'Tạo tài khoản thành công', user: newUser });
+  } catch (err) {
+    console.error('Error adding user:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.put('/admin/users/:id', authenticateToken, authorizePermission('manage_users'), async (req, res) => {
+  const { role, store_id, password } = req.body;
+  const userId = req.params.id;
+  try {
+    const payload = { role, store_id };
+    if (password && password.trim() !== '') {
+      const bcrypt = require('bcryptjs');
+      const salt = await bcrypt.genSalt(10);
+      payload.password = await bcrypt.hash(password, salt);
+    }
+    const updated = await db.updateUser(userId, payload);
+    if (!updated) {
+      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+    }
+    
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'USER_UPDATE',
+      details: `Cập nhật tài khoản #ID: ${userId} (Vai trò mới: ${role})`,
+      ip: req.ip || '127.0.0.1'
+    });
+    
+    res.json({ message: 'Cập nhật tài khoản thành công', user: updated });
+  } catch (err) {
+    console.error('Error updating user:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.delete('/admin/users/:id', authenticateToken, authorizePermission('manage_users'), async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const success = await db.deleteUser(userId);
+    if (!success) {
+      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+    }
+    
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'USER_DELETE',
+      details: `Xóa tài khoản #ID: ${userId}`,
+      ip: req.ip || '127.0.0.1'
+    });
+    
+    res.json({ message: 'Xóa tài khoản thành công' });
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Reset MFA ticket for user
+router.post('/admin/users/:id/reset-mfa', authenticateToken, authorizePermission('manage_users'), async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const success = await db.updateUserMfa(userId, { mfa_enabled: false, mfa_secret: null });
+    if (!success) {
+      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+    }
+    
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'USER_MFA_RESET',
+      details: `Reset MFA của tài khoản #ID: ${userId}`,
+      ip: req.ip || '127.0.0.1'
+    });
+    
+    res.json({ message: 'Đã tắt và reset MFA cho tài khoản thành công' });
+  } catch (err) {
+    console.error('Error resetting user MFA:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// --- ADMIN PERMISSION ENDPOINTS ---
+router.get('/admin/permissions', authenticateToken, authorizePermission('manage_permissions'), async (req, res) => {
+  try {
+    const perms = await db.getRolePermissions();
+    res.json(perms);
+  } catch (err) {
+    console.error('Error fetching permissions:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.put('/admin/permissions', authenticateToken, authorizePermission('manage_permissions'), async (req, res) => {
+  try {
+    const permsMap = req.body;
+    await db.updateRolePermissions(permsMap);
+    
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'PERMISSIONS_UPDATE',
+      details: 'Cập nhật ma trận phân quyền động',
+      ip: req.ip || '127.0.0.1'
+    });
+    
+    res.json({ message: 'Cập nhật phân quyền thành công!' });
+  } catch (err) {
+    console.error('Error updating permissions:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// --- ADMIN AUDIT LOGS ENDPOINT ---
+router.get('/admin/audit-logs', authenticateToken, authorizePermission('view_audit_logs'), async (req, res) => {
+  try {
+    const logs = await db.getAuditLogs();
+    res.json(logs);
+  } catch (err) {
+    console.error('Error fetching audit logs:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

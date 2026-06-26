@@ -2,241 +2,55 @@
   {
     "employee_id": 200,
     "store_id": 1,
-    "name": "Jack Wang",
+    "name": "Sophia Brown",
     "role": "Store Manager"
   },
   {
     "employee_id": 201,
     "store_id": 1,
-    "name": "Wei Li",
+    "name": "James Jones",
     "role": "Sales Staff"
   },
   {
     "employee_id": 202,
     "store_id": 1,
-    "name": "Min Chen",
+    "name": "Jack Wang",
     "role": "Sales Staff"
   },
   {
     "employee_id": 203,
-    "store_id": 1,
-    "name": "Lan Zhang",
-    "role": "Sales Staff"
+    "store_id": 2,
+    "name": "Wei Li",
+    "role": "Store Manager"
   },
   {
     "employee_id": 204,
     "store_id": 2,
-    "name": "Lukas Schmidt",
-    "role": "Store Manager"
-  },
-  {
-    "employee_id": 205,
-    "store_id": 2,
-    "name": "Lina Müller",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 206,
-    "store_id": 2,
-    "name": "Leon Fischer",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 207,
-    "store_id": 2,
-    "name": "Mia Weber",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 208,
-    "store_id": 2,
-    "name": "Jonas Becker",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 209,
-    "store_id": 3,
-    "name": "Thomas Taylor",
-    "role": "Store Manager"
-  },
-  {
-    "employee_id": 210,
-    "store_id": 3,
-    "name": "Jessica Evans",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 211,
-    "store_id": 3,
-    "name": "Daniel Davies",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 212,
-    "store_id": 4,
-    "name": "Lucas Martin",
-    "role": "Store Manager"
-  },
-  {
-    "employee_id": 213,
-    "store_id": 4,
-    "name": "Chloé Bernard",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 214,
-    "store_id": 4,
-    "name": "Manon Dubois",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 215,
-    "store_id": 4,
-    "name": "Thomas Michel",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 216,
-    "store_id": 4,
-    "name": "Léa Petit",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 217,
-    "store_id": 5,
-    "name": "Daniel García",
-    "role": "Store Manager"
-  },
-  {
-    "employee_id": 218,
-    "store_id": 5,
-    "name": "Sofía Rodríguez",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 219,
-    "store_id": 5,
-    "name": "Alejandro González",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 220,
-    "store_id": 6,
-    "name": "João Silva",
-    "role": "Store Manager"
-  },
-  {
-    "employee_id": 221,
-    "store_id": 6,
-    "name": "Maria Santos",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 222,
-    "store_id": 6,
-    "name": "Pedro Ferreira",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 223,
-    "store_id": 6,
-    "name": "Ana Pereira",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 224,
-    "store_id": 7,
-    "name": "Emma Smith",
-    "role": "Store Manager"
-  },
-  {
-    "employee_id": 225,
-    "store_id": 7,
-    "name": "Noah Johnson",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 226,
-    "store_id": 7,
-    "name": "Oliver Williams",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 227,
-    "store_id": 8,
-    "name": "Jack Wang",
-    "role": "Store Manager"
-  },
-  {
-    "employee_id": 228,
-    "store_id": 8,
-    "name": "Wei Li",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 229,
-    "store_id": 8,
     "name": "Min Chen",
     "role": "Sales Staff"
   },
   {
-    "employee_id": 230,
-    "store_id": 8,
+    "employee_id": 205,
+    "store_id": 2,
     "name": "Lan Zhang",
     "role": "Sales Staff"
   },
   {
-    "employee_id": 231,
-    "store_id": 9,
-    "name": "Lukas Schmidt",
+    "employee_id": 206,
+    "store_id": 6,
+    "name": "Sophia Brown",
     "role": "Store Manager"
   },
   {
-    "employee_id": 232,
-    "store_id": 9,
-    "name": "Lina Müller",
+    "employee_id": 207,
+    "store_id": 6,
+    "name": "James Jones",
     "role": "Sales Staff"
   },
   {
-    "employee_id": 233,
-    "store_id": 9,
-    "name": "Leon Fischer",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 234,
-    "store_id": 9,
-    "name": "Mia Weber",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 235,
-    "store_id": 9,
-    "name": "Jonas Becker",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 236,
-    "store_id": 10,
-    "name": "Thomas Taylor",
-    "role": "Store Manager"
-  },
-  {
-    "employee_id": 237,
-    "store_id": 10,
-    "name": "Jessica Evans",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 238,
-    "store_id": 10,
-    "name": "Daniel Davies",
-    "role": "Sales Staff"
-  },
-  {
-    "employee_id": 239,
-    "store_id": 10,
-    "name": "Chloe Thomas",
+    "employee_id": 208,
+    "store_id": 6,
+    "name": "Jack Wang",
     "role": "Sales Staff"
   }
 ]

@@ -1,561 +1,561 @@
 [
   {
     "customer_id": 10001,
-    "customer_name": "Customer #1",
-    "age": 56,
+    "customer_name": "Khách hàng #1",
+    "age": 47,
     "gender": "Female",
     "country": "China"
   },
   {
     "customer_id": 10002,
-    "customer_name": "Customer #2",
-    "age": 62,
+    "customer_name": "Khách hàng #2",
+    "age": 36,
     "gender": "Non-binary",
     "country": "Germany"
   },
   {
     "customer_id": 10003,
-    "customer_name": "Customer #3",
-    "age": 65,
+    "customer_name": "Khách hàng #3",
+    "age": 43,
     "gender": "Male",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10004,
-    "customer_name": "Customer #4",
-    "age": 41,
+    "customer_name": "Khách hàng #4",
+    "age": 54,
     "gender": "Female",
     "country": "France"
   },
   {
     "customer_id": 10005,
-    "customer_name": "Customer #5",
-    "age": 34,
+    "customer_name": "Khách hàng #5",
+    "age": 62,
     "gender": "Non-binary",
     "country": "Spain"
   },
   {
     "customer_id": 10006,
-    "customer_name": "Customer #6",
-    "age": 46,
+    "customer_name": "Khách hàng #6",
+    "age": 22,
     "gender": "Male",
     "country": "Portugal"
   },
   {
     "customer_id": 10007,
-    "customer_name": "Customer #7",
-    "age": 64,
+    "customer_name": "Khách hàng #7",
+    "age": 61,
     "gender": "Female",
     "country": "United States"
   },
   {
     "customer_id": 10008,
-    "customer_name": "Customer #8",
-    "age": 34,
+    "customer_name": "Khách hàng #8",
+    "age": 63,
     "gender": "Non-binary",
     "country": "China"
   },
   {
     "customer_id": 10009,
-    "customer_name": "Customer #9",
-    "age": 35,
+    "customer_name": "Khách hàng #9",
+    "age": 43,
     "gender": "Male",
     "country": "Germany"
   },
   {
     "customer_id": 10010,
-    "customer_name": "Customer #10",
-    "age": 26,
+    "customer_name": "Khách hàng #10",
+    "age": 49,
     "gender": "Female",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10011,
-    "customer_name": "Customer #11",
-    "age": 26,
+    "customer_name": "Khách hàng #11",
+    "age": 31,
     "gender": "Non-binary",
     "country": "France"
   },
   {
     "customer_id": 10012,
-    "customer_name": "Customer #12",
-    "age": 56,
+    "customer_name": "Khách hàng #12",
+    "age": 45,
     "gender": "Male",
     "country": "Spain"
   },
   {
     "customer_id": 10013,
-    "customer_name": "Customer #13",
-    "age": 20,
+    "customer_name": "Khách hàng #13",
+    "age": 18,
     "gender": "Female",
     "country": "Portugal"
   },
   {
     "customer_id": 10014,
-    "customer_name": "Customer #14",
+    "customer_name": "Khách hàng #14",
     "age": 26,
     "gender": "Non-binary",
     "country": "United States"
   },
   {
     "customer_id": 10015,
-    "customer_name": "Customer #15",
-    "age": 44,
+    "customer_name": "Khách hàng #15",
+    "age": 26,
     "gender": "Male",
     "country": "China"
   },
   {
     "customer_id": 10016,
-    "customer_name": "Customer #16",
-    "age": 44,
+    "customer_name": "Khách hàng #16",
+    "age": 41,
     "gender": "Female",
     "country": "Germany"
   },
   {
     "customer_id": 10017,
-    "customer_name": "Customer #17",
-    "age": 41,
+    "customer_name": "Khách hàng #17",
+    "age": 42,
     "gender": "Non-binary",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10018,
-    "customer_name": "Customer #18",
-    "age": 42,
+    "customer_name": "Khách hàng #18",
+    "age": 49,
     "gender": "Male",
     "country": "France"
   },
   {
     "customer_id": 10019,
-    "customer_name": "Customer #19",
-    "age": 36,
+    "customer_name": "Khách hàng #19",
+    "age": 51,
     "gender": "Female",
     "country": "Spain"
   },
   {
     "customer_id": 10020,
-    "customer_name": "Customer #20",
-    "age": 28,
+    "customer_name": "Khách hàng #20",
+    "age": 32,
     "gender": "Non-binary",
     "country": "Portugal"
   },
   {
     "customer_id": 10021,
-    "customer_name": "Customer #21",
-    "age": 43,
+    "customer_name": "Khách hàng #21",
+    "age": 38,
     "gender": "Male",
     "country": "United States"
   },
   {
     "customer_id": 10022,
-    "customer_name": "Customer #22",
-    "age": 51,
+    "customer_name": "Khách hàng #22",
+    "age": 66,
     "gender": "Female",
     "country": "China"
   },
   {
     "customer_id": 10023,
-    "customer_name": "Customer #23",
-    "age": 41,
+    "customer_name": "Khách hàng #23",
+    "age": 64,
     "gender": "Non-binary",
     "country": "Germany"
   },
   {
     "customer_id": 10024,
-    "customer_name": "Customer #24",
-    "age": 57,
+    "customer_name": "Khách hàng #24",
+    "age": 61,
     "gender": "Male",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10025,
-    "customer_name": "Customer #25",
-    "age": 33,
+    "customer_name": "Khách hàng #25",
+    "age": 29,
     "gender": "Female",
     "country": "France"
   },
   {
     "customer_id": 10026,
-    "customer_name": "Customer #26",
-    "age": 21,
+    "customer_name": "Khách hàng #26",
+    "age": 50,
     "gender": "Non-binary",
     "country": "Spain"
   },
   {
     "customer_id": 10027,
-    "customer_name": "Customer #27",
-    "age": 60,
+    "customer_name": "Khách hàng #27",
+    "age": 62,
     "gender": "Male",
     "country": "Portugal"
   },
   {
     "customer_id": 10028,
-    "customer_name": "Customer #28",
-    "age": 55,
+    "customer_name": "Khách hàng #28",
+    "age": 23,
     "gender": "Female",
     "country": "United States"
   },
   {
     "customer_id": 10029,
-    "customer_name": "Customer #29",
-    "age": 59,
+    "customer_name": "Khách hàng #29",
+    "age": 29,
     "gender": "Non-binary",
     "country": "China"
   },
   {
     "customer_id": 10030,
-    "customer_name": "Customer #30",
-    "age": 54,
+    "customer_name": "Khách hàng #30",
+    "age": 39,
     "gender": "Male",
     "country": "Germany"
   },
   {
     "customer_id": 10031,
-    "customer_name": "Customer #31",
-    "age": 47,
+    "customer_name": "Khách hàng #31",
+    "age": 18,
     "gender": "Female",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10032,
-    "customer_name": "Customer #32",
-    "age": 53,
+    "customer_name": "Khách hàng #32",
+    "age": 42,
     "gender": "Non-binary",
     "country": "France"
   },
   {
     "customer_id": 10033,
-    "customer_name": "Customer #33",
-    "age": 62,
+    "customer_name": "Khách hàng #33",
+    "age": 23,
     "gender": "Male",
     "country": "Spain"
   },
   {
     "customer_id": 10034,
-    "customer_name": "Customer #34",
-    "age": 42,
+    "customer_name": "Khách hàng #34",
+    "age": 38,
     "gender": "Female",
     "country": "Portugal"
   },
   {
     "customer_id": 10035,
-    "customer_name": "Customer #35",
-    "age": 45,
+    "customer_name": "Khách hàng #35",
+    "age": 63,
     "gender": "Non-binary",
     "country": "United States"
   },
   {
     "customer_id": 10036,
-    "customer_name": "Customer #36",
-    "age": 59,
+    "customer_name": "Khách hàng #36",
+    "age": 54,
     "gender": "Male",
     "country": "China"
   },
   {
     "customer_id": 10037,
-    "customer_name": "Customer #37",
-    "age": 25,
+    "customer_name": "Khách hàng #37",
+    "age": 40,
     "gender": "Female",
     "country": "Germany"
   },
   {
     "customer_id": 10038,
-    "customer_name": "Customer #38",
-    "age": 52,
+    "customer_name": "Khách hàng #38",
+    "age": 66,
     "gender": "Non-binary",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10039,
-    "customer_name": "Customer #39",
-    "age": 20,
+    "customer_name": "Khách hàng #39",
+    "age": 60,
     "gender": "Male",
     "country": "France"
   },
   {
     "customer_id": 10040,
-    "customer_name": "Customer #40",
-    "age": 57,
+    "customer_name": "Khách hàng #40",
+    "age": 23,
     "gender": "Female",
     "country": "Spain"
   },
   {
     "customer_id": 10041,
-    "customer_name": "Customer #41",
-    "age": 41,
+    "customer_name": "Khách hàng #41",
+    "age": 57,
     "gender": "Non-binary",
     "country": "Portugal"
   },
   {
     "customer_id": 10042,
-    "customer_name": "Customer #42",
-    "age": 48,
+    "customer_name": "Khách hàng #42",
+    "age": 41,
     "gender": "Male",
     "country": "United States"
   },
   {
     "customer_id": 10043,
-    "customer_name": "Customer #43",
-    "age": 67,
+    "customer_name": "Khách hàng #43",
+    "age": 23,
     "gender": "Female",
     "country": "China"
   },
   {
     "customer_id": 10044,
-    "customer_name": "Customer #44",
-    "age": 25,
+    "customer_name": "Khách hàng #44",
+    "age": 28,
     "gender": "Non-binary",
     "country": "Germany"
   },
   {
     "customer_id": 10045,
-    "customer_name": "Customer #45",
-    "age": 39,
+    "customer_name": "Khách hàng #45",
+    "age": 48,
     "gender": "Male",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10046,
-    "customer_name": "Customer #46",
-    "age": 65,
+    "customer_name": "Khách hàng #46",
+    "age": 20,
     "gender": "Female",
     "country": "France"
   },
   {
     "customer_id": 10047,
-    "customer_name": "Customer #47",
-    "age": 38,
+    "customer_name": "Khách hàng #47",
+    "age": 49,
     "gender": "Non-binary",
     "country": "Spain"
   },
   {
     "customer_id": 10048,
-    "customer_name": "Customer #48",
-    "age": 52,
+    "customer_name": "Khách hàng #48",
+    "age": 39,
     "gender": "Male",
     "country": "Portugal"
   },
   {
     "customer_id": 10049,
-    "customer_name": "Customer #49",
-    "age": 20,
+    "customer_name": "Khách hàng #49",
+    "age": 35,
     "gender": "Female",
     "country": "United States"
   },
   {
     "customer_id": 10050,
-    "customer_name": "Customer #50",
-    "age": 31,
+    "customer_name": "Khách hàng #50",
+    "age": 61,
     "gender": "Non-binary",
     "country": "China"
   },
   {
     "customer_id": 10051,
-    "customer_name": "Customer #51",
+    "customer_name": "Khách hàng #51",
     "age": 64,
     "gender": "Male",
     "country": "Germany"
   },
   {
     "customer_id": 10052,
-    "customer_name": "Customer #52",
-    "age": 58,
+    "customer_name": "Khách hàng #52",
+    "age": 40,
     "gender": "Female",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10053,
-    "customer_name": "Customer #53",
-    "age": 46,
+    "customer_name": "Khách hàng #53",
+    "age": 28,
     "gender": "Non-binary",
     "country": "France"
   },
   {
     "customer_id": 10054,
-    "customer_name": "Customer #54",
-    "age": 21,
+    "customer_name": "Khách hàng #54",
+    "age": 22,
     "gender": "Male",
     "country": "Spain"
   },
   {
     "customer_id": 10055,
-    "customer_name": "Customer #55",
-    "age": 45,
+    "customer_name": "Khách hàng #55",
+    "age": 39,
     "gender": "Female",
     "country": "Portugal"
   },
   {
     "customer_id": 10056,
-    "customer_name": "Customer #56",
-    "age": 30,
+    "customer_name": "Khách hàng #56",
+    "age": 67,
     "gender": "Non-binary",
     "country": "United States"
   },
   {
     "customer_id": 10057,
-    "customer_name": "Customer #57",
-    "age": 61,
+    "customer_name": "Khách hàng #57",
+    "age": 63,
     "gender": "Male",
     "country": "China"
   },
   {
     "customer_id": 10058,
-    "customer_name": "Customer #58",
-    "age": 24,
+    "customer_name": "Khách hàng #58",
+    "age": 51,
     "gender": "Female",
     "country": "Germany"
   },
   {
     "customer_id": 10059,
-    "customer_name": "Customer #59",
-    "age": 55,
+    "customer_name": "Khách hàng #59",
+    "age": 30,
     "gender": "Non-binary",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10060,
-    "customer_name": "Customer #60",
-    "age": 59,
+    "customer_name": "Khách hàng #60",
+    "age": 47,
     "gender": "Male",
     "country": "France"
   },
   {
     "customer_id": 10061,
-    "customer_name": "Customer #61",
-    "age": 35,
+    "customer_name": "Khách hàng #61",
+    "age": 34,
     "gender": "Female",
     "country": "Spain"
   },
   {
     "customer_id": 10062,
-    "customer_name": "Customer #62",
-    "age": 33,
+    "customer_name": "Khách hàng #62",
+    "age": 49,
     "gender": "Non-binary",
     "country": "Portugal"
   },
   {
     "customer_id": 10063,
-    "customer_name": "Customer #63",
-    "age": 40,
+    "customer_name": "Khách hàng #63",
+    "age": 66,
     "gender": "Male",
     "country": "United States"
   },
   {
     "customer_id": 10064,
-    "customer_name": "Customer #64",
-    "age": 62,
+    "customer_name": "Khách hàng #64",
+    "age": 67,
     "gender": "Female",
     "country": "China"
   },
   {
     "customer_id": 10065,
-    "customer_name": "Customer #65",
-    "age": 44,
+    "customer_name": "Khách hàng #65",
+    "age": 35,
     "gender": "Non-binary",
     "country": "Germany"
   },
   {
     "customer_id": 10066,
-    "customer_name": "Customer #66",
-    "age": 44,
+    "customer_name": "Khách hàng #66",
+    "age": 35,
     "gender": "Male",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10067,
-    "customer_name": "Customer #67",
-    "age": 28,
+    "customer_name": "Khách hàng #67",
+    "age": 22,
     "gender": "Female",
     "country": "France"
   },
   {
     "customer_id": 10068,
-    "customer_name": "Customer #68",
-    "age": 19,
+    "customer_name": "Khách hàng #68",
+    "age": 51,
     "gender": "Non-binary",
     "country": "Spain"
   },
   {
     "customer_id": 10069,
-    "customer_name": "Customer #69",
-    "age": 63,
+    "customer_name": "Khách hàng #69",
+    "age": 28,
     "gender": "Male",
     "country": "Portugal"
   },
   {
     "customer_id": 10070,
-    "customer_name": "Customer #70",
-    "age": 61,
+    "customer_name": "Khách hàng #70",
+    "age": 52,
     "gender": "Female",
     "country": "United States"
   },
   {
     "customer_id": 10071,
-    "customer_name": "Customer #71",
-    "age": 66,
+    "customer_name": "Khách hàng #71",
+    "age": 51,
     "gender": "Non-binary",
     "country": "China"
   },
   {
     "customer_id": 10072,
-    "customer_name": "Customer #72",
-    "age": 37,
+    "customer_name": "Khách hàng #72",
+    "age": 49,
     "gender": "Male",
     "country": "Germany"
   },
   {
     "customer_id": 10073,
-    "customer_name": "Customer #73",
-    "age": 61,
+    "customer_name": "Khách hàng #73",
+    "age": 30,
     "gender": "Female",
     "country": "United Kingdom"
   },
   {
     "customer_id": 10074,
-    "customer_name": "Customer #74",
-    "age": 25,
+    "customer_name": "Khách hàng #74",
+    "age": 21,
     "gender": "Non-binary",
     "country": "France"
   },
   {
     "customer_id": 10075,
-    "customer_name": "Customer #75",
-    "age": 46,
+    "customer_name": "Khách hàng #75",
+    "age": 26,
     "gender": "Male",
     "country": "Spain"
   },
   {
     "customer_id": 10076,
-    "customer_name": "Customer #76",
-    "age": 67,
+    "customer_name": "Khách hàng #76",
+    "age": 63,
     "gender": "Female",
     "country": "Portugal"
   },
   {
     "customer_id": 10077,
-    "customer_name": "Customer #77",
-    "age": 40,
+    "customer_name": "Khách hàng #77",
+    "age": 18,
     "gender": "Non-binary",
     "country": "United States"
   },
   {
     "customer_id": 10078,
-    "customer_name": "Customer #78",
-    "age": 42,
+    "customer_name": "Khách hàng #78",
+    "age": 53,
     "gender": "Male",
     "country": "China"
   },
   {
     "customer_id": 10079,
-    "customer_name": "Customer #79",
-    "age": 21,
+    "customer_name": "Khách hàng #79",
+    "age": 66,
     "gender": "Female",
     "country": "Germany"
   },
   {
     "customer_id": 10080,
-    "customer_name": "Customer #80",
-    "age": 63,
+    "customer_name": "Khách hàng #80",
+    "age": 22,
     "gender": "Non-binary",
     "country": "United Kingdom"
   }

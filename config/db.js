@@ -504,6 +504,232 @@ const db = {
       const res = await pool.query('SELECT * FROM forecasts WHERE store_id = $1 ORDER BY year ASC, week ASC', [storeId]);
       return res.rows;
     }
+  },
+
+  // --- User Administration (IT Admin) ---
+  getUsers: async () => {
+    if (isMockMode) {
+      return readMockFile('users.json');
+    } else {
+      try {
+        const res = await pool.query('SELECT id, username, role, store_id, mfa_enabled FROM users ORDER BY id ASC');
+        return res.rows;
+      } catch (err) {
+        console.warn('Error fetching users from PG, returning empty list', err);
+        return [];
+      }
+    }
+  },
+
+  addUser: async (userData) => {
+    if (isMockMode) {
+      const users = readMockFile('users.json');
+      const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
+      const newUser = {
+        id: newId,
+        username: userData.username,
+        password: userData.password,
+        role: userData.role,
+        store_id: userData.store_id ? parseInt(userData.store_id) : null,
+        mfa_enabled: false,
+        mfa_secret: null
+      };
+      users.push(newUser);
+      writeMockFile('users.json', users);
+      return newUser;
+    } else {
+      try {
+        const res = await pool.query(
+          'INSERT INTO users (username, password, role, store_id, mfa_enabled, mfa_secret) VALUES ($1, $2, $3, $4, false, null) RETURNING id, username, role, store_id, mfa_enabled',
+          [userData.username, userData.password, userData.role, userData.store_id]
+        );
+        return res.rows[0];
+      } catch (err) {
+        console.error('Error adding user to PG:', err);
+        throw err;
+      }
+    }
+  },
+
+  updateUser: async (userId, userData) => {
+    if (isMockMode) {
+      const users = readMockFile('users.json');
+      const uIndex = users.findIndex(u => u.id === parseInt(userId));
+      if (uIndex === -1) return null;
+      users[uIndex] = {
+        ...users[uIndex],
+        role: userData.role,
+        store_id: userData.store_id ? parseInt(userData.store_id) : null,
+        mfa_enabled: userData.mfa_enabled !== undefined ? userData.mfa_enabled : users[uIndex].mfa_enabled
+      };
+      if (userData.password) {
+        users[uIndex].password = userData.password;
+      }
+      writeMockFile('users.json', users);
+      return users[uIndex];
+    } else {
+      try {
+        let query = 'UPDATE users SET role = $1, store_id = $2';
+        const params = [userData.role, userData.store_id];
+        if (userData.password) {
+          params.push(userData.password);
+          query += `, password = $${params.length}`;
+        }
+        params.push(userId);
+        query += ` WHERE id = $${params.length} RETURNING id, username, role, store_id, mfa_enabled`;
+        const res = await pool.query(query, params);
+        return res.rows[0] || null;
+      } catch (err) {
+        console.error('Error updating user in PG:', err);
+        throw err;
+      }
+    }
+  },
+
+  deleteUser: async (userId) => {
+    if (isMockMode) {
+      const users = readMockFile('users.json');
+      const filtered = users.filter(u => u.id !== parseInt(userId));
+      if (users.length === filtered.length) return false;
+      writeMockFile('users.json', filtered);
+      return true;
+    } else {
+      try {
+        const res = await pool.query('DELETE FROM users WHERE id = $1', [userId]);
+        return res.rowCount > 0;
+      } catch (err) {
+        console.error('Error deleting user in PG:', err);
+        throw err;
+      }
+    }
+  },
+
+  updateUserMfa: async (userId, mfaData) => {
+    if (isMockMode) {
+      const users = readMockFile('users.json');
+      const uIndex = users.findIndex(u => u.id === parseInt(userId));
+      if (uIndex === -1) return false;
+      users[uIndex].mfa_enabled = mfaData.mfa_enabled;
+      users[uIndex].mfa_secret = mfaData.mfa_secret;
+      writeMockFile('users.json', users);
+      return true;
+    } else {
+      try {
+        const res = await pool.query(
+          'UPDATE users SET mfa_enabled = $1, mfa_secret = $2 WHERE id = $3',
+          [mfaData.mfa_enabled, mfaData.mfa_secret, userId]
+        );
+        return res.rowCount > 0;
+      } catch (err) {
+        console.error('Error updating MFA in PG:', err);
+        throw err;
+      }
+    }
+  },
+
+  // --- Dynamic Permissions ---
+  getRolePermissions: async () => {
+    if (isMockMode) {
+      return readMockFile('permissions.json');
+    } else {
+      try {
+        const tableCheck = await pool.query("SELECT to_regclass('public.role_permissions')");
+        if (!tableCheck.rows[0].to_regclass) {
+          return {
+            "IT Admin": ["manage_users", "manage_permissions", "view_audit_logs"],
+            "Director": ["view_dashboard", "view_all_stores", "view_customers", "view_discounts", "view_employees", "view_products", "view_transactions"],
+            "Finance/Auditor": ["view_all_stores", "view_transactions", "view_discounts"],
+            "Inventory Manager": ["view_all_stores", "view_products", "edit_products"],
+            "Marketing Manager": ["view_all_stores", "view_discounts", "edit_discounts"],
+            "Store Manager": ["view_dashboard", "view_own_store", "view_customers", "create_customer", "view_discounts", "edit_discounts", "view_employees", "edit_employees", "view_products"],
+            "Sales Staff": ["view_own_store", "view_products", "view_transactions"]
+          };
+        }
+        const res = await pool.query('SELECT role, permissions FROM role_permissions');
+        const mappings = {};
+        res.rows.forEach(row => {
+          mappings[row.role] = Array.isArray(row.permissions) ? row.permissions : JSON.parse(row.permissions);
+        });
+        return mappings;
+      } catch (err) {
+        console.warn('Error reading role permissions from PG, returning default object', err);
+        return {};
+      }
+    }
+  },
+
+  updateRolePermissions: async (rolePermissionsMap) => {
+    if (isMockMode) {
+      writeMockFile('permissions.json', rolePermissionsMap);
+      return true;
+    } else {
+      try {
+        await pool.query('CREATE TABLE IF NOT EXISTS role_permissions (role VARCHAR(100) PRIMARY KEY, permissions TEXT[])');
+        for (const [role, perms] of Object.entries(rolePermissionsMap)) {
+          await pool.query(
+            'INSERT INTO role_permissions (role, permissions) VALUES ($1, $2) ON CONFLICT (role) DO UPDATE SET permissions = $2',
+            [role, perms]
+          );
+        }
+        return true;
+      } catch (err) {
+        console.error('Error updating role permissions in PG:', err);
+        throw err;
+      }
+    }
+  },
+
+  // --- Audit Logs ---
+  getAuditLogs: async () => {
+    if (isMockMode) {
+      const logs = readMockFile('audit_logs.json');
+      return logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    } else {
+      try {
+        await pool.query('CREATE TABLE IF NOT EXISTS audit_logs (id SERIAL PRIMARY KEY, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, username VARCHAR(255), role VARCHAR(255), action VARCHAR(255), details TEXT, ip VARCHAR(45))');
+        const res = await pool.query('SELECT * FROM audit_logs ORDER BY timestamp DESC LIMIT 500');
+        return res.rows;
+      } catch (err) {
+        console.error('Error fetching audit logs from PG:', err);
+        return [];
+      }
+    }
+  },
+
+  addAuditLog: async (logData) => {
+    const newLog = {
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      timestamp: new Date().toISOString(),
+      username: logData.username || 'system',
+      role: logData.role || 'System',
+      action: logData.action,
+      details: logData.details || '',
+      ip: logData.ip || '127.0.0.1'
+    };
+
+    if (isMockMode) {
+      try {
+        const logs = readMockFile('audit_logs.json');
+        logs.push(newLog);
+        if (logs.length > 1000) logs.shift();
+        writeMockFile('audit_logs.json', logs);
+      } catch (err) {
+        console.error('Error writing audit log:', err);
+      }
+      return newLog;
+    } else {
+      try {
+        await pool.query('CREATE TABLE IF NOT EXISTS audit_logs (id SERIAL PRIMARY KEY, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, username VARCHAR(255), role VARCHAR(255), action VARCHAR(255), details TEXT, ip VARCHAR(45))');
+        const res = await pool.query(
+          'INSERT INTO audit_logs (username, role, action, details, ip) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+          [newLog.username, newLog.role, newLog.action, newLog.details, newLog.ip]
+        );
+        return res.rows[0];
+      } catch (err) {
+        console.error('Error writing audit log to PG:', err);
+        return newLog;
+      }
+    }
   }
 };
 

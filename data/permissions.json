@@ -1,0 +1,47 @@
+{
+  "IT Admin": [
+    "manage_users",
+    "manage_permissions",
+    "view_audit_logs"
+  ],
+  "Director": [
+    "view_dashboard",
+    "view_all_stores",
+    "view_customers",
+    "view_discounts",
+    "view_employees",
+    "view_products",
+    "view_transactions"
+  ],
+  "Finance/Auditor": [
+    "view_all_stores",
+    "view_transactions",
+    "view_discounts"
+  ],
+  "Inventory Manager": [
+    "view_all_stores",
+    "view_products",
+    "edit_products"
+  ],
+  "Marketing Manager": [
+    "view_all_stores",
+    "view_discounts",
+    "edit_discounts"
+  ],
+  "Store Manager": [
+    "view_dashboard",
+    "view_own_store",
+    "view_customers",
+    "create_customer",
+    "view_discounts",
+    "edit_discounts",
+    "view_employees",
+    "edit_employees",
+    "view_products"
+  ],
+  "Sales Staff": [
+    "view_own_store",
+    "view_products",
+    "view_transactions"
+  ]
+}

@@ -4,6 +4,8 @@ let currentUser = JSON.parse(localStorage.getItem('user')) || null;
 let activeTab = 'dashboard';
 let map = null;
 let storesData = [];
+let mfaStepActive = false;
+let mfaTicket = null;
 
 // Pagination states
 const pagState = {
@@ -126,10 +128,10 @@ function showApp() {
   userDisplayRole.textContent = currentUser.role;
   
   // Set role class on body for CSS-based RBAC visibility constraints if any
-  document.body.className = 'dark-mode role-' + currentUser.role.toLowerCase().replace(' ', '-');
+  document.body.className = 'dark-mode role-' + currentUser.role.toLowerCase().replace(' ', '-').replace('/', '-');
   
-  // Initialize UI components based on roles
-  configureRoleBasedVisibility();
+  // Initialize UI components based on permissions
+  configurePermissionBasedVisibility();
   
   // Trigger initial tab loading
   switchTab(activeTab);
@@ -148,66 +150,93 @@ function logout() {
     map = null;
   }
   
+  resetLoginFormState();
   showLogin();
 }
 
-// Hide elements depending on user role
-function configureRoleBasedVisibility() {
-  const role = currentUser.role;
+// Hide elements depending on user permissions
+function configurePermissionBasedVisibility() {
+  const permissions = currentUser.permissions || [];
   
-  // Hide navbar tabs for Sales Staff
+  const dashboardTab = document.getElementById('nav-dashboard');
   const customersTab = document.getElementById('nav-customers');
   const discountsTab = document.getElementById('nav-discounts');
   const employeesTab = document.getElementById('nav-employees');
+  const productsTab = document.getElementById('nav-products');
   const storesTab = document.getElementById('nav-stores');
+  const transactionsTab = document.getElementById('nav-transactions');
+  
+  const adminUsersTab = document.getElementById('nav-admin-users');
+  const adminPermissionsTab = document.getElementById('nav-admin-permissions');
+  const adminLogsTab = document.getElementById('nav-admin-logs');
 
-  // CRUD buttons
+  toggleElementVisibility(dashboardTab, permissions.includes('view_dashboard'));
+  toggleElementVisibility(customersTab, permissions.includes('view_customers'));
+  toggleElementVisibility(discountsTab, permissions.includes('view_discounts'));
+  toggleElementVisibility(employeesTab, permissions.includes('view_employees'));
+  toggleElementVisibility(productsTab, permissions.includes('view_products'));
+  toggleElementVisibility(storesTab, permissions.includes('view_all_stores') || permissions.includes('view_own_store'));
+  toggleElementVisibility(transactionsTab, permissions.includes('view_transactions'));
+  
+  toggleElementVisibility(adminUsersTab, permissions.includes('manage_users'));
+  toggleElementVisibility(adminPermissionsTab, permissions.includes('manage_permissions'));
+  toggleElementVisibility(adminLogsTab, permissions.includes('view_audit_logs'));
+
+  const selectStoreContainers = document.querySelectorAll('.select-store-container');
+  selectStoreContainers.forEach(container => {
+    toggleElementVisibility(container, permissions.includes('view_all_stores'));
+  });
+
   const btnAddCustomer = document.getElementById('btn-add-customer');
   const btnAddDiscount = document.getElementById('btn-add-discount');
   const btnAddEmployee = document.getElementById('btn-add-employee');
   const btnAddProduct = document.getElementById('btn-add-product');
 
-  if (role === 'Sales Staff') {
-    customersTab.classList.add('hidden');
-    discountsTab.classList.add('hidden');
-    employeesTab.classList.add('hidden');
-    storesTab.classList.add('hidden');
-    
-    // Hide store filters in other views, as they only belong to their store
-    document.querySelectorAll('.select-store-container').forEach(el => el.classList.add('hidden'));
+  toggleElementVisibility(btnAddCustomer, permissions.includes('create_customer'));
+  toggleElementVisibility(btnAddDiscount, permissions.includes('edit_discounts'));
+  toggleElementVisibility(btnAddEmployee, permissions.includes('edit_employees'));
+  toggleElementVisibility(btnAddProduct, permissions.includes('edit_products'));
 
-    // Hide CRUD buttons
-    btnAddCustomer && btnAddCustomer.classList.add('hidden');
-    btnAddDiscount && btnAddDiscount.classList.add('hidden');
-    btnAddEmployee && btnAddEmployee.classList.add('hidden');
-    btnAddProduct && btnAddProduct.classList.add('hidden');
-  } else if (role === 'Store Manager') {
-    customersTab.classList.remove('hidden');
-    discountsTab.classList.remove('hidden');
-    employeesTab.classList.remove('hidden');
-    storesTab.classList.add('hidden'); // Managers can't see store list/global overview
-    
-    document.querySelectorAll('.select-store-container').forEach(el => el.classList.add('hidden'));
+  const tabToPermission = {
+    'dashboard': 'view_dashboard',
+    'customers': 'view_customers',
+    'discounts': 'view_discounts',
+    'employees': 'view_employees',
+    'products': 'view_products',
+    'stores': 'view_all_stores',
+    'transactions': 'view_transactions',
+    'admin-users': 'manage_users',
+    'admin-permissions': 'manage_permissions',
+    'admin-logs': 'view_audit_logs'
+  };
 
-    // Show CRUD buttons
-    btnAddCustomer && btnAddCustomer.classList.remove('hidden');
-    btnAddDiscount && btnAddDiscount.classList.remove('hidden');
-    btnAddEmployee && btnAddEmployee.classList.remove('hidden');
-    btnAddProduct && btnAddProduct.classList.remove('hidden');
+  const currentRequiredPerm = tabToPermission[activeTab];
+  if (currentRequiredPerm) {
+    let hasAccess = permissions.includes(currentRequiredPerm);
+    if (activeTab === 'stores') {
+      hasAccess = permissions.includes('view_all_stores') || permissions.includes('view_own_store');
+    }
+    if (!hasAccess) {
+      const permittedTabs = Object.keys(tabToPermission).filter(t => {
+        if (t === 'stores') return permissions.includes('view_all_stores') || permissions.includes('view_own_store');
+        return permissions.includes(tabToPermission[t]);
+      });
+      if (permittedTabs.length > 0) {
+        switchTab(permittedTabs[0]);
+      } else {
+        alert('Tài khoản của bạn không có quyền xem bất kỳ chức năng nào. Vui lòng liên hệ Admin.');
+        logout();
+      }
+    }
+  }
+}
+
+function toggleElementVisibility(element, isVisible) {
+  if (!element) return;
+  if (isVisible) {
+    element.classList.remove('hidden');
   } else {
-    // Director
-    customersTab.classList.remove('hidden');
-    discountsTab.classList.remove('hidden');
-    employeesTab.classList.remove('hidden');
-    storesTab.classList.remove('hidden');
-    
-    document.querySelectorAll('.select-store-container').forEach(el => el.classList.remove('hidden'));
-
-    // Show CRUD buttons
-    btnAddCustomer && btnAddCustomer.classList.remove('hidden');
-    btnAddDiscount && btnAddDiscount.classList.remove('hidden');
-    btnAddEmployee && btnAddEmployee.classList.remove('hidden');
-    btnAddProduct && btnAddProduct.classList.remove('hidden');
+    element.classList.add('hidden');
   }
 }
 
@@ -253,7 +282,10 @@ function switchTab(tabName) {
     employees: 'Danh sách Nhân sự',
     products: 'Lưới Sản phẩm (GenAI Showcase)',
     stores: 'Danh sách Cửa hàng Toàn cầu',
-    transactions: 'Lịch sử Giao dịch'
+    transactions: 'Lịch sử Giao dịch',
+    'admin-users': 'Quản lý Tài khoản Hệ thống',
+    'admin-permissions': 'Thiết lập Phân quyền Dynamic',
+    'admin-logs': 'Nhật ký Hoạt động Hệ thống'
   };
   pageTitle.textContent = titles[tabName] || 'G-Fashion BI';
 
@@ -292,6 +324,15 @@ function loadTabContent(tabName) {
       break;
     case 'transactions':
       loadTransactionsTab();
+      break;
+    case 'admin-users':
+      loadAdminUsersTab();
+      break;
+    case 'admin-permissions':
+      loadAdminPermissionsTab();
+      break;
+    case 'admin-logs':
+      loadAdminLogsTab();
       break;
   }
 }
@@ -1020,7 +1061,8 @@ async function loadTransactionsTab() {
   try {
     if (storeFilter.children.length === 0) {
       const stores = await fetchAPI('/api/stores');
-      storeFilter.innerHTML = currentUser.role === 'Director' ? '<option value="">Tất cả Cửa hàng</option>' : '';
+      const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
+      storeFilter.innerHTML = hasAllStores ? '<option value="">Tất cả Cửa hàng</option>' : '';
       stores.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.store_id;
@@ -1028,8 +1070,8 @@ async function loadTransactionsTab() {
         storeFilter.appendChild(opt);
       });
       
-      if (currentUser.role !== 'Director') {
-        storeFilter.value = currentUser.store_id;
+      if (!hasAllStores) {
+        storeFilter.value = currentUser.store_id || '';
       }
     }
 
@@ -1139,27 +1181,67 @@ loginForm.addEventListener('submit', async (e) => {
   
   const usernameVal = document.getElementById('username').value.trim();
   const passwordVal = document.getElementById('password').value;
+  const otpCodeVal = document.getElementById('otp-code').value.trim();
 
   try {
-    const data = await fetchAPI('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ username: usernameVal, password: passwordVal })
-    });
+    if (mfaStepActive) {
+      if (!otpCodeVal || otpCodeVal.length !== 6) {
+        throw new Error('Vui lòng nhập mã OTP gồm 6 chữ số');
+      }
+      
+      const data = await fetchAPI('/api/auth/verify-mfa', {
+        method: 'POST',
+        body: JSON.stringify({ ticket: mfaTicket, code: otpCodeVal })
+      });
+      
+      token = data.token;
+      currentUser = data.user;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      
+      resetLoginFormState();
+      showApp();
+    } else {
+      const data = await fetchAPI('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ username: usernameVal, password: passwordVal })
+      });
 
-    token = data.token;
-    currentUser = data.user;
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(currentUser));
-    
-    // Clear form
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    
-    showApp();
+      if (data.mfa_required) {
+        mfaStepActive = true;
+        mfaTicket = data.ticket;
+        document.getElementById('credentials-group').classList.add('hidden');
+        document.getElementById('mfa-group').classList.remove('hidden');
+        document.getElementById('btn-login-text').textContent = 'Xác nhận OTP';
+        document.getElementById('otp-code').required = true;
+        document.getElementById('otp-code').focus();
+        return;
+      }
+
+      token = data.token;
+      currentUser = data.user;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      
+      resetLoginFormState();
+      showApp();
+    }
   } catch (err) {
     loginError.textContent = err.message || 'Đăng nhập thất bại. Vui lòng thử lại.';
   }
 });
+
+function resetLoginFormState() {
+  mfaStepActive = false;
+  mfaTicket = null;
+  document.getElementById('credentials-group').classList.remove('hidden');
+  document.getElementById('mfa-group').classList.add('hidden');
+  document.getElementById('btn-login-text').textContent = 'Đăng Nhập';
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+  document.getElementById('otp-code').value = '';
+  document.getElementById('otp-code').required = false;
+}
 
 // ================= CRUD SYSTEM ACTIONS & HANDS =================
 
@@ -1183,10 +1265,11 @@ async function populateModalStoreDropdowns() {
       employeeStoreInput.appendChild(opt2);
     });
 
-    if (currentUser.role !== 'Director') {
-      discountStoreInput.value = currentUser.store_id;
+    const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
+    if (!hasAllStores) {
+      discountStoreInput.value = currentUser.store_id || '';
       discountStoreInput.disabled = true;
-      employeeStoreInput.value = currentUser.store_id;
+      employeeStoreInput.value = currentUser.store_id || '';
       employeeStoreInput.disabled = true;
     } else {
       discountStoreInput.disabled = false;
@@ -1403,6 +1486,453 @@ productForm.addEventListener('submit', async (e) => {
 btnLogout.addEventListener('click', () => {
   if (confirm('Ông có chắc chắn muốn đăng xuất?')) {
     logout();
+  }
+});
+
+// ================= IT ADMIN MANAGEMENT & MFA CLIENT FUNCTIONS =================
+
+async function loadAdminUsersTab() {
+  try {
+    const users = await fetchAPI('/api/admin/users');
+    const stores = await fetchAPI('/api/stores');
+    
+    const storeSelect = document.getElementById('admin-user-store-input');
+    storeSelect.innerHTML = '<option value="">Không gán (Global)</option>';
+    stores.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.store_id;
+      opt.textContent = s.store_name;
+      storeSelect.appendChild(opt);
+    });
+
+    const tbody = document.querySelector('#admin-users-table tbody');
+    tbody.innerHTML = '';
+    
+    users.forEach(u => {
+      const tr = document.createElement('tr');
+      const storeName = u.store_id ? (stores.find(s => s.store_id === u.store_id)?.store_name || `Store #${u.store_id}`) : 'Global (Tất cả)';
+      const mfaText = u.mfa_enabled ? '<span class="mfa-status-active"><i class="fa-solid fa-circle-check"></i> Đang bật</span>' : '<span class="mfa-status-inactive"><i class="fa-solid fa-circle-xmark"></i> Chưa bật</span>';
+      
+      tr.innerHTML = `
+        <td>${u.id}</td>
+        <td><strong>${u.username}</strong></td>
+        <td><span class="badge">${u.role}</span></td>
+        <td>${storeName}</td>
+        <td>${mfaText}</td>
+        <td>
+          <button class="btn-action-edit" onclick="openEditAdminUser(${u.id}, '${u.username}', '${u.role}', ${u.store_id || 'null'})" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn-action-delete" onclick="deleteAdminUser(${u.id})" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+          ${u.mfa_enabled ? `<button class="btn-action-edit" style="background:var(--danger-color); margin-left: 5px;" onclick="resetAdminUserMfa(${u.id})" title="Tắt & Reset MFA"><i class="fa-solid fa-key"></i> Reset MFA</button>` : ''}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error('Error loading admin users tab:', err);
+  }
+}
+
+window.openEditAdminUser = function(id, username, role, storeId) {
+  document.getElementById('admin-user-modal-title').textContent = 'Cập nhật tài khoản';
+  document.getElementById('admin-user-id-input').value = id;
+  document.getElementById('admin-user-username-input').value = username;
+  document.getElementById('admin-user-username-input').disabled = true;
+  document.getElementById('admin-user-password-input').placeholder = 'Bỏ trống nếu giữ nguyên mật khẩu';
+  document.getElementById('admin-user-password-input').required = false;
+  document.getElementById('admin-user-role-input').value = role;
+  document.getElementById('admin-user-store-input').value = storeId || '';
+  document.getElementById('admin-user-modal').classList.add('active');
+};
+
+window.deleteAdminUser = async function(id) {
+  if (id === currentUser.id) {
+    alert('Không thể tự xóa tài khoản của chính bạn!');
+    return;
+  }
+  if (!confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) return;
+  try {
+    const data = await fetchAPI(`/api/admin/users/${id}`, { method: 'DELETE' });
+    alert(data.message || 'Xóa thành công');
+    loadAdminUsersTab();
+  } catch (err) {
+    console.error('Error deleting user:', err);
+  }
+};
+
+window.resetAdminUserMfa = async function(id) {
+  if (!confirm('Bạn có chắc muốn tắt và reset MFA cho tài khoản này không?')) return;
+  try {
+    const data = await fetchAPI(`/api/admin/users/${id}/reset-mfa`, { method: 'POST' });
+    alert(data.message || 'Reset MFA thành công');
+    loadAdminUsersTab();
+  } catch (err) {
+    console.error('Error resetting MFA:', err);
+  }
+};
+
+let currentPermissionsMap = {};
+
+async function loadAdminPermissionsTab() {
+  try {
+    currentPermissionsMap = await fetchAPI('/api/admin/permissions');
+    
+    const permissionGroups = [
+      {
+        category: 'Dashboard & Cửa hàng',
+        color: '#3b82f6',
+        icon: 'fa-chart-line',
+        perms: [
+          { key: 'view_dashboard', name: 'Xem Dashboard & Bản đồ' },
+          { key: 'view_all_stores', name: 'Xem Toàn bộ Cửa hàng (Global)' },
+          { key: 'view_own_store', name: 'Xem Cửa hàng được gán (Local)' }
+        ]
+      },
+      {
+        category: 'Khách hàng',
+        color: '#10b981',
+        icon: 'fa-users',
+        perms: [
+          { key: 'view_customers', name: 'Xem danh sách Khách hàng' },
+          { key: 'create_customer', name: 'Thêm Khách hàng' },
+          { key: 'delete_customer', name: 'Xóa Khách hàng' }
+        ]
+      },
+      {
+        category: 'Khuyến mãi & Giảm giá',
+        color: '#f59e0b',
+        icon: 'fa-tags',
+        perms: [
+          { key: 'view_discounts', name: 'Xem danh sách Khuyến mãi' },
+          { key: 'edit_discounts', name: 'Thao tác Khuyến mãi (CRUD)' }
+        ]
+      },
+      {
+        category: 'Nhân sự',
+        color: '#ec4899',
+        icon: 'fa-user-tie',
+        perms: [
+          { key: 'view_employees', name: 'Xem danh sách Nhân sự' },
+          { key: 'edit_employees', name: 'Thao tác Nhân sự (CRUD)' }
+        ]
+      },
+      {
+        category: 'Sản phẩm',
+        color: '#8b5cf6',
+        icon: 'fa-box-open',
+        perms: [
+          { key: 'view_products', name: 'Xem danh mục Sản phẩm' },
+          { key: 'edit_products', name: 'Thao tác Sản phẩm (CRUD)' }
+        ]
+      },
+      {
+        category: 'Giao dịch',
+        color: '#06b6d4',
+        icon: 'fa-receipt',
+        perms: [
+          { key: 'view_transactions', name: 'Xem lịch sử Giao dịch' }
+        ]
+      },
+      {
+        category: 'Quản trị hệ thống (IT Admin)',
+        color: '#ef4444',
+        icon: 'fa-users-gear',
+        perms: [
+          { key: 'manage_users', name: 'Quản lý Tài khoản' },
+          { key: 'manage_permissions', name: 'Thiết lập Phân quyền' },
+          { key: 'view_audit_logs', name: 'Xem Nhật ký Hoạt động (Audit Logs)' }
+        ]
+      }
+    ];
+
+    const roles = Object.keys(currentPermissionsMap);
+
+    const headerRow = document.getElementById('permissions-table-header');
+    headerRow.innerHTML = '<th style="text-align: left; padding: 15px;">Quyền Hạn / Vai trò</th>';
+    roles.forEach(role => {
+      const th = document.createElement('th');
+      th.style.padding = '15px';
+      th.style.textAlign = 'center';
+      th.innerHTML = `<span class="badge" style="font-size:12px; padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">${role}</span>`;
+      headerRow.appendChild(th);
+    });
+
+    const tbody = document.getElementById('permissions-table-body');
+    tbody.innerHTML = '';
+
+    permissionGroups.forEach(group => {
+      // Category row
+      const catTr = document.createElement('tr');
+      catTr.innerHTML = `
+        <td colspan="${roles.length + 1}" style="background: rgba(255,255,255,0.02); font-weight: 700; padding: 12px 18px; border-left: 4px solid ${group.color}; color: ${group.color}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fa-solid ${group.icon}" style="margin-right: 8px;"></i> ${group.category}
+        </td>
+      `;
+      tbody.appendChild(catTr);
+
+      // Permission rows
+      group.perms.forEach(perm => {
+        const tr = document.createElement('tr');
+        
+        let html = `<td style="padding: 12px 18px; border-left: 4px solid ${group.color}44;">
+          <div style="font-weight: 600; color: var(--text-main); font-size: 13px;">${perm.name}</div>
+          <small style="color: var(--text-muted); font-family: monospace; font-size: 10px;">${perm.key}</small>
+        </td>`;
+        
+        roles.forEach(role => {
+          const checked = currentPermissionsMap[role].includes(perm.key) ? 'checked' : '';
+          html += `<td style="text-align: center; padding: 12px;">
+            <input type="checkbox" class="permission-checkbox" data-role="${role}" data-perm="${perm.key}" ${checked}>
+          </td>`;
+        });
+        
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+      });
+    });
+
+  } catch (err) {
+    console.error('Error loading permissions tab:', err);
+  }
+}
+
+document.getElementById('btn-save-permissions').addEventListener('click', async () => {
+  const checkboxes = document.querySelectorAll('.permission-checkbox');
+  const updatedPermissions = {};
+  
+  Object.keys(currentPermissionsMap).forEach(role => {
+    updatedPermissions[role] = [];
+  });
+
+  checkboxes.forEach(cb => {
+    const role = cb.getAttribute('data-role');
+    const perm = cb.getAttribute('data-perm');
+    if (cb.checked) {
+      updatedPermissions[role].push(perm);
+    }
+  });
+
+  try {
+    const data = await fetchAPI('/api/admin/permissions', {
+      method: 'PUT',
+      body: JSON.stringify(updatedPermissions)
+    });
+    alert(data.message || 'Lưu cấu hình thành công!');
+    
+    if (updatedPermissions[currentUser.role]) {
+      currentUser.permissions = updatedPermissions[currentUser.role];
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      configurePermissionBasedVisibility();
+    }
+    
+    loadAdminPermissionsTab();
+  } catch (err) {
+    alert('Lỗi lưu phân quyền: ' + err.message);
+  }
+});
+
+async function loadAdminLogsTab() {
+  const filterAction = document.getElementById('admin-logs-action-filter').value;
+  try {
+    const logs = await fetchAPI('/api/admin/audit-logs');
+    const tbody = document.querySelector('#admin-logs-table tbody');
+    tbody.innerHTML = '';
+    
+    let filteredLogs = logs;
+    if (filterAction) {
+      filteredLogs = logs.filter(l => l.action === filterAction);
+    }
+
+    filteredLogs.forEach(l => {
+      const tr = document.createElement('tr');
+      const formattedTime = new Date(l.timestamp).toLocaleString('vi-VN');
+      
+      let badgeClass = 'default';
+      const actionLower = l.action.toLowerCase();
+      if (actionLower.includes('login')) badgeClass = 'login';
+      else if (actionLower.includes('create')) badgeClass = 'create';
+      else if (actionLower.includes('update')) badgeClass = 'update';
+      else if (actionLower.includes('delete')) badgeClass = 'delete';
+      else if (actionLower.includes('mfa')) badgeClass = 'mfa';
+
+      tr.innerHTML = `
+        <td style="white-space:nowrap;"><code>${formattedTime}</code></td>
+        <td><strong>${l.username}</strong></td>
+        <td><span class="badge">${l.role}</span></td>
+        <td><span class="badge-action ${badgeClass}">${l.action}</span></td>
+        <td>${l.details}</td>
+        <td><code>${l.ip}</code></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error('Error loading audit logs:', err);
+  }
+}
+
+document.getElementById('admin-logs-action-filter').addEventListener('change', loadAdminLogsTab);
+document.getElementById('btn-refresh-admin-logs').addEventListener('click', loadAdminLogsTab);
+
+// --- MFA CLIENT HANDLERS ---
+const mfaSetupModal = document.getElementById('mfa-setup-modal');
+const mfaCurrentStatusText = document.getElementById('mfa-current-status-text');
+const mfaEnablePanel = document.getElementById('mfa-enable-panel');
+const mfaDisablePanel = document.getElementById('mfa-disable-panel');
+
+let mfaSetupSecret = '';
+
+document.getElementById('btn-user-profile').addEventListener('click', async () => {
+  try {
+    const data = await fetchAPI('/api/auth/me');
+    currentUser.mfa_enabled = data.user.mfa_enabled;
+    localStorage.setItem('user', JSON.stringify(currentUser));
+  } catch (err) {
+    console.error('Error fetching profile detail:', err);
+  }
+
+  if (currentUser.mfa_enabled) {
+    mfaCurrentStatusText.textContent = 'Đang Bật';
+    mfaCurrentStatusText.className = 'mfa-status-active';
+    mfaCurrentStatusText.style.color = '#10b981';
+    mfaEnablePanel.classList.add('hidden');
+    mfaDisablePanel.classList.remove('hidden');
+  } else {
+    mfaCurrentStatusText.textContent = 'Đang Tắt';
+    mfaCurrentStatusText.className = 'mfa-status-inactive';
+    mfaCurrentStatusText.style.color = '#ef4444';
+    mfaDisablePanel.classList.add('hidden');
+    mfaEnablePanel.classList.remove('hidden');
+    
+    try {
+      const data = await fetchAPI('/api/auth/mfa/setup', { method: 'POST' });
+      mfaSetupSecret = data.secret;
+      document.getElementById('mfa-secret-key').value = data.secret;
+    } catch (err) {
+      alert('Không thể tạo secret cho MFA: ' + err.message);
+    }
+  }
+  
+  mfaSetupModal.classList.add('active');
+});
+
+document.getElementById('btn-copy-mfa-secret').addEventListener('click', () => {
+  const secretKeyInput = document.getElementById('mfa-secret-key');
+  secretKeyInput.select();
+  navigator.clipboard.writeText(secretKeyInput.value);
+  alert('Đã sao chép khóa bí mật!');
+});
+
+document.getElementById('btn-confirm-enable-mfa').addEventListener('click', async () => {
+  const code = document.getElementById('mfa-verify-code').value.trim();
+  if (!code || code.length !== 6) {
+    alert('Vui lòng nhập mã OTP gồm 6 chữ số');
+    return;
+  }
+
+  try {
+    const data = await fetchAPI('/api/auth/mfa/enable', {
+      method: 'POST',
+      body: JSON.stringify({ secret: mfaSetupSecret, code })
+    });
+    alert(data.message || 'Đã bật MFA thành công!');
+    currentUser.mfa_enabled = true;
+    localStorage.setItem('user', JSON.stringify(currentUser));
+    mfaSetupModal.classList.remove('active');
+    document.getElementById('mfa-verify-code').value = '';
+  } catch (err) {
+    alert('Lỗi kích hoạt MFA: ' + err.message);
+  }
+});
+
+document.getElementById('btn-confirm-disable-mfa').addEventListener('click', async () => {
+  const code = document.getElementById('mfa-disable-code').value.trim();
+  if (!code || code.length !== 6) {
+    alert('Vui lòng nhập mã OTP gồm 6 chữ số');
+    return;
+  }
+
+  try {
+    const data = await fetchAPI('/api/auth/mfa/disable', {
+      method: 'POST',
+      body: JSON.stringify({ code })
+    });
+    alert(data.message || 'Đã hủy MFA thành công!');
+    currentUser.mfa_enabled = false;
+    localStorage.setItem('user', JSON.stringify(currentUser));
+    mfaSetupModal.classList.remove('active');
+    document.getElementById('mfa-disable-code').value = '';
+  } catch (err) {
+    alert('Lỗi hủy kích hoạt MFA: ' + err.message);
+  }
+});
+
+document.getElementById('btn-close-mfa-setup').addEventListener('click', () => mfaSetupModal.classList.remove('active'));
+document.getElementById('btn-close-mfa-disable').addEventListener('click', () => mfaSetupModal.classList.remove('active'));
+
+// --- ADMIN USER CRUD DIALOG LOGIC ---
+const adminUserModal = document.getElementById('admin-user-modal');
+const adminUserForm = document.getElementById('admin-user-form');
+const btnCancelAdminUser = document.getElementById('btn-cancel-admin-user');
+
+document.getElementById('btn-admin-add-user').addEventListener('click', async () => {
+  document.getElementById('admin-user-modal-title').textContent = 'Thêm Tài Khoản Mới';
+  document.getElementById('admin-user-id-input').value = '';
+  document.getElementById('admin-user-username-input').value = '';
+  document.getElementById('admin-user-username-input').disabled = false;
+  document.getElementById('admin-user-password-input').value = '';
+  document.getElementById('admin-user-password-input').placeholder = 'Nhập mật khẩu...';
+  document.getElementById('admin-user-password-input').required = true;
+  document.getElementById('admin-user-role-input').value = 'Sales Staff';
+  
+  try {
+    const stores = await fetchAPI('/api/stores');
+    const storeSelect = document.getElementById('admin-user-store-input');
+    storeSelect.innerHTML = '<option value="">Không gán (Global)</option>';
+    stores.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.store_id;
+      opt.textContent = s.store_name;
+      storeSelect.appendChild(opt);
+    });
+  } catch (e) {
+    console.error(e);
+  }
+
+  adminUserModal.classList.add('active');
+});
+
+btnCancelAdminUser.addEventListener('click', () => {
+  adminUserModal.classList.remove('active');
+  adminUserForm.reset();
+});
+
+adminUserForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('admin-user-id-input').value;
+  const username = document.getElementById('admin-user-username-input').value.trim();
+  const password = document.getElementById('admin-user-password-input').value;
+  const role = document.getElementById('admin-user-role-input').value;
+  const store_id = document.getElementById('admin-user-store-input').value ? parseInt(document.getElementById('admin-user-store-input').value) : null;
+
+  try {
+    if (id) {
+      await fetchAPI(`/api/admin/users/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ role, store_id, password })
+      });
+      alert('Cập nhật tài khoản thành công!');
+    } else {
+      await fetchAPI('/api/admin/users', {
+        method: 'POST',
+        body: JSON.stringify({ username, password, role, store_id })
+      });
+      alert('Tạo tài khoản thành công!');
+    }
+    
+    adminUserModal.classList.remove('active');
+    adminUserForm.reset();
+    loadAdminUsersTab();
+  } catch (err) {
+    alert(err.message || 'Lỗi lưu tài khoản');
   }
 });
 
