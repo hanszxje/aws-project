@@ -19,13 +19,17 @@ app.use(express.json());
 // Serve static frontend files (caching disabled for development)
 app.use(express.static(path.join(__dirname, 'public'), { etag: false, maxAge: 0 }));
 
+// Set EJS view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 // Mount API routes
 app.use('/api/auth', authRoutes);
 app.use('/api', apiRoutes);
 
-// Fallback to index.html for SPA routing
+// Fallback to index template for SPA routing
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.render('index');
 });
 
 // Initialize DB and start server

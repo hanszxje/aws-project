@@ -88,5 +88,32 @@
     "action": "LOGIN",
     "details": "Đăng nhập thành công",
     "ip": "::1"
+  },
+  {
+    "id": 1782472766590,
+    "timestamp": "2026-06-26T11:19:25.746Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782472949983,
+    "timestamp": "2026-06-26T11:22:29.762Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1782472956156,
+    "timestamp": "2026-06-26T11:22:35.706Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
   }
 ]

@@ -1,0 +1,34 @@
+<%- include('partials/head') %>
+<%- include('partials/auth_overlay') %>
+
+<div id="app-container" class="app-container hidden">
+  <%- include('partials/sidebar') %>
+  
+  <main class="content-area">
+    <header class="content-header">
+      <h1 id="page-title">Dashboard Bản đồ</h1>
+      <div class="header-actions">
+        <div class="db-mode-badge" id="db-mode-badge">
+          <i class="fa-solid fa-database"></i> <span id="db-mode-text">Mock Mode</span>
+        </div>
+      </div>
+    </header>
+
+    <%- include('tabs/dashboard') %>
+    <%- include('tabs/customers') %>
+    <%- include('tabs/discounts') %>
+    <%- include('tabs/employees') %>
+    <%- include('tabs/products') %>
+    <%- include('tabs/stores') %>
+    <%- include('tabs/transactions') %>
+    <%- include('tabs/admin_users') %>
+    <%- include('tabs/admin_permissions') %>
+    <%- include('tabs/admin_logs') %>
+  </main>
+</div>
+
+<%- include('partials/modals') %>
+
+<script src="/js/app.js?v=2.2"></script>
+</body>
+</html>

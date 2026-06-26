@@ -1652,7 +1652,7 @@ async function loadAdminPermissionsTab() {
       const th = document.createElement('th');
       th.style.padding = '15px';
       th.style.textAlign = 'center';
-      th.innerHTML = `<span class="badge" style="font-size:12px; padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">${role}</span>`;
+      th.innerHTML = `<span class="badge">${role}</span>`;
       headerRow.appendChild(th);
     });
 

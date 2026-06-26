@@ -15,8 +15,8 @@
   ],
   "Finance/Auditor": [
     "view_all_stores",
-    "view_transactions",
-    "view_discounts"
+    "view_discounts",
+    "view_transactions"
   ],
   "Inventory Manager": [
     "view_all_stores",

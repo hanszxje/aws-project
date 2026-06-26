@@ -1,0 +1,44 @@
+      <!-- ================= TAB CONTENT: CUSTOMERS ================= -->
+      <section id="tab-customers" class="tab-content">
+        <div class="filter-bar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="customers-search" placeholder="Tìm theo tên hoặc mã KH...">
+          </div>
+          <div class="filter-group">
+            <label>Giới tính:</label>
+            <select id="customers-gender-filter" class="select-control">
+              <option value="">Tất cả</option>
+              <option value="Male">Nam (Male)</option>
+              <option value="Female">Nữ (Female)</option>
+              <option value="Non-binary">Khác (Non-binary)</option>
+            </select>
+          </div>
+          <button id="btn-add-customer" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-user-plus"></i> Thêm Khách Hàng</button>
+        </div>
+        
+        <div class="data-grid">
+          <div class="table-card">
+            <table class="data-table" id="customers-table">
+              <thead>
+                <tr>
+                  <th>Mã Khách Hàng</th>
+                  <th>Họ và Tên</th>
+                  <th>Tuổi</th>
+                  <th>Giới tính</th>
+                  <th>Quốc gia</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div class="pagination" id="customers-pagination"></div>
+          </div>
+          
+          <div class="charts-card">
+            <h3><i class="fa-solid fa-chart-pie"></i> Phân tích Cơ cấu Khách hàng</h3>
+            <div id="customers-gender-chart" class="sub-chart"></div>
+            <div id="customers-age-chart" class="sub-chart"></div>
+          </div>
+        </div>
+      </section>

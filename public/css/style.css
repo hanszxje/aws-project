@@ -1055,6 +1055,45 @@ select:focus,
   text-transform: uppercase;
   font-size: 11px;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  min-width: 155px;
+}
+
+#admin-permissions-table th:first-child {
+  min-width: 280px;
+  text-align: left;
+}
+
+/* General Badge Style */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#admin-permissions-table th .badge {
+  font-size: 12px;
+  padding: 6px 12px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: var(--primary-light);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: var(--transition);
+}
+
+#admin-permissions-table th .badge:hover {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.35);
+  transform: translateY(-1px);
 }
 
 #admin-permissions-table td {

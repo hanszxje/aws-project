@@ -1,0 +1,41 @@
+      <!-- ================= TAB CONTENT: DASHBOARD ================= -->
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="dashboard-layout">
+          <!-- Map Container -->
+          <div class="map-card">
+            <div id="map"></div>
+            <!-- Map Legend / Tutorial -->
+            <div class="map-overlay-info">
+              <h3><i class="fa-solid fa-circle-info"></i> Chỉ dẫn</h3>
+              <p>Nhấp vào một cửa hàng (icon cửa hàng) để xem dữ liệu dự báo nhu cầu thời trang theo tuần sinh ra từ mô hình học máy LightGBM.</p>
+            </div>
+          </div>
+          
+          <!-- Forecast Panel (Overlay right side of map) -->
+          <div id="forecast-panel" class="forecast-panel hidden">
+            <div class="panel-header">
+              <h2 id="forecast-store-name">Store Name</h2>
+              <button id="btn-close-forecast" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="panel-body">
+              <div class="forecast-stats">
+                <div class="stat-card">
+                  <span class="stat-label">Tổng SKU dự báo</span>
+                  <span class="stat-val" id="forecast-sku-count">0</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Dự kiến tuần tới</span>
+                  <span class="stat-val" id="forecast-next-week-qty">0</span>
+                </div>
+              </div>
+              <div class="form-group-forecast">
+                <label for="forecast-sku-selector">Chọn SKU sản phẩm:</label>
+                <select id="forecast-sku-selector" class="select-control"></select>
+              </div>
+              <div class="chart-wrapper">
+                <div id="forecast-chart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>

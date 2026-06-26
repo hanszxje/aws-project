@@ -1,0 +1,39 @@
+      <!-- ================= TAB CONTENT: TRANSACTIONS ================= -->
+      <section id="tab-transactions" class="tab-content">
+        <div class="filter-bar">
+          <div class="filter-group select-store-container">
+            <label>Lọc theo cửa hàng:</label>
+            <select id="transactions-store-filter" class="select-control"></select>
+          </div>
+          <div class="filter-group">
+            <label>Hình thức thanh toán:</label>
+            <select id="transactions-payment-filter" class="select-control">
+              <option value="">Tất cả</option>
+              <option value="Credit Card">Thẻ tín dụng (Credit Card)</option>
+              <option value="PayPal">PayPal</option>
+              <option value="Cash">Tiền mặt (Cash)</option>
+              <option value="Apple Pay">Apple Pay</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="table-card full-width">
+          <table class="data-table" id="transactions-table">
+            <thead>
+              <tr>
+                <th>Mã Giao Dịch</th>
+                <th>Cửa hàng</th>
+                <th>SKU</th>
+                <th>Sản phẩm</th>
+                <th>Ngày</th>
+                <th>Thanh toán</th>
+                <th>Đơn giá gốc</th>
+                <th>SL</th>
+                <th>Tổng tiền quy đổi (USD)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="pagination" id="transactions-pagination"></div>
+        </div>
+      </section>

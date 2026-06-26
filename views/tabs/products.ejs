@@ -1,0 +1,23 @@
+      <!-- ================= TAB CONTENT: PRODUCTS ================= -->
+      <section id="tab-products" class="tab-content">
+        <div class="filter-bar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="products-search" placeholder="Tìm tên sản phẩm hoặc mô tả...">
+          </div>
+          <div class="filter-group">
+            <label>Danh mục:</label>
+            <select id="products-category-filter" class="select-control">
+              <option value="">Tất cả</option>
+              <option value="Clothing">Quần áo (Clothing)</option>
+              <option value="Shoes">Giày dép (Shoes)</option>
+              <option value="Accessories">Phụ kiện (Accessories)</option>
+            </select>
+          </div>
+          <button id="btn-add-product" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-plus"></i> Thêm Sản Phẩm</button>
+        </div>
+        
+        <div class="products-grid-container" id="products-grid">
+          <!-- Dynamically populated products cards -->
+        </div>
+      </section>

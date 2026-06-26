@@ -1,0 +1,46 @@
+      <!-- ================= TAB CONTENT: ADMIN LOGS ================= -->
+      <section id="tab-admin-logs" class="tab-content">
+        <div class="filter-bar">
+          <h3 style="margin: 0; color: var(--primary-light);"><i class="fa-solid fa-clock-rotate-left"></i> Nhật ký Hoạt động (Audit Logs)</h3>
+          <div class="filter-group" style="margin-left: auto;">
+            <label>Lọc hành động:</label>
+            <select id="admin-logs-action-filter" class="select-control">
+              <option value="">Tất cả</option>
+              <option value="LOGIN">Đăng nhập (Thường)</option>
+              <option value="LOGIN_MFA">Đăng nhập (MFA)</option>
+              <option value="CUSTOMER_CREATE">Tạo KH</option>
+              <option value="CUSTOMER_DELETE">Xóa KH</option>
+              <option value="DISCOUNT_CREATE">Tạo Khuyến mãi</option>
+              <option value="DISCOUNT_UPDATE">Sửa Khuyến mãi</option>
+              <option value="DISCOUNT_DELETE">Xóa Khuyến mãi</option>
+              <option value="EMPLOYEE_CREATE">Thêm Nhân viên</option>
+              <option value="EMPLOYEE_UPDATE">Sửa Nhân viên</option>
+              <option value="EMPLOYEE_DELETE">Xóa Nhân viên</option>
+              <option value="PRODUCT_CREATE">Tạo Sản phẩm</option>
+              <option value="PRODUCT_UPDATE">Sửa Sản phẩm</option>
+              <option value="PRODUCT_DELETE">Xóa Sản phẩm</option>
+              <option value="USER_CREATE">Tạo User</option>
+              <option value="USER_UPDATE">Sửa User</option>
+              <option value="USER_DELETE">Xóa User</option>
+              <option value="MFA_ENABLE">Bật MFA</option>
+              <option value="MFA_DISABLE">Tắt MFA</option>
+            </select>
+          </div>
+          <button id="btn-refresh-admin-logs" class="btn-secondary" style="height: 42px; margin-left: 10px;"><i class="fa-solid fa-rotate"></i> Tải lại</button>
+        </div>
+        <div class="table-card full-width">
+          <table class="data-table" id="admin-logs-table">
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Người dùng</th>
+                <th>Vai trò</th>
+                <th>Hành động</th>
+                <th>Chi tiết hoạt động</th>
+                <th>Địa chỉ IP</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>

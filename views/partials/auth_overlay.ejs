@@ -1,0 +1,49 @@
+  <!-- ================= AUTH OVERLAY ================= -->
+  <div id="auth-overlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i class="fa-solid fa-shirt"></i>
+          <span>GLOBAL FASHION</span>
+        </div>
+        <h2 id="auth-title">Đăng Nhập Hệ Thống</h2>
+        <p id="auth-subtitle">Vui lòng đăng nhập để truy cập cổng thông tin quản trị và dự báo</p>
+      </div>
+      
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <div id="credentials-group">
+          <div class="form-group">
+            <label for="username"><i class="fa-solid fa-user"></i> Tên đăng nhập</label>
+            <input type="text" id="username" placeholder="Nhập tên đăng nhập (ví dụ: director)">
+          </div>
+          <div class="form-group">
+            <label for="password"><i class="fa-solid fa-lock"></i> Mật khẩu</label>
+            <input type="password" id="password" placeholder="Nhập mật khẩu (password123)">
+          </div>
+        </div>
+        
+        <div id="mfa-group" class="hidden">
+          <div class="form-group">
+            <label for="otp-code"><i class="fa-solid fa-key"></i> Mã xác thực OTP (MFA)</label>
+            <input type="text" id="otp-code" placeholder="Nhập mã 6 chữ số từ app Authenticator" maxlength="6" pattern="[0-9]{6}">
+            <p class="form-help" style="font-size: 11px; color: var(--text-dark); margin-top: 5px;">Mở ứng dụng Google Authenticator trên điện thoại để lấy mã.</p>
+          </div>
+        </div>
+
+        <div id="login-error" class="login-error-msg"></div>
+        <button type="submit" id="btn-login" class="btn-primary">
+          <span id="btn-login-text">Đăng Nhập</span> <i class="fa-solid fa-right-to-bracket"></i>
+        </button>
+      </form>
+      
+      <div id="auth-demo-footer" class="auth-footer">
+        <p>Tài khoản dùng thử có sẵn:</p>
+        <ul>
+          <li><strong>Director (Giám đốc):</strong> <code>director</code> / <code>password123</code></li>
+          <li><strong>Store Manager (Quản lý Store 1):</strong> <code>manager1</code> / <code>password123</code></li>
+          <li><strong>Sales Staff (Nhân viên Store 1):</strong> <code>sales1</code> / <code>password123</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
