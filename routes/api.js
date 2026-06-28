@@ -503,6 +503,60 @@ router.get('/transactions', authenticateToken, authorizePermission('view_transac
   }
 });
 
+// POST /api/transactions
+// Access: create_transaction.
+router.post('/transactions', authenticateToken, authorizePermission('create_transaction'), async (req, res) => {
+  const { store_id, customer_id, sku, quantity, payment_method, price } = req.body;
+  if (!store_id || !customer_id || !sku || !quantity || !payment_method || !price) {
+    return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
+  }
+
+  try {
+    // Validate store access
+    if (!(await checkStoreAccess(req, res, store_id))) {
+      return;
+    }
+
+    // Extract product_id from SKU (e.g. SKU-10000 -> product_id = 10000)
+    const productId = parseInt(sku.replace('SKU-', ''));
+    if (isNaN(productId)) {
+      return res.status(400).json({ message: 'SKU không hợp lệ' });
+    }
+
+    // 1. Try to decrease stock (will throw error if stock is insufficient)
+    await db.decreaseStock(store_id, sku, quantity);
+
+    // 2. Add transaction record
+    const newTx = await db.addTransaction({
+      store_id,
+      customer_id,
+      product_id: productId,
+      sku,
+      quantity,
+      payment_method,
+      price,
+      salesperson: req.user.username
+    });
+
+    // 3. Log
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'TRANSACTION_CREATE',
+      details: `Tạo giao dịch bán hàng mới: Cửa hàng #${store_id}, Khách hàng #${customer_id}, SKU: ${sku}, S.Lượng: ${quantity}, Tổng: $${(price * quantity).toFixed(2)}`,
+      ip: req.ip || '127.0.0.1'
+    });
+
+    res.status(201).json({
+      message: 'Giao dịch được tạo thành công, kho hàng đã tự động cập nhật!',
+      transaction: newTx
+    });
+  } catch (err) {
+    console.error('Error creating transaction:', err);
+    res.status(400).json({ message: err.message || 'Lỗi khi tạo giao dịch' });
+  }
+});
+
 // 7. GET /api/predict
 // Access: view_dashboard.
 router.get('/predict', authenticateToken, authorizePermission('view_dashboard'), async (req, res) => {
@@ -704,6 +758,84 @@ router.get('/admin/audit-logs', authenticateToken, authorizePermission('view_aud
     res.json(logs);
   } catch (err) {
     console.error('Error fetching audit logs:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// --- INVENTORY ENDPOINTS ---
+
+// 12. GET /api/inventory
+router.get('/inventory', authenticateToken, authorizePermission('view_inventory'), async (req, res) => {
+  try {
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+    
+    let targetStoreId = null;
+    if (userPermissions.includes('view_all_stores')) {
+      targetStoreId = req.query.store_id ? parseInt(req.query.store_id) : null;
+    } else {
+      targetStoreId = req.user.store_id;
+    }
+
+    const search = req.query.search || '';
+    const inventory = await db.getInventory(targetStoreId, search);
+    res.json(inventory);
+  } catch (err) {
+    console.error('Error fetching inventory:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// 13. GET /api/inventory/imports
+router.get('/inventory/imports', authenticateToken, authorizePermission('view_inventory'), async (req, res) => {
+  try {
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+    
+    let targetStoreId = null;
+    if (userPermissions.includes('view_all_stores')) {
+      targetStoreId = req.query.store_id ? parseInt(req.query.store_id) : null;
+    } else {
+      targetStoreId = req.user.store_id;
+    }
+
+    const imports = await db.getInventoryImports(targetStoreId);
+    res.json(imports);
+  } catch (err) {
+    console.error('Error fetching inventory imports:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// 14. POST /api/inventory/imports
+router.post('/inventory/imports', authenticateToken, authorizePermission('manage_inventory'), async (req, res) => {
+  const { store_id, sku, quantity, supplier } = req.body;
+  if (!store_id || !sku || !quantity || !supplier) {
+    return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
+  }
+
+  try {
+    // Validate manager access to store_id
+    if (!(await checkStoreAccess(req, res, store_id))) {
+      return;
+    }
+
+    const newImport = await db.addInventoryImport({ store_id, sku, quantity, supplier });
+
+    await db.addAuditLog({
+      username: req.user.username,
+      role: req.user.role,
+      action: 'INVENTORY_IMPORT',
+      details: `Nhập hàng mới cho store #${store_id}: SKU ${sku}, Số lượng: ${quantity}, Nhà CC: ${supplier}`,
+      ip: req.ip || '127.0.0.1'
+    });
+
+    res.status(201).json({
+      message: 'Nhập hàng thành công!',
+      import: newImport
+    });
+  } catch (err) {
+    console.error('Error creating inventory import:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

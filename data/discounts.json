@@ -3,7 +3,7 @@
     "discount_id": 1,
     "store_id": 1,
     "season_name": "Summer Sale",
-    "total_discount_avg": 0.1765,
+    "total_discount_avg": 0.1654,
     "start_date": "2026-01-01",
     "end_date": "2026-02-28"
   },
@@ -11,7 +11,7 @@
     "discount_id": 2,
     "store_id": 1,
     "season_name": "Winter Clearance",
-    "total_discount_avg": 0.0953,
+    "total_discount_avg": 0.0726,
     "start_date": "2026-04-01",
     "end_date": "2026-05-28"
   },
@@ -19,7 +19,7 @@
     "discount_id": 3,
     "store_id": 1,
     "season_name": "Spring Promo",
-    "total_discount_avg": 0.0846,
+    "total_discount_avg": 0.2245,
     "start_date": "2026-07-01",
     "end_date": "2026-08-28"
   },
@@ -27,7 +27,7 @@
     "discount_id": 4,
     "store_id": 1,
     "season_name": "Autumn Collection",
-    "total_discount_avg": 0.083,
+    "total_discount_avg": 0.2026,
     "start_date": "2026-010-01",
     "end_date": "2026-011-28"
   },
@@ -35,7 +35,7 @@
     "discount_id": 5,
     "store_id": 2,
     "season_name": "Summer Sale",
-    "total_discount_avg": 0.268,
+    "total_discount_avg": 0.1524,
     "start_date": "2026-01-01",
     "end_date": "2026-02-28"
   },
@@ -43,7 +43,7 @@
     "discount_id": 6,
     "store_id": 2,
     "season_name": "Winter Clearance",
-    "total_discount_avg": 0.2085,
+    "total_discount_avg": 0.0709,
     "start_date": "2026-04-01",
     "end_date": "2026-05-28"
   },
@@ -51,7 +51,7 @@
     "discount_id": 7,
     "store_id": 2,
     "season_name": "Spring Promo",
-    "total_discount_avg": 0.2111,
+    "total_discount_avg": 0.1191,
     "start_date": "2026-07-01",
     "end_date": "2026-08-28"
   },
@@ -59,7 +59,7 @@
     "discount_id": 8,
     "store_id": 2,
     "season_name": "Autumn Collection",
-    "total_discount_avg": 0.2172,
+    "total_discount_avg": 0.1915,
     "start_date": "2026-010-01",
     "end_date": "2026-011-28"
   },
@@ -67,7 +67,7 @@
     "discount_id": 9,
     "store_id": 6,
     "season_name": "Summer Sale",
-    "total_discount_avg": 0.2087,
+    "total_discount_avg": 0.084,
     "start_date": "2026-01-01",
     "end_date": "2026-02-28"
   },
@@ -75,7 +75,7 @@
     "discount_id": 10,
     "store_id": 6,
     "season_name": "Winter Clearance",
-    "total_discount_avg": 0.2386,
+    "total_discount_avg": 0.188,
     "start_date": "2026-04-01",
     "end_date": "2026-05-28"
   },
@@ -83,7 +83,7 @@
     "discount_id": 11,
     "store_id": 6,
     "season_name": "Spring Promo",
-    "total_discount_avg": 0.2349,
+    "total_discount_avg": 0.0501,
     "start_date": "2026-07-01",
     "end_date": "2026-08-28"
   },
@@ -91,7 +91,7 @@
     "discount_id": 12,
     "store_id": 6,
     "season_name": "Autumn Collection",
-    "total_discount_avg": 0.0848,
+    "total_discount_avg": 0.0951,
     "start_date": "2026-010-01",
     "end_date": "2026-011-28"
   }

@@ -260,6 +260,9 @@ async function generateMockData() {
       transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
       fs.writeFileSync(path.join(DATA_DIR, 'transactions.json'), JSON.stringify(transactions, null, 2));
 
+      // Generate stock and import logs
+      generateInventoryAndImports(stores, uniqueSkus);
+
       console.log(`Parsed sample_data.json. Generated:`);
       console.log(`- ${stores.length} Stores`);
       console.log(`- ${products.length} Products`);
@@ -361,25 +364,64 @@ async function generateMockData() {
     { forecast_id: 1, store_id: 1, sku: 'SKU-10000', product_name: 'Product #1000', category: 'Clothing', year: 2026, week: 26, predicted_quantity: 10, actual_quantity: 8 }
   ];
   fs.writeFileSync(path.join(DATA_DIR, 'forecasts.json'), JSON.stringify(forecasts, null, 2));
+  // Generate stock and import logs
+  generateInventoryAndImports(stores, skus);
+
   writePermissionsAndLogs();
   console.log('Fallback mock data generation completed successfully!');
 }
 
 function writePermissionsAndLogs() {
   const defaultPermissions = {
-    "IT Admin": ["manage_users", "manage_permissions", "view_audit_logs"],
-    "Director": ["view_dashboard", "view_all_stores", "view_customers", "view_discounts", "view_employees", "view_products", "view_transactions"],
-    "Finance/Auditor": ["view_all_stores", "view_transactions", "view_discounts"],
-    "Inventory Manager": ["view_all_stores", "view_products", "edit_products"],
-    "Marketing Manager": ["view_all_stores", "view_discounts", "edit_discounts"],
-    "Store Manager": ["view_dashboard", "view_own_store", "view_customers", "create_customer", "view_discounts", "edit_discounts", "view_employees", "edit_employees", "view_products"],
-    "Sales Staff": ["view_own_store", "view_products", "view_transactions"]
+    "IT Admin": ["manage_users", "manage_permissions", "view_audit_logs", "view_inventory", "manage_inventory", "create_transaction"],
+    "Director": ["view_dashboard", "view_all_stores", "view_customers", "view_discounts", "view_employees", "view_products", "view_transactions", "view_inventory", "manage_inventory", "create_transaction"],
+    "Finance/Auditor": ["view_all_stores", "view_transactions", "view_discounts", "view_inventory"],
+    "Inventory Manager": ["view_all_stores", "view_products", "edit_products", "view_inventory", "manage_inventory"],
+    "Marketing Manager": ["view_all_stores", "view_discounts", "edit_discounts", "view_inventory"],
+    "Store Manager": ["view_dashboard", "view_own_store", "view_customers", "create_customer", "view_discounts", "edit_discounts", "view_employees", "edit_employees", "view_products", "view_inventory", "manage_inventory", "create_transaction", "view_transactions"],
+    "Sales Staff": ["view_own_store", "view_products", "view_transactions", "view_inventory", "view_customers", "create_customer", "create_transaction"]
   };
   fs.writeFileSync(path.join(DATA_DIR, 'permissions.json'), JSON.stringify(defaultPermissions, null, 2));
   
   if (!fs.existsSync(path.join(DATA_DIR, 'audit_logs.json'))) {
     fs.writeFileSync(path.join(DATA_DIR, 'audit_logs.json'), JSON.stringify([], null, 2));
   }
+}
+
+function generateInventoryAndImports(stores, skus) {
+  const inventory = [];
+  const imports = [];
+  let importId = 1;
+  const suppliers = ["Fashion Global Wholesaler", "Asia Apparel Co.", "US Textile Group", "EuroStyle Distributor", "Modern Threads Inc."];
+
+  stores.forEach(store => {
+    // For each SKU, generate a random stock
+    skus.forEach(s => {
+      const stock = Math.floor(Math.random() * 41) + 10; // 10 to 50
+      inventory.push({
+        store_id: store.store_id,
+        sku: s.sku,
+        stock_quantity: stock
+      });
+
+      // Generate 1 initial import log per store/SKU to populate history
+      const importDate = new Date();
+      importDate.setDate(importDate.getDate() - (Math.floor(Math.random() * 10) + 1));
+      imports.push({
+        import_id: importId++,
+        store_id: store.store_id,
+        sku: s.sku,
+        quantity: stock + 20, // initial import was slightly higher
+        import_date: importDate.toISOString(),
+        supplier: suppliers[importId % suppliers.length]
+      });
+    });
+  });
+
+  fs.writeFileSync(path.join(DATA_DIR, 'inventory.json'), JSON.stringify(inventory, null, 2));
+  fs.writeFileSync(path.join(DATA_DIR, 'inventory_imports.json'), JSON.stringify(imports, null, 2));
+  console.log(`- Generated ${inventory.length} Inventory stock items`);
+  console.log(`- Generated ${imports.length} Inventory import logs`);
 }
 
 module.exports = generateMockData;

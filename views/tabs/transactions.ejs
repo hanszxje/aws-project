@@ -1,6 +1,6 @@
       <!-- ================= TAB CONTENT: TRANSACTIONS ================= -->
       <section id="tab-transactions" class="tab-content">
-        <div class="filter-bar">
+        <div class="filter-bar" style="display: flex; align-items: center; width: 100%;">
           <div class="filter-group select-store-container">
             <label>Lọc theo cửa hàng:</label>
             <select id="transactions-store-filter" class="select-control"></select>
@@ -15,6 +15,9 @@
               <option value="Apple Pay">Apple Pay</option>
             </select>
           </div>
+          <button id="btn-add-transaction" class="btn btn-primary" style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-plus"></i> Tạo Giao Dịch Mới
+          </button>
         </div>
         
         <div class="table-card full-width">
@@ -23,13 +26,14 @@
               <tr>
                 <th>Mã Giao Dịch</th>
                 <th>Cửa hàng</th>
+                <th>Người thực hiện</th>
+                <th>Thời gian</th>
                 <th>SKU</th>
                 <th>Sản phẩm</th>
-                <th>Ngày</th>
                 <th>Thanh toán</th>
-                <th>Đơn giá gốc</th>
+                <th>Đơn giá</th>
                 <th>SL</th>
-                <th>Tổng tiền quy đổi (USD)</th>
+                <th>Tổng tiền (USD)</th>
               </tr>
             </thead>
             <tbody></tbody>

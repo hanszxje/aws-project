@@ -115,5 +115,203 @@
     "action": "PERMISSIONS_UPDATE",
     "details": "Cập nhật ma trận phân quyền động",
     "ip": "::1"
+  },
+  {
+    "id": 1782473153401,
+    "timestamp": "2026-06-26T11:25:53.160Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782636364016,
+    "timestamp": "2026-06-28T08:46:03.796Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782636400041,
+    "timestamp": "2026-06-28T08:46:39.920Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782636428506,
+    "timestamp": "2026-06-28T08:47:08.325Z",
+    "username": "inventory",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782636470984,
+    "timestamp": "2026-06-28T08:47:50.290Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782640634816,
+    "timestamp": "2026-06-28T09:57:14.680Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782640763074,
+    "timestamp": "2026-06-28T09:59:22.992Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782641385263,
+    "timestamp": "2026-06-28T10:09:44.516Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782643350339,
+    "timestamp": "2026-06-28T10:42:30.129Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782643392513,
+    "timestamp": "2026-06-28T10:43:12.077Z",
+    "username": "inventory",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782650053803,
+    "timestamp": "2026-06-28T12:34:13.570Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782650087866,
+    "timestamp": "2026-06-28T12:34:46.918Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782650436013,
+    "timestamp": "2026-06-28T12:40:35.423Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #10001, SKU: SKU-10001, S.Lượng: 1, Tổng: $1.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1782650481887,
+    "timestamp": "2026-06-28T12:41:21.033Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782650560810,
+    "timestamp": "2026-06-28T12:42:40.494Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782651094541,
+    "timestamp": "2026-06-28T12:51:34.360Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #10013, SKU: SKU-125, S.Lượng: 1, Tổng: $123.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1782651119768,
+    "timestamp": "2026-06-28T12:51:59.186Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #10001, SKU: SKU-21030, S.Lượng: 1, Tổng: $2.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1782651159882,
+    "timestamp": "2026-06-28T12:52:39.683Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #10003, SKU: SKU-21030, S.Lượng: 3, Tổng: $699.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1782651176030,
+    "timestamp": "2026-06-28T12:52:55.289Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782651331046,
+    "timestamp": "2026-06-28T12:55:30.834Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1782651356136,
+    "timestamp": "2026-06-28T12:55:55.751Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #10003, SKU: SKU-15322, S.Lượng: 10, Tổng: $3210.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1782651364730,
+    "timestamp": "2026-06-28T12:56:04.057Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
   }
 ]

@@ -220,3 +220,76 @@
       </div>
     </div>
   </div>
+
+  <!-- Inventory Import Modal -->
+  <div id="inventory-import-modal" class="modal">
+    <div class="modal-content">
+      <h3>Nhập Kho Hàng Mới</h3>
+      <form id="inventory-import-form">
+        <div class="form-group import-store-container">
+          <label for="import-store-input">Cửa hàng nhận:</label>
+          <select id="import-store-input" required class="select-control"></select>
+        </div>
+        <div class="form-group">
+          <label for="import-sku-input">Chọn SKU sản phẩm:</label>
+          <select id="import-sku-input" required class="select-control"></select>
+        </div>
+        <div class="form-group">
+          <label for="import-qty-input">Số lượng nhập (sản phẩm):</label>
+          <input type="number" id="import-qty-input" required min="1" class="select-control" placeholder="Ví dụ: 100">
+        </div>
+        <div class="form-group">
+          <label for="import-supplier-input">Nhà cung cấp / Đối tác:</label>
+          <input type="text" id="import-supplier-input" required class="select-control" placeholder="Nhập tên nhà cung cấp...">
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Nhập kho</button>
+          <button type="button" id="btn-cancel-import" class="btn-secondary">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Transaction Modal -->
+  <div id="transaction-create-modal" class="modal">
+    <div class="modal-content">
+      <h3>Tạo Giao Dịch Bán Hàng Mới</h3>
+      <form id="transaction-create-form">
+        <div class="form-group tx-store-container">
+          <label for="tx-store-input">Cửa hàng thực hiện:</label>
+          <select id="tx-store-input" required class="select-control"></select>
+        </div>
+        <div class="form-group">
+          <label for="tx-customer-input">Chọn Khách Hàng:</label>
+          <input type="text" id="tx-customer-search" class="select-control" placeholder="Tìm nhanh khách hàng (nhập tên, ID, quốc gia)..." style="margin-bottom: 8px; height: 34px; font-size: 13px; padding: 6px 10px;">
+          <select id="tx-customer-input" required class="select-control"></select>
+        </div>
+        <div class="form-group">
+          <label for="tx-sku-input">Chọn SKU sản phẩm bán:</label>
+          <input type="text" id="tx-sku-search" class="select-control" placeholder="Tìm nhanh sản phẩm (nhập SKU, tên)..." style="margin-bottom: 8px; height: 34px; font-size: 13px; padding: 6px 10px;">
+          <select id="tx-sku-input" required class="select-control"></select>
+        </div>
+        <div class="form-group">
+          <label for="tx-qty-input">Số lượng mua:</label>
+          <input type="number" id="tx-qty-input" required min="1" class="select-control" value="1">
+        </div>
+        <div class="form-group">
+          <label for="tx-price-input">Đơn giá bán (USD):</label>
+          <input type="number" id="tx-price-input" required step="0.01" min="0.01" class="select-control" placeholder="Nhập đơn giá...">
+        </div>
+        <div class="form-group">
+          <label for="tx-payment-input">Hình thức thanh toán:</label>
+          <select id="tx-payment-input" required class="select-control">
+            <option value="Credit Card">Thẻ tín dụng (Credit Card)</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Cash">Tiền mặt (Cash)</option>
+            <option value="Apple Pay">Apple Pay</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Tạo giao dịch</button>
+          <button type="button" id="btn-cancel-tx" class="btn-secondary">Hủy</button>
+        </div>
+      </form>
+    </div>
+  </div>

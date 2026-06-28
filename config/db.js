@@ -730,6 +730,266 @@ const db = {
         return newLog;
       }
     }
+  },
+
+  // --- Inventory & Imports ---
+  getInventory: async (storeId, search = '') => {
+    if (isMockMode) {
+      let inventory = readMockFile('inventory.json');
+      const skus = readMockFile('skus.json');
+      const products = readMockFile('products.json');
+
+      if (storeId) {
+        inventory = inventory.filter(i => i.store_id === parseInt(storeId));
+      }
+
+      let data = inventory.map(item => {
+        const skuInfo = skus.find(s => s.sku === item.sku);
+        const prod = skuInfo ? products.find(p => p.product_id === skuInfo.product_id) : null;
+        return {
+          store_id: item.store_id,
+          sku: item.sku,
+          stock_quantity: item.stock_quantity,
+          product_name: prod ? prod.product_name : `Sản phẩm ${item.sku}`,
+          category: prod ? prod.category : 'Clothing'
+        };
+      });
+
+      if (search) {
+        const query = search.toLowerCase();
+        data = data.filter(d => 
+          d.sku.toLowerCase().includes(query) || 
+          d.product_name.toLowerCase().includes(query) || 
+          d.category.toLowerCase().includes(query)
+        );
+      }
+
+      return data;
+    } else {
+      let query = `
+        SELECT i.store_id, i.sku, i.stock_quantity, p.product_name, p.category 
+        FROM inventory i
+        JOIN skus s ON i.sku = s.sku
+        JOIN products p ON s.product_id = p.product_id
+        WHERE 1=1
+      `;
+      const params = [];
+      if (storeId) {
+        params.push(parseInt(storeId));
+        query += ` AND i.store_id = $${params.length}`;
+      }
+      if (search) {
+        params.push(`%${search}%`);
+        query += ` AND (i.sku ILIKE $${params.length} OR p.product_name ILIKE $${params.length} OR p.category ILIKE $${params.length})`;
+      }
+      const res = await pool.query(query, params);
+      return res.rows;
+    }
+  },
+
+  getInventoryImports: async (storeId) => {
+    if (isMockMode) {
+      let imports = readMockFile('inventory_imports.json');
+      const stores = readMockFile('stores.json');
+      const skus = readMockFile('skus.json');
+      const products = readMockFile('products.json');
+
+      if (storeId) {
+        imports = imports.filter(i => i.store_id === parseInt(storeId));
+      }
+
+      // Sort descending by date/id
+      imports.sort((a, b) => new Date(b.import_date) - new Date(a.import_date));
+
+      return imports.slice(0, 150).map(item => {
+        const store = stores.find(s => s.store_id === item.store_id);
+        const skuInfo = skus.find(s => s.sku === item.sku);
+        const prod = skuInfo ? products.find(p => p.product_id === skuInfo.product_id) : null;
+        return {
+          ...item,
+          store_name: store ? store.store_name : `Store #${item.store_id}`,
+          product_name: prod ? prod.product_name : `Sản phẩm ${item.sku}`
+        };
+      });
+    } else {
+      let query = `
+        SELECT ii.*, st.store_name, p.product_name
+        FROM inventory_imports ii
+        JOIN stores st ON ii.store_id = st.store_id
+        LEFT JOIN skus s ON ii.sku = s.sku
+        LEFT JOIN products p ON s.product_id = p.product_id
+        WHERE 1=1
+      `;
+      const params = [];
+      if (storeId) {
+        params.push(parseInt(storeId));
+        query += ` AND ii.store_id = $${params.length}`;
+      }
+      query += ` ORDER BY ii.import_date DESC LIMIT 150`;
+      const res = await pool.query(query, params);
+      return res.rows;
+    }
+  },
+
+  addInventoryImport: async ({ store_id, sku, quantity, supplier }) => {
+    const qty = parseInt(quantity);
+    const storeId = parseInt(store_id);
+
+    if (isMockMode) {
+      // 1. Update Inventory
+      const inventory = readMockFile('inventory.json');
+      let item = inventory.find(i => i.store_id === storeId && i.sku === sku);
+      if (item) {
+        item.stock_quantity += qty;
+      } else {
+        item = { store_id: storeId, sku, stock_quantity: qty };
+        inventory.push(item);
+      }
+      writeMockFile('inventory.json', inventory);
+
+      // 2. Add Import Log
+      const imports = readMockFile('inventory_imports.json');
+      const newImport = {
+        import_id: Date.now() + Math.floor(Math.random() * 1000),
+        store_id: storeId,
+        sku,
+        quantity: qty,
+        import_date: new Date().toISOString(),
+        supplier
+      };
+      imports.push(newImport);
+      writeMockFile('inventory_imports.json', imports);
+
+      return newImport;
+    } else {
+      // Ensure tables exist in PG
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS inventory (
+          store_id INT,
+          sku VARCHAR(50),
+          stock_quantity INT,
+          PRIMARY KEY (store_id, sku)
+        )
+      `);
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS inventory_imports (
+          import_id SERIAL PRIMARY KEY,
+          store_id INT,
+          sku VARCHAR(50),
+          quantity INT,
+          import_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          supplier VARCHAR(255)
+        )
+      `);
+
+      // 1. Update Inventory
+      await pool.query(`
+        INSERT INTO inventory (store_id, sku, stock_quantity)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (store_id, sku)
+        DO UPDATE SET stock_quantity = inventory.stock_quantity + EXCLUDED.stock_quantity
+      `, [storeId, sku, qty]);
+
+      // 2. Insert Import Log
+      const res = await pool.query(`
+        INSERT INTO inventory_imports (store_id, sku, quantity, supplier)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+      `, [storeId, sku, qty, supplier]);
+
+      return res.rows[0];
+    }
+  },
+
+  decreaseStock: async (storeId, sku, quantity) => {
+    const qty = parseInt(quantity);
+    const sId = parseInt(storeId);
+    
+    if (isMockMode) {
+      const inventory = readMockFile('inventory.json');
+      const item = inventory.find(i => i.store_id === sId && i.sku === sku);
+      if (!item) {
+        throw new Error('Sản phẩm không tồn tại trong kho của cửa hàng này.');
+      }
+      if (item.stock_quantity < qty) {
+        throw new Error(`Không đủ hàng tồn kho. Lượng tồn kho hiện tại: ${item.stock_quantity}`);
+      }
+      item.stock_quantity -= qty;
+      writeMockFile('inventory.json', inventory);
+      return item.stock_quantity;
+    } else {
+      // 1. Check stock first
+      const checkRes = await pool.query(
+        'SELECT stock_quantity FROM inventory WHERE store_id = $1 AND sku = $2',
+        [sId, sku]
+      );
+      if (checkRes.rows.length === 0) {
+        throw new Error('Sản phẩm không tồn tại trong kho của cửa hàng này.');
+      }
+      const stock = checkRes.rows[0].stock_quantity;
+      if (stock < qty) {
+        throw new Error(`Không đủ hàng tồn kho. Lượng tồn kho hiện tại: ${stock}`);
+      }
+      
+      // 2. Update stock
+      const updateRes = await pool.query(
+        'UPDATE inventory SET stock_quantity = stock_quantity - $3 WHERE store_id = $1 AND sku = $2 RETURNING stock_quantity',
+        [sId, sku, qty]
+      );
+      return updateRes.rows[0].stock_quantity;
+    }
+  },
+
+  addTransaction: async ({ store_id, customer_id, product_id, sku, quantity, payment_method, price, salesperson }) => {
+    const sId = parseInt(store_id);
+    const cId = parseInt(customer_id);
+    const pId = parseInt(product_id);
+    const qty = parseInt(quantity);
+    const prc = parseFloat(price);
+    const lineTotal = prc * qty;
+    const dateStr = new Date().toISOString().split('T')[0];
+    const timestampStr = new Date().toISOString();
+
+    if (isMockMode) {
+      const transactions = readMockFile('transactions.json');
+      const products = readMockFile('products.json');
+      const prod = products.find(p => p.product_id === pId) || { product_name: `Sản phẩm ${sku}` };
+      
+      const newTx = {
+        transaction_id: Date.now() + Math.floor(Math.random() * 1000),
+        store_id: sId,
+        customer_id: cId,
+        product_id: pId,
+        sku,
+        product_name: prod.product_name,
+        date: dateStr,
+        timestamp: timestampStr,
+        salesperson: salesperson || 'System',
+        payment_method,
+        currency: 'USD',
+        local_price: prc,
+        usd_price: prc,
+        quantity: qty,
+        line_total: lineTotal
+      };
+      
+      transactions.push(newTx);
+      // Sort and write back
+      transactions.sort((a, b) => new Date(b.timestamp || b.date) - new Date(a.timestamp || a.date));
+      writeMockFile('transactions.json', transactions);
+      return newTx;
+    } else {
+      // Auto-migrate database table
+      await pool.query('ALTER TABLE transactions ADD COLUMN IF NOT EXISTS salesperson VARCHAR(255)');
+      await pool.query('ALTER TABLE transactions ADD COLUMN IF NOT EXISTS timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+
+      const res = await pool.query(`
+        INSERT INTO transactions (store_id, customer_id, product_id, sku, date, timestamp, salesperson, payment_method, currency, local_price, usd_price, quantity, line_total)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'USD', $9, $9, $10, $11)
+        RETURNING *
+      `, [sId, cId, pId, sku, dateStr, timestampStr, salesperson || 'System', payment_method, prc, qty, lineTotal]);
+      return res.rows[0];
+    }
   }
 };
 

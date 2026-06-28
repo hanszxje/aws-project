@@ -2,7 +2,7 @@
   {
     "id": 1,
     "username": "admin",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "IT Admin",
     "store_id": null,
     "mfa_enabled": false,
@@ -11,7 +11,7 @@
   {
     "id": 2,
     "username": "director",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Director",
     "store_id": null,
     "mfa_enabled": false,
@@ -20,7 +20,7 @@
   {
     "id": 3,
     "username": "finance",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Finance/Auditor",
     "store_id": null,
     "mfa_enabled": false,
@@ -29,7 +29,7 @@
   {
     "id": 4,
     "username": "inventory",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Inventory Manager",
     "store_id": null,
     "mfa_enabled": false,
@@ -38,7 +38,7 @@
   {
     "id": 5,
     "username": "marketing",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Marketing Manager",
     "store_id": null,
     "mfa_enabled": false,
@@ -47,7 +47,7 @@
   {
     "id": 6,
     "username": "manager1",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Store Manager",
     "store_id": 1,
     "mfa_enabled": false,
@@ -56,7 +56,7 @@
   {
     "id": 7,
     "username": "sales1",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Sales Staff",
     "store_id": 1,
     "mfa_enabled": false,
@@ -65,7 +65,7 @@
   {
     "id": 8,
     "username": "manager2",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Store Manager",
     "store_id": 2,
     "mfa_enabled": false,
@@ -74,7 +74,7 @@
   {
     "id": 9,
     "username": "sales2",
-    "password": "$2a$10$3mPMEhHleloN4/bSw.xdTuFSr/YTshveGxISLtJKCrfunQc5LrhWq",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Sales Staff",
     "store_id": 2,
     "mfa_enabled": false,

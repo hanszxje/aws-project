@@ -21,6 +21,7 @@ let activeEditProduct = null;
 // Forecast state
 let activeForecastStoreId = null;
 let activeForecastsData = []; // Cache predictions for active store
+let activeStoreInventoryData = []; // Cache inventory of active store for warnings
 
 // ================= DOM ELEMENTS =================
 const authOverlay = document.getElementById('auth-overlay');
@@ -169,6 +170,7 @@ function configurePermissionBasedVisibility() {
   const adminUsersTab = document.getElementById('nav-admin-users');
   const adminPermissionsTab = document.getElementById('nav-admin-permissions');
   const adminLogsTab = document.getElementById('nav-admin-logs');
+  const inventoryTab = document.getElementById('nav-inventory');
 
   toggleElementVisibility(dashboardTab, permissions.includes('view_dashboard'));
   toggleElementVisibility(customersTab, permissions.includes('view_customers'));
@@ -177,6 +179,7 @@ function configurePermissionBasedVisibility() {
   toggleElementVisibility(productsTab, permissions.includes('view_products'));
   toggleElementVisibility(storesTab, permissions.includes('view_all_stores') || permissions.includes('view_own_store'));
   toggleElementVisibility(transactionsTab, permissions.includes('view_transactions'));
+  toggleElementVisibility(inventoryTab, permissions.includes('view_inventory'));
   
   toggleElementVisibility(adminUsersTab, permissions.includes('manage_users'));
   toggleElementVisibility(adminPermissionsTab, permissions.includes('manage_permissions'));
@@ -191,11 +194,15 @@ function configurePermissionBasedVisibility() {
   const btnAddDiscount = document.getElementById('btn-add-discount');
   const btnAddEmployee = document.getElementById('btn-add-employee');
   const btnAddProduct = document.getElementById('btn-add-product');
+  const btnOpenImport = document.getElementById('btn-open-import');
+  const btnAddTransaction = document.getElementById('btn-add-transaction');
 
   toggleElementVisibility(btnAddCustomer, permissions.includes('create_customer'));
   toggleElementVisibility(btnAddDiscount, permissions.includes('edit_discounts'));
   toggleElementVisibility(btnAddEmployee, permissions.includes('edit_employees'));
   toggleElementVisibility(btnAddProduct, permissions.includes('edit_products'));
+  toggleElementVisibility(btnOpenImport, permissions.includes('manage_inventory'));
+  toggleElementVisibility(btnAddTransaction, permissions.includes('create_transaction'));
 
   const tabToPermission = {
     'dashboard': 'view_dashboard',
@@ -205,6 +212,7 @@ function configurePermissionBasedVisibility() {
     'products': 'view_products',
     'stores': 'view_all_stores',
     'transactions': 'view_transactions',
+    'inventory': 'view_inventory',
     'admin-users': 'manage_users',
     'admin-permissions': 'manage_permissions',
     'admin-logs': 'view_audit_logs'
@@ -283,6 +291,7 @@ function switchTab(tabName) {
     products: 'Lưới Sản phẩm (GenAI Showcase)',
     stores: 'Danh sách Cửa hàng Toàn cầu',
     transactions: 'Lịch sử Giao dịch',
+    inventory: 'Quản lý Kho hàng & Nhập kho',
     'admin-users': 'Quản lý Tài khoản Hệ thống',
     'admin-permissions': 'Thiết lập Phân quyền Dynamic',
     'admin-logs': 'Nhật ký Hoạt động Hệ thống'
@@ -324,6 +333,9 @@ function loadTabContent(tabName) {
       break;
     case 'transactions':
       loadTransactionsTab();
+      break;
+    case 'inventory':
+      loadInventoryTab();
       break;
     case 'admin-users':
       loadAdminUsersTab();
@@ -477,6 +489,14 @@ window.openForecastPanel = async function(storeId, storeName) {
     const data = await fetchAPI(`/api/predict?store_id=${storeId}`);
     activeForecastsData = data.forecasts;
     
+    // Fetch store inventory to check stock warnings
+    try {
+      activeStoreInventoryData = await fetchAPI(`/api/inventory?store_id=${storeId}`);
+    } catch (e) {
+      console.warn('Failed to load store inventory for warnings:', e);
+      activeStoreInventoryData = [];
+    }
+    
     // Populate SKU Selector
     const selector = document.getElementById('forecast-sku-selector');
     selector.innerHTML = '';
@@ -514,52 +534,194 @@ function renderForecastChart(sku) {
 
   const timeline = forecastObj.timeline; // Array of { year, week, predicted, actual }
   
-  const labels = timeline.map(t => `W${t.week}/${t.year}`);
-  const predictedVals = timeline.map(t => t.predicted);
-  const actualVals = timeline.map(t => t.actual); // Contains nulls for future weeks
-
   // Set stats card next week demand
-  // Find first week where actual is null (this represents the immediate next week to be forecasted)
   const nextWeekIndex = timeline.findIndex(t => t.actual === null);
-  const nextWeekForecast = nextWeekIndex !== -1 ? predictedVals[nextWeekIndex] : predictedVals[0];
+  const nextWeekForecast = nextWeekIndex !== -1 ? timeline[nextWeekIndex].predicted : timeline[0].predicted;
   document.getElementById('forecast-next-week-qty').textContent = nextWeekForecast;
 
-  const traceActual = {
-    x: labels,
-    y: actualVals,
-    name: 'Thực tế (Actual)',
-    type: 'scatter',
-    mode: 'lines+markers',
-    line: { color: '#10b981', width: 3 }, // Green
-    marker: { size: 6 }
-  };
+  // Warning check: if predicted quantity > stock remaining
+  const alertBanner = document.getElementById('forecast-alert-banner');
+  const inventoryItem = activeStoreInventoryData.find(i => i.sku === sku);
+  const stockQty = inventoryItem ? inventoryItem.stock_quantity : 0;
 
-  const tracePredicted = {
-    x: labels,
-    y: predictedVals,
-    name: 'Dự báo (Forecast)',
-    type: 'scatter',
-    mode: 'lines+markers',
-    line: { color: '#818cf8', width: 3, dash: 'dash' }, // Dotted Indigo
-    marker: { size: 6 }
-  };
+  if (nextWeekForecast > stockQty) {
+    document.getElementById('alert-predicted-qty').textContent = nextWeekForecast;
+    document.getElementById('alert-stock-qty').textContent = stockQty;
+    document.getElementById('alert-needed-qty').textContent = nextWeekForecast - stockQty;
+    alertBanner.classList.remove('hidden');
+  } else {
+    alertBanner.classList.add('hidden');
+  }
+
+  // Determine time grouping
+  const timeGroup = document.getElementById('forecast-time-group').value;
+  let dataPoints = [];
+
+  if (timeGroup === 'month') {
+    // Group timeline by month
+    const monthlyMap = {};
+    timeline.forEach(t => {
+      // Map week (1-53) to month (1-12)
+      const month = Math.min(12, Math.max(1, Math.floor((t.week - 1) / 4.34) + 1));
+      const key = `Tháng ${month}/${t.year}`;
+      if (!monthlyMap[key]) {
+        monthlyMap[key] = {
+          label: key,
+          predicted: 0,
+          actual: 0,
+          hasActual: false
+        };
+      }
+      monthlyMap[key].predicted += t.predicted;
+      if (t.actual !== null) {
+        monthlyMap[key].actual += t.actual;
+        monthlyMap[key].hasActual = true;
+      }
+    });
+
+    dataPoints = Object.values(monthlyMap).map(m => ({
+      label: m.label,
+      predicted: m.predicted,
+      actual: m.hasActual ? m.actual : null
+    }));
+  } else {
+    // Group timeline by week/year to prevent duplicate labels causing overlapping columns
+    const weeklyMap = {};
+    timeline.forEach(t => {
+      const key = `Tuần ${t.week}/${t.year}`;
+      if (!weeklyMap[key]) {
+        weeklyMap[key] = {
+          label: key,
+          predicted: 0,
+          actual: 0,
+          hasActual: false
+        };
+      }
+      weeklyMap[key].predicted += t.predicted;
+      if (t.actual !== null) {
+        weeklyMap[key].actual += t.actual;
+        weeklyMap[key].hasActual = true;
+      }
+    });
+
+    dataPoints = Object.values(weeklyMap).map(w => ({
+      label: w.label,
+      predicted: w.predicted,
+      actual: w.hasActual ? w.actual : null
+    }));
+  }
+
+  const labels = dataPoints.map(d => d.label);
+  const predictedVals = dataPoints.map(d => d.predicted);
+  const chartType = document.getElementById('forecast-chart-type').value;
+
+  let traces = [];
+
+  if (chartType === 'column') {
+    // Grouped-Stacked column chart:
+    // predicted = green column (left)
+    // actual = royal blue column (right bottom)
+    // upcoming = light blue column (right top)
+    const actualVals = [];
+    const upcomingVals = [];
+
+    dataPoints.forEach(d => {
+      const act = d.actual === null ? 0 : d.actual;
+      const pred = d.predicted;
+      actualVals.push(act);
+      upcomingVals.push(Math.max(0, pred - act));
+    });
+
+    traces = [
+      {
+        x: labels,
+        y: predictedVals,
+        name: 'Dự kiến (Predicted)',
+        type: 'bar',
+        offsetgroup: 'predicted',
+        marker: { color: '#24ad4a' } // Green
+      },
+      {
+        x: labels,
+        y: actualVals,
+        name: 'Thực tế (Actual)',
+        type: 'bar',
+        offsetgroup: 'actual_upcoming',
+        marker: { color: '#3f51b5' } // Royal Blue
+      },
+      {
+        x: labels,
+        y: upcomingVals,
+        base: actualVals,
+        name: 'Sắp tới (Upcoming)',
+        type: 'bar',
+        offsetgroup: 'actual_upcoming',
+        marker: { color: '#9ad6eb' } // Light Blue
+      }
+    ];
+  } else {
+    // Line chart
+    const lineActualVals = dataPoints.map(d => d.actual);
+    traces = [
+      {
+        x: labels,
+        y: lineActualVals,
+        name: 'Thực tế (Actual)',
+        type: 'scatter',
+        mode: 'lines+markers',
+        line: { color: '#10b981', width: 3 }, // Green
+        marker: { size: 6 }
+      },
+      {
+        x: labels,
+        y: predictedVals,
+        name: 'Dự báo (Forecast)',
+        type: 'scatter',
+        mode: 'lines+markers',
+        line: { color: '#818cf8', width: 3, dash: 'dash' }, // Dotted Indigo
+        marker: { size: 6 }
+      }
+    ];
+  }
+
+  // Calculate dynamic bargap based on data points count to keep columns slim
+  const numDataPoints = labels.length;
+  let dynamicBargap = 0.3;
+  if (numDataPoints <= 2) {
+    dynamicBargap = 0.65; // Skinny columns when only 1-2 items
+  } else if (numDataPoints <= 4) {
+    dynamicBargap = 0.45; // Moderately skinny columns for 3-4 items
+  }
 
   const layout = {
+    barmode: 'group',
+    bargap: dynamicBargap,
+    height: 320,
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: { color: '#f3f4f6', family: 'Inter, sans-serif' },
-    margin: { t: 30, r: 20, b: 40, l: 40 },
-    legend: { orientation: 'h', y: -0.2 },
+    margin: { t: 20, r: 15, b: 60, l: 40 },
+    legend: { orientation: 'h', y: -0.28, x: 0.5, xanchor: 'center' },
     xaxis: { gridcolor: 'rgba(255,255,255,0.05)', tickfont: { size: 10 } },
     yaxis: { gridcolor: 'rgba(255,255,255,0.05)', title: 'Số lượng sản phẩm' }
   };
 
-  Plotly.newPlot('forecast-chart', [traceActual, tracePredicted], layout, { responsive: true, displayModeBar: false });
+  Plotly.newPlot('forecast-chart', traces, layout, { responsive: true, displayModeBar: false });
 }
 
-// Event handler for SKU selector change
+// Event handlers for selector changes
 document.getElementById('forecast-sku-selector').addEventListener('change', (e) => {
   renderForecastChart(e.target.value);
+});
+
+document.getElementById('forecast-chart-type').addEventListener('change', () => {
+  const sku = document.getElementById('forecast-sku-selector').value;
+  if (sku) renderForecastChart(sku);
+});
+
+document.getElementById('forecast-time-group').addEventListener('change', () => {
+  const sku = document.getElementById('forecast-sku-selector').value;
+  if (sku) renderForecastChart(sku);
 });
 
 document.getElementById('btn-close-forecast').addEventListener('click', () => {
@@ -1084,13 +1246,21 @@ async function loadTransactionsTab() {
     tbody.innerHTML = '';
 
     res.data.forEach(t => {
+      let formattedDate = t.date;
+      if (t.timestamp) {
+        formattedDate = new Date(t.timestamp).toLocaleDateString('vi-VN', {
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+      }
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><code>#TX-${t.transaction_id}</code></td>
         <td>Store ${t.store_id}</td>
+        <td><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-light); font-weight: normal;">${t.salesperson || 'System'}</span></td>
+        <td><span style="font-size: 12px; color: var(--text-muted);">${formattedDate}</span></td>
         <td><code>${t.sku}</code></td>
         <td>${t.product_name || 'Sản phẩm ' + t.product_id}</td>
-        <td>${t.date}</td>
         <td><span class="badge">${t.payment_method}</span></td>
         <td>${t.local_price} ${t.currency}</td>
         <td><strong>x${t.quantity}</strong></td>
@@ -1117,6 +1287,241 @@ document.getElementById('transactions-payment-filter').addEventListener('change'
   pagState.transactions.page = 1;
   loadTransactionsTab();
 });
+
+// ================= INVENTORY TAB MANAGEMENT =================
+let inventorySearchTimeout = null;
+
+async function loadInventoryTab() {
+  const storeSelect = document.getElementById('inventory-store-select');
+  const searchInput = document.getElementById('inventory-search');
+
+  try {
+    // 1. Populate store filter
+    if (storeSelect.children.length === 0) {
+      const stores = await fetchAPI('/api/stores');
+      const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
+      
+      storeSelect.innerHTML = hasAllStores ? '<option value="">Tất cả Cửa hàng</option>' : '';
+      stores.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.store_id;
+        opt.textContent = s.store_name;
+        storeSelect.appendChild(opt);
+      });
+
+      if (!hasAllStores) {
+        storeSelect.value = currentUser.store_id || '';
+        // Hide store filter if they only see their own store
+        document.getElementById('inventory-store-filter-group').style.display = 'none';
+      }
+
+      // Add event listeners once
+      storeSelect.addEventListener('change', () => {
+        loadInventoryStock();
+        loadInventoryImports();
+      });
+
+      searchInput.addEventListener('input', () => {
+        clearTimeout(inventorySearchTimeout);
+        inventorySearchTimeout = setTimeout(() => {
+          loadInventoryStock();
+        }, 300);
+      });
+      
+      setupInventoryEvents(stores);
+    }
+
+    // 2. Load Stock & Imports
+    loadInventoryStock();
+    loadInventoryImports();
+
+  } catch (err) {
+    console.error('Error loading inventory tab:', err);
+  }
+}
+
+async function loadInventoryStock() {
+  const storeId = document.getElementById('inventory-store-select').value;
+  const search = document.getElementById('inventory-search').value;
+  const tbody = document.getElementById('inventory-stock-tbody');
+  
+  tbody.innerHTML = '<tr><td colspan="4" class="text-center">Đang tải dữ liệu kho...</td></tr>';
+  
+  try {
+    const stockItems = await fetchAPI(`/api/inventory?store_id=${storeId}&search=${encodeURIComponent(search)}`);
+    tbody.innerHTML = '';
+    
+    if (stockItems.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Không tìm thấy sản phẩm nào trong kho.</td></tr>';
+      return;
+    }
+
+    stockItems.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.03)';
+      tr.innerHTML = `
+        <td style="padding: 10px;"><code>${item.sku}</code></td>
+        <td style="padding: 10px; color: var(--text-light); font-weight: 500;">${item.product_name}</td>
+        <td style="padding: 10px;"><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">${item.category}</span></td>
+        <td style="padding: 10px; text-align: right; font-weight: bold; color: ${item.stock_quantity <= 15 ? '#ef4444' : '#10b981'}">
+          ${item.stock_quantity}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error('Error loading inventory stock:', err);
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Lỗi tải dữ liệu kho.</td></tr>';
+  }
+}
+
+async function loadInventoryImports() {
+  const storeId = document.getElementById('inventory-store-select').value;
+  const tbody = document.getElementById('inventory-imports-tbody');
+  
+  tbody.innerHTML = '<tr><td colspan="4" class="text-center">Đang tải lịch sử nhập...</td></tr>';
+  
+  try {
+    const imports = await fetchAPI(`/api/inventory/imports?store_id=${storeId}`);
+    tbody.innerHTML = '';
+    
+    if (imports.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Chưa có lịch sử nhập hàng nào.</td></tr>';
+      return;
+    }
+
+    imports.forEach(item => {
+      const dateStr = new Date(item.import_date).toLocaleDateString('vi-VN', {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit'
+      });
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.03)';
+      tr.innerHTML = `
+        <td style="padding: 10px; font-size: 11px; color: var(--text-muted);">${dateStr}</td>
+        <td style="padding: 10px;">
+          <div style="font-weight: 500;"><code>${item.sku}</code></div>
+          <div style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">${item.product_name}</div>
+        </td>
+        <td style="padding: 10px; text-align: right; font-weight: bold; color: var(--primary-light);">+${item.quantity}</td>
+        <td style="padding: 10px; font-size: 12px; color: var(--text-light);">${item.supplier}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error('Error loading inventory imports:', err);
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Lỗi tải lịch sử nhập hàng.</td></tr>';
+  }
+}
+
+function setupInventoryEvents(stores) {
+  const modal = document.getElementById('inventory-import-modal');
+  const btnOpen = document.getElementById('btn-open-import');
+  const btnCancel = document.getElementById('btn-cancel-import');
+  const form = document.getElementById('inventory-import-form');
+  
+  const storeInput = document.getElementById('import-store-input');
+  const skuInput = document.getElementById('import-sku-input');
+
+  // Populate store dropdown inside modal
+  storeInput.innerHTML = '';
+  stores.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.store_id;
+    opt.textContent = s.store_name;
+    storeInput.appendChild(opt);
+  });
+
+  const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
+  if (!hasAllStores) {
+    storeInput.value = currentUser.store_id || '';
+    document.querySelector('.import-store-container').style.display = 'none';
+  }
+
+  // Populate SKU list inside modal dropdown
+  skuInput.innerHTML = '<option value="">Đang tải danh sách SKU...</option>';
+  
+  fetchAPI('/api/products?page=1&limit=100')
+    .then(res => {
+      skuInput.innerHTML = '';
+      if (res && res.data) {
+        // Find unique SKUs
+        const skus = [...new Set(res.data.map(p => `SKU-${p.product_id}`))];
+        skus.forEach(sku => {
+          const opt = document.createElement('option');
+          opt.value = sku;
+          opt.textContent = sku;
+          skuInput.appendChild(opt);
+        });
+      }
+      if (skuInput.children.length === 0) {
+        // Fallback popular SKUs
+        const popularSkus = ['SKU-10000', 'SKU-10001', 'SKU-10002', 'SKU-10003', 'SKU-21030', 'SKU-9803', 'SKU-9871', 'SKU-9896', 'SKU-10010'];
+        popularSkus.forEach(sku => {
+          const opt = document.createElement('option');
+          opt.value = sku;
+          opt.textContent = sku;
+          skuInput.appendChild(opt);
+        });
+      }
+    })
+    .catch(e => {
+      console.warn('Failed to load SKUs, using fallback:', e);
+      skuInput.innerHTML = '';
+      const popularSkus = ['SKU-10000', 'SKU-10001', 'SKU-10002', 'SKU-10003', 'SKU-21030', 'SKU-9803', 'SKU-9871', 'SKU-9896', 'SKU-10010'];
+      popularSkus.forEach(sku => {
+        const opt = document.createElement('option');
+        opt.value = sku;
+        opt.textContent = sku;
+        skuInput.appendChild(opt);
+      });
+    });
+
+  // Open modal
+  btnOpen.addEventListener('click', () => {
+    form.reset();
+    if (!hasAllStores) {
+      storeInput.value = currentUser.store_id || '';
+    }
+    modal.classList.add('active');
+  });
+
+  // Cancel/Close modal
+  const closeModal = () => modal.classList.remove('active');
+  btnCancel.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Form submit handler
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const payload = {
+      store_id: storeInput.value,
+      sku: skuInput.value,
+      quantity: document.getElementById('import-qty-input').value,
+      supplier: document.getElementById('import-supplier-input').value
+    };
+
+    try {
+      const res = await fetchAPI('/api/inventory/imports', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      closeModal();
+      alert(res.message || 'Nhập kho thành công!');
+      
+      // Reload both lists
+      loadInventoryStock();
+      loadInventoryImports();
+    } catch (err) {
+      console.error('Error importing inventory:', err);
+      alert(err.message || 'Lỗi nhập hàng. Vui lòng thử lại.');
+    }
+  });
+}
 
 // ================= PAGINATION COMPONENT =================
 function renderPagination(tab, total, page, limit) {
@@ -1935,6 +2340,209 @@ adminUserForm.addEventListener('submit', async (e) => {
     alert(err.message || 'Lỗi lưu tài khoản');
   }
 });
+
+// ================= CREATE TRANSACTION MODAL =================
+const txModal = document.getElementById('transaction-create-modal');
+const btnAddTx = document.getElementById('btn-add-transaction');
+const btnCancelTx = document.getElementById('btn-cancel-tx');
+const txForm = document.getElementById('transaction-create-form');
+
+const txStoreInput = document.getElementById('tx-store-input');
+const txCustomerInput = document.getElementById('tx-customer-input');
+const txSkuInput = document.getElementById('tx-sku-input');
+const txQtyInput = document.getElementById('tx-qty-input');
+const txPriceInput = document.getElementById('tx-price-input');
+const txPaymentInput = document.getElementById('tx-payment-input');
+
+const txCustomerSearch = document.getElementById('tx-customer-search');
+const txSkuSearch = document.getElementById('tx-sku-search');
+
+let activeTxCustomers = [];
+let activeTxInventory = [];
+
+function renderTxCustomerOptions(items) {
+  txCustomerInput.innerHTML = '<option value="">-- Chọn khách hàng --</option>';
+  items.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.customer_id;
+    opt.textContent = `#${c.customer_id} - ${c.customer_name} (${c.country})`;
+    txCustomerInput.appendChild(opt);
+  });
+}
+
+function renderTxSkuOptions(items) {
+  txSkuInput.innerHTML = '';
+  if (items.length === 0) {
+    txSkuInput.innerHTML = '<option value="">Không tìm thấy sản phẩm nào trong kho</option>';
+    return;
+  }
+  items.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item.sku;
+    opt.textContent = `${item.sku} - ${item.product_name} (Tồn kho: ${item.stock_quantity})`;
+    txSkuInput.appendChild(opt);
+  });
+}
+
+async function loadStoreInventoryForTx(storeId) {
+  txSkuInput.innerHTML = '<option value="">Đang tải hàng tồn kho...</option>';
+  try {
+    const inventory = await fetchAPI(`/api/inventory?store_id=${storeId}`);
+    activeTxInventory = inventory || [];
+    renderTxSkuOptions(activeTxInventory);
+  } catch (err) {
+    console.error('Failed to load store inventory for tx modal:', err);
+    txSkuInput.innerHTML = '<option value="">Lỗi tải hàng tồn kho</option>';
+  }
+}
+
+// Store input change listener
+if (txStoreInput) {
+  txStoreInput.addEventListener('change', (e) => {
+    txSkuSearch.value = '';
+    loadStoreInventoryForTx(e.target.value);
+  });
+}
+
+// Search inputs event listeners
+if (txCustomerSearch) {
+  txCustomerSearch.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const filtered = activeTxCustomers.filter(c => 
+      c.customer_name.toLowerCase().includes(query) || 
+      c.customer_id.toString().includes(query) ||
+      (c.country && c.country.toLowerCase().includes(query))
+    );
+    renderTxCustomerOptions(filtered);
+  });
+}
+
+if (txSkuSearch) {
+  txSkuSearch.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const filtered = activeTxInventory.filter(item => 
+      item.sku.toLowerCase().includes(query) || 
+      item.product_name.toLowerCase().includes(query)
+    );
+    renderTxSkuOptions(filtered);
+  });
+}
+
+// Initialize transaction modal triggers
+if (btnAddTx) {
+  btnAddTx.addEventListener('click', async () => {
+    txForm.reset();
+    txQtyInput.value = 1;
+    txPriceInput.value = '';
+    if (txCustomerSearch) txCustomerSearch.value = '';
+    if (txSkuSearch) txSkuSearch.value = '';
+
+    try {
+      // 1. Fetch stores
+      const stores = await fetchAPI('/api/stores');
+      txStoreInput.innerHTML = '';
+      stores.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.store_id;
+        opt.textContent = s.store_name;
+        txStoreInput.appendChild(opt);
+      });
+
+      const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
+      if (!hasAllStores) {
+        txStoreInput.value = currentUser.store_id || '';
+        document.querySelector('.tx-store-container').style.display = 'none';
+      } else {
+        document.querySelector('.tx-store-container').style.display = 'block';
+      }
+
+      // 2. Fetch customers (up to 300)
+      const customersRes = await fetchAPI('/api/customers?page=1&limit=300');
+      activeTxCustomers = customersRes.data || [];
+      renderTxCustomerOptions(activeTxCustomers);
+
+      // 3. Load SKUs for the initially selected store
+      await loadStoreInventoryForTx(txStoreInput.value);
+
+      txModal.classList.add('active');
+    } catch (err) {
+      console.error('Error opening transaction modal:', err);
+      alert('Không thể mở màn hình tạo giao dịch. Vui lòng kiểm tra quyền truy cập.');
+    }
+  });
+}
+
+if (btnCancelTx) {
+  btnCancelTx.addEventListener('click', () => {
+    txModal.classList.remove('active');
+  });
+}
+
+if (txModal) {
+  txModal.addEventListener('click', (e) => {
+    if (e.target === txModal) txModal.classList.remove('active');
+  });
+}
+
+if (txForm) {
+  txForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!txCustomerInput.value) {
+      alert('Vui lòng chọn khách hàng.');
+      return;
+    }
+    if (!txSkuInput.value || txSkuInput.value === 'Không tìm thấy sản phẩm nào trong kho') {
+      alert('Vui lòng chọn SKU sản phẩm hợp lệ.');
+      return;
+    }
+
+    const payload = {
+      store_id: parseInt(txStoreInput.value),
+      customer_id: parseInt(txCustomerInput.value),
+      sku: txSkuInput.value,
+      quantity: parseInt(txQtyInput.value),
+      price: parseFloat(txPriceInput.value),
+      payment_method: txPaymentInput.value
+    };
+
+    try {
+      const res = await fetchAPI('/api/transactions', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      txModal.classList.remove('active');
+      alert(res.message || 'Tạo giao dịch thành công!');
+      
+      // Reload Transactions tab if active
+      if (activeTab === 'transactions') {
+        loadTransactionsTab();
+      }
+      
+      // Reload Inventory if active
+      if (activeTab === 'inventory') {
+        loadInventoryTab();
+      }
+      
+      // Reload dashboard cache/warnings
+      if (activeForecastStoreId === payload.store_id) {
+        try {
+          activeStoreInventoryData = await fetchAPI(`/api/inventory?store_id=${activeForecastStoreId}`);
+          const selector = document.getElementById('forecast-sku-selector');
+          if (selector && selector.value) {
+            renderForecastChart(selector.value);
+          }
+        } catch (err) {
+          console.warn('Failed to refresh dashboard warning:', err);
+        }
+      }
+    } catch (err) {
+      console.error('Error creating transaction:', err);
+      alert(err.message || 'Lỗi khi tạo giao dịch. Vui lòng kiểm tra lại tồn kho.');
+    }
+  });
+}
 
 // Run auth check on page load
 checkAuth();
