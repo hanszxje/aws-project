@@ -51,6 +51,16 @@ body.light-theme {
   --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.1);
 }
 
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
+
+body.light-theme .stat-card {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+}
+
 /* Fixes for Light Theme map labels, charts, inputs */
 body.light-theme select,
 body.light-theme input,

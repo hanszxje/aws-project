@@ -2,21 +2,21 @@
       <section id="tab-transactions" class="tab-content">
         <div class="filter-bar" style="display: flex; align-items: center; width: 100%;">
           <div class="filter-group select-store-container">
-            <label>Lọc theo cửa hàng:</label>
+            <label data-i18n="disc_filter_store">Lọc theo cửa hàng:</label>
             <select id="transactions-store-filter" class="select-control"></select>
           </div>
           <div class="filter-group">
-            <label>Hình thức thanh toán:</label>
+            <label data-i18n="modal_tx_payment">Hình thức thanh toán:</label>
             <select id="transactions-payment-filter" class="select-control">
-              <option value="">Tất cả</option>
-              <option value="Credit Card">Thẻ tín dụng (Credit Card)</option>
-              <option value="PayPal">PayPal</option>
-              <option value="Cash">Tiền mặt (Cash)</option>
-              <option value="Apple Pay">Apple Pay</option>
+              <option value="" data-i18n="cust_filter_gender">Tất cả</option>
+              <option value="Credit Card" data-i18n="modal_tx_payment_cc">Thẻ tín dụng (Credit Card)</option>
+              <option value="PayPal" data-i18n="modal_tx_payment_paypal">PayPal</option>
+              <option value="Cash" data-i18n="modal_tx_payment_cash">Tiền mặt (Cash)</option>
+              <option value="Apple Pay" data-i18n="modal_tx_payment_apple">Apple Pay</option>
             </select>
           </div>
           <button id="btn-add-transaction" class="btn btn-primary" style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-plus"></i> Tạo Giao Dịch Mới
+            <i class="fa-solid fa-plus"></i> <span data-i18n="tx_btn_add">Tạo Giao Dịch Mới</span>
           </button>
         </div>
         
@@ -24,16 +24,16 @@
           <table class="data-table" id="transactions-table">
             <thead>
               <tr>
-                <th>Mã Giao Dịch</th>
-                <th>Cửa hàng</th>
-                <th>Người thực hiện</th>
-                <th>Thời gian</th>
-                <th>SKU</th>
-                <th>Sản phẩm</th>
-                <th>Thanh toán</th>
-                <th>Đơn giá</th>
-                <th>SL</th>
-                <th>Tổng tiền (USD)</th>
+                <th data-i18n="tx_col_id">Mã Giao Dịch</th>
+                <th data-i18n="tx_col_store">Cửa hàng</th>
+                <th data-i18n="tx_col_salesperson">Người thực hiện</th>
+                <th data-i18n="tx_col_time">Thời gian</th>
+                <th data-i18n="tx_col_sku">SKU</th>
+                <th data-i18n="tx_col_product">Sản phẩm</th>
+                <th data-i18n="tx_col_payment">Thanh toán</th>
+                <th data-i18n="tx_col_price">Đơn giá</th>
+                <th data-i18n="tx_col_qty">SL</th>
+                <th data-i18n="tx_col_total">Tổng tiền (USD)</th>
               </tr>
             </thead>
             <tbody></tbody>

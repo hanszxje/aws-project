@@ -6,8 +6,8 @@
             <div id="map"></div>
             <!-- Map Legend / Tutorial -->
             <div class="map-overlay-info">
-              <h3><i class="fa-solid fa-circle-info"></i> Chỉ dẫn</h3>
-              <p>Nhấp vào một cửa hàng (icon cửa hàng) để xem dữ liệu dự báo nhu cầu thời trang theo tuần sinh ra từ mô hình học máy LightGBM.</p>
+              <h3><i class="fa-solid fa-circle-info"></i> <span data-i18n="db_instruction_title">Chỉ dẫn</span></h3>
+              <p data-i18n="db_instruction_desc">Nhấp vào một cửa hàng (icon cửa hàng) để xem dữ liệu dự báo nhu cầu thời trang theo tuần sinh ra từ mô hình học máy LightGBM.</p>
             </div>
           </div>
           
@@ -20,31 +20,31 @@
             <div class="panel-body">
               <div class="forecast-stats">
                 <div class="stat-card">
-                  <span class="stat-label">Tổng SKU dự báo</span>
+                  <span class="stat-label" data-i18n="db_total_skus">Tổng SKU dự báo</span>
                   <span class="stat-val" id="forecast-sku-count">0</span>
                 </div>
                 <div class="stat-card">
-                  <span class="stat-label">Dự kiến tuần tới</span>
+                  <span class="stat-label" data-i18n="db_next_week_demand">Dự kiến tuần tới</span>
                   <span class="stat-val" id="forecast-next-week-qty">0</span>
                 </div>
               </div>
               <div class="form-group-forecast-grid" style="display: grid; grid-template-columns: 1.8fr 1.1fr 1.1fr; gap: 8px; align-items: flex-end; margin-bottom: 12px;">
                 <div class="form-group-forecast" style="margin-bottom: 0;">
-                  <label for="forecast-sku-selector" style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Chọn SKU sản phẩm:</label>
+                  <label for="forecast-sku-selector" style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="db_select_sku">Chọn SKU sản phẩm:</label>
                   <select id="forecast-sku-selector" class="select-control" style="font-size: 12px; padding: 8px 12px; height: 38px;"></select>
                 </div>
                 <div class="form-group-forecast" style="margin-bottom: 0;">
-                  <label for="forecast-chart-type" style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Loại biểu đồ:</label>
+                  <label for="forecast-chart-type" style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="db_chart_type">Loại biểu đồ:</label>
                   <select id="forecast-chart-type" class="select-control" style="font-size: 12px; padding: 8px 12px; height: 38px;">
-                    <option value="line">Đường (Line)</option>
-                    <option value="column">Cột (Column)</option>
+                    <option value="line" data-i18n="db_chart_line">Đường (Line)</option>
+                    <option value="column" data-i18n="db_chart_column">Cột (Column)</option>
                   </select>
                 </div>
                 <div class="form-group-forecast" style="margin-bottom: 0;">
-                  <label for="forecast-time-group" style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Xem theo:</label>
+                  <label for="forecast-time-group" style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="db_time_group">Xem theo:</label>
                   <select id="forecast-time-group" class="select-control" style="font-size: 12px; padding: 8px 12px; height: 38px;">
-                    <option value="week">Tuần</option>
-                    <option value="month">Tháng</option>
+                    <option value="week" data-i18n="db_group_week">Tuần</option>
+                    <option value="month" data-i18n="db_group_month">Tháng</option>
                   </select>
                 </div>
               </div>
@@ -54,8 +54,8 @@
               <div id="forecast-alert-banner" class="forecast-alert-banner hidden" style="margin-top: 12px; padding: 12px; border-radius: var(--border-radius); background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); display: flex; align-items: flex-start; gap: 10px;">
                 <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger-color); font-size: 15px; margin-top: 2px;"></i>
                 <div>
-                  <h4 style="margin: 0 0 3px 0; font-size: 13px; color: #fca5a5;">Cảnh báo thiếu hàng tồn kho!</h4>
-                  <p style="margin: 0; font-size: 11px; color: #f3f4f6; line-height: 1.4;">Số lượng dự báo tuần tới (<span id="alert-predicted-qty">0</span>) vượt quá số lượng hàng còn lại trong kho (<span id="alert-stock-qty">0</span>). Vui lòng bổ sung thêm <strong id="alert-needed-qty" style="color: #f87171;">0</strong> sản phẩm!</p>
+                  <h4 style="margin: 0 0 3px 0; font-size: 13px; color: #fca5a5;" data-i18n="modal_tx_alert_stock">Cảnh báo thiếu hàng tồn kho!</h4>
+                  <p id="alert-banner-desc" style="margin: 0; font-size: 11px; color: #f3f4f6; line-height: 1.4;"></p>
                 </div>
               </div>
             </div>

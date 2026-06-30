@@ -1,43 +1,43 @@
       <!-- ================= TAB CONTENT: ADMIN LOGS ================= -->
       <section id="tab-admin-logs" class="tab-content">
         <div class="filter-bar">
-          <h3 style="margin: 0; color: var(--primary-light);"><i class="fa-solid fa-clock-rotate-left"></i> Nhật ký Hoạt động (Audit Logs)</h3>
+          <h3 style="margin: 0; color: var(--primary-light);"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="admin_logs_title">Nhật ký Hoạt động (Audit Logs)</span></h3>
           <div class="filter-group" style="margin-left: auto;">
-            <label>Lọc hành động:</label>
+            <label data-i18n="admin_logs_lbl_filter">Lọc hành động:</label>
             <select id="admin-logs-action-filter" class="select-control">
-              <option value="">Tất cả</option>
-              <option value="LOGIN">Đăng nhập (Thường)</option>
-              <option value="LOGIN_MFA">Đăng nhập (MFA)</option>
-              <option value="CUSTOMER_CREATE">Tạo KH</option>
-              <option value="CUSTOMER_DELETE">Xóa KH</option>
-              <option value="DISCOUNT_CREATE">Tạo Khuyến mãi</option>
-              <option value="DISCOUNT_UPDATE">Sửa Khuyến mãi</option>
-              <option value="DISCOUNT_DELETE">Xóa Khuyến mãi</option>
-              <option value="EMPLOYEE_CREATE">Thêm Nhân viên</option>
-              <option value="EMPLOYEE_UPDATE">Sửa Nhân viên</option>
-              <option value="EMPLOYEE_DELETE">Xóa Nhân viên</option>
-              <option value="PRODUCT_CREATE">Tạo Sản phẩm</option>
-              <option value="PRODUCT_UPDATE">Sửa Sản phẩm</option>
-              <option value="PRODUCT_DELETE">Xóa Sản phẩm</option>
-              <option value="USER_CREATE">Tạo User</option>
-              <option value="USER_UPDATE">Sửa User</option>
-              <option value="USER_DELETE">Xóa User</option>
-              <option value="MFA_ENABLE">Bật MFA</option>
-              <option value="MFA_DISABLE">Tắt MFA</option>
+              <option value="" data-i18n="admin_logs_opt_all">Tất cả</option>
+              <option value="LOGIN" data-i18n="admin_logs_opt_login">Đăng nhập (Thường)</option>
+              <option value="LOGIN_MFA" data-i18n="admin_logs_opt_login_mfa">Đăng nhập (MFA)</option>
+              <option value="CUSTOMER_CREATE" data-i18n="admin_logs_opt_customer_create">Tạo KH</option>
+              <option value="CUSTOMER_DELETE" data-i18n="admin_logs_opt_customer_delete">Xóa KH</option>
+              <option value="DISCOUNT_CREATE" data-i18n="admin_logs_opt_discount_create">Tạo Khuyến mãi</option>
+              <option value="DISCOUNT_UPDATE" data-i18n="admin_logs_opt_discount_update">Sửa Khuyến mãi</option>
+              <option value="DISCOUNT_DELETE" data-i18n="admin_logs_opt_discount_delete">Xóa Khuyến mãi</option>
+              <option value="EMPLOYEE_CREATE" data-i18n="admin_logs_opt_employee_create">Thêm Nhân viên</option>
+              <option value="EMPLOYEE_UPDATE" data-i18n="admin_logs_opt_employee_update">Sửa Nhân viên</option>
+              <option value="EMPLOYEE_DELETE" data-i18n="admin_logs_opt_employee_delete">Xóa Nhân viên</option>
+              <option value="PRODUCT_CREATE" data-i18n="admin_logs_opt_product_create">Tạo Sản phẩm</option>
+              <option value="PRODUCT_UPDATE" data-i18n="admin_logs_opt_product_update">Sửa Sản phẩm</option>
+              <option value="PRODUCT_DELETE" data-i18n="admin_logs_opt_product_delete">Xóa Sản phẩm</option>
+              <option value="USER_CREATE" data-i18n="admin_logs_opt_user_create">Tạo User</option>
+              <option value="USER_UPDATE" data-i18n="admin_logs_opt_user_update">Sửa User</option>
+              <option value="USER_DELETE" data-i18n="admin_logs_opt_user_delete">Xóa User</option>
+              <option value="MFA_ENABLE" data-i18n="admin_logs_opt_mfa_enable">Bật MFA</option>
+              <option value="MFA_DISABLE" data-i18n="admin_logs_opt_mfa_disable">Tắt MFA</option>
             </select>
           </div>
-          <button id="btn-refresh-admin-logs" class="btn-secondary" style="height: 42px; margin-left: 10px;"><i class="fa-solid fa-rotate"></i> Tải lại</button>
+          <button id="btn-refresh-admin-logs" class="btn-secondary" style="height: 42px; margin-left: 10px;"><i class="fa-solid fa-rotate"></i> <span data-i18n="admin_logs_btn_refresh">Tải lại</span></button>
         </div>
         <div class="table-card full-width">
           <table class="data-table" id="admin-logs-table">
             <thead>
               <tr>
-                <th>Thời gian</th>
-                <th>Người dùng</th>
-                <th>Vai trò</th>
-                <th>Hành động</th>
-                <th>Chi tiết hoạt động</th>
-                <th>Địa chỉ IP</th>
+                <th data-i18n="admin_logs_col_time">Thời gian</th>
+                <th data-i18n="admin_logs_col_user">Người dùng</th>
+                <th data-i18n="admin_logs_col_role">Vai trò</th>
+                <th data-i18n="admin_logs_col_action">Hành động</th>
+                <th data-i18n="admin_logs_col_details">Chi tiết hoạt động</th>
+                <th data-i18n="admin_logs_col_ip">Địa chỉ IP</th>
               </tr>
             </thead>
             <tbody></tbody>

@@ -535,7 +535,7 @@ window.openForecastPanel = async function(storeId, storeName) {
     selector.innerHTML = '';
     
     if (activeForecastsData.length === 0) {
-      selector.innerHTML = '<option value="">Không có dữ liệu dự báo</option>';
+      selector.innerHTML = `<option value="">${currentLang === 'en' ? 'No forecast data' : (currentLang === 'zh' ? '无预测数据' : 'Không có dữ liệu dự báo')}</option>`;
       document.getElementById('forecast-sku-count').textContent = '0';
       document.getElementById('forecast-next-week-qty').textContent = '0';
       Plotly.purge('forecast-chart');
@@ -578,9 +578,17 @@ function renderForecastChart(sku) {
   const stockQty = inventoryItem ? inventoryItem.stock_quantity : 0;
 
   if (nextWeekForecast > stockQty) {
-    document.getElementById('alert-predicted-qty').textContent = nextWeekForecast;
-    document.getElementById('alert-stock-qty').textContent = stockQty;
-    document.getElementById('alert-needed-qty').textContent = nextWeekForecast - stockQty;
+    const diff = nextWeekForecast - stockQty;
+    const descEl = document.getElementById('alert-banner-desc');
+    if (descEl) {
+      if (currentLang === 'en') {
+        descEl.innerHTML = `Next week forecasted demand (<strong>${nextWeekForecast}</strong>) exceeds the remaining in-stock quantity (<strong>${stockQty}</strong>). Please import <strong style="color:#f87171">${diff}</strong> more products!`;
+      } else if (currentLang === 'zh') {
+        descEl.innerHTML = `下周预测需求数量 (<strong>${nextWeekForecast}</strong>) 超出了目前该商品的剩余库存量 (<strong>${stockQty}</strong>)。请补货 <strong style="color:#f87171">${diff}</strong> 件商品！`;
+      } else {
+        descEl.innerHTML = `Số lượng dự báo tuần tới (<strong>${nextWeekForecast}</strong>) vượt quá số lượng hàng còn lại trong kho (<strong>${stockQty}</strong>). Vui lòng bổ sung thêm <strong style="color:#f87171">${diff}</strong> sản phẩm!`;
+      }
+    }
     alertBanner.classList.remove('hidden');
   } else {
     alertBanner.classList.add('hidden');
@@ -669,7 +677,7 @@ function renderForecastChart(sku) {
       {
         x: labels,
         y: predictedVals,
-        name: 'Dự kiến (Predicted)',
+        name: currentLang === 'en' ? 'Predicted' : (currentLang === 'zh' ? '预测 (Predicted)' : 'Dự kiến (Predicted)'),
         type: 'bar',
         offsetgroup: 'predicted',
         marker: { color: '#24ad4a' } // Green
@@ -677,7 +685,7 @@ function renderForecastChart(sku) {
       {
         x: labels,
         y: actualVals,
-        name: 'Thực tế (Actual)',
+        name: currentLang === 'en' ? 'Actual' : (currentLang === 'zh' ? '实际 (Actual)' : 'Thực tế (Actual)'),
         type: 'bar',
         offsetgroup: 'actual_upcoming',
         marker: { color: '#3f51b5' } // Royal Blue
@@ -686,7 +694,7 @@ function renderForecastChart(sku) {
         x: labels,
         y: upcomingVals,
         base: actualVals,
-        name: 'Sắp tới (Upcoming)',
+        name: currentLang === 'en' ? 'Upcoming' : (currentLang === 'zh' ? '即将到来 (Upcoming)' : 'Sắp tới (Upcoming)'),
         type: 'bar',
         offsetgroup: 'actual_upcoming',
         marker: { color: '#9ad6eb' } // Light Blue
@@ -699,7 +707,7 @@ function renderForecastChart(sku) {
       {
         x: labels,
         y: lineActualVals,
-        name: 'Thực tế (Actual)',
+        name: currentLang === 'en' ? 'Actual' : (currentLang === 'zh' ? '实际 (Actual)' : 'Thực tế (Actual)'),
         type: 'scatter',
         mode: 'lines+markers',
         line: { color: '#10b981', width: 3 }, // Green
@@ -708,7 +716,7 @@ function renderForecastChart(sku) {
       {
         x: labels,
         y: predictedVals,
-        name: 'Dự báo (Forecast)',
+        name: currentLang === 'en' ? 'Forecast' : (currentLang === 'zh' ? '预测 (Forecast)' : 'Dự báo (Forecast)'),
         type: 'scatter',
         mode: 'lines+markers',
         line: { color: '#818cf8', width: 3, dash: 'dash' }, // Dotted Indigo
@@ -736,7 +744,7 @@ function renderForecastChart(sku) {
     margin: { t: 20, r: 15, b: 60, l: 40 },
     legend: { orientation: 'h', y: -0.28, x: 0.5, xanchor: 'center' },
     xaxis: { gridcolor: 'rgba(255,255,255,0.05)', tickfont: { size: 10 } },
-    yaxis: { gridcolor: 'rgba(255,255,255,0.05)', title: 'Số lượng sản phẩm' }
+    yaxis: { gridcolor: 'rgba(255,255,255,0.05)', title: currentLang === 'en' ? 'Product Quantity' : (currentLang === 'zh' ? '产品数量' : 'Số lượng sản phẩm') }
   };
 
   Plotly.newPlot('forecast-chart', traces, layout, { responsive: true, displayModeBar: false });
@@ -808,12 +816,13 @@ async function loadCustomersTab() {
 function renderCustomerCharts(pageData) {
   // To make charts beautiful and representative of the global dataset (since pageData is only 10 items)
   // We mock a nice overview for the BI display
+  const genderLabels = currentLang === 'en' ? ['Male', 'Female', 'Other'] : (currentLang === 'zh' ? ['男', '女', '其他'] : ['Nam', 'Nữ', 'Khác']);
   const genderData = [
-    { values: [42, 53, 5], labels: ['Nam (Male)', 'Nữ (Female)', 'Khác (Non-binary)'], type: 'pie', hole: .4, marker: { colors: ['#6366f1', '#ec4899', '#f59e0b'] } }
+    { values: [42, 53, 5], labels: genderLabels, type: 'pie', hole: .4, marker: { colors: ['#6366f1', '#ec4899', '#f59e0b'] } }
   ];
 
   const genderLayout = {
-    title: 'Phân bố Giới tính',
+    title: currentLang === 'en' ? 'Gender Distribution' : (currentLang === 'zh' ? '性别分布' : 'Phân bố Giới tính'),
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: { color: '#f3f4f6', family: 'Inter' },
@@ -836,7 +845,7 @@ function renderCustomerCharts(pageData) {
   };
 
   const ageLayout = {
-    title: 'Phân bố Độ tuổi',
+    title: currentLang === 'en' ? 'Age Distribution' : (currentLang === 'zh' ? '年龄分布' : 'Phân bố Độ tuổi'),
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: { color: '#f3f4f6', family: 'Inter' },
@@ -870,7 +879,7 @@ async function loadDiscountsTab() {
     if (storeFilter.children.length === 0) {
       // Fetch stores
       const stores = await fetchAPI('/api/stores');
-      storeFilter.innerHTML = currentUser.role === 'Director' ? '<option value="">Tất cả Cửa hàng</option>' : '';
+      storeFilter.innerHTML = currentUser.role === 'Director' ? `<option value="">${currentLang === 'en' ? 'All Stores' : (currentLang === 'zh' ? '所有门店' : 'Tất cả Cửa hàng')}</option>` : '';
       
       stores.forEach(s => {
         const opt = document.createElement('option');
@@ -947,7 +956,17 @@ function renderDiscountsChart(discounts) {
     return;
   }
 
-  const xData = discounts.map(d => `${d.season_name} (Store ${d.store_id})`);
+  const seasonMap = {
+    'Mùa đông 2024': { vi: 'Mùa đông 2024', en: 'Winter 2024', zh: '2024冬季' },
+    'Mùa xuân 2024': { vi: 'Mùa xuân 2024', en: 'Spring 2024', zh: '2024春季' },
+    'Mùa hè 2024': { vi: 'Mùa hè 2024', en: 'Summer 2024', zh: '2024夏季' },
+    'Mùa thu 2024': { vi: 'Mùa thu 2024', en: 'Autumn 2024', zh: '2024秋季' }
+  };
+  const xData = discounts.map(d => {
+    const name = seasonMap[d.season_name] ? seasonMap[d.season_name][currentLang] : d.season_name;
+    const storeLabel = currentLang === 'en' ? 'Store' : (currentLang === 'zh' ? '门店' : 'Cửa hàng');
+    return `${name} (${storeLabel} ${d.store_id})`;
+  });
   const yData = discounts.map(d => d.total_discount_avg * 100);
 
   const trace = {
@@ -966,7 +985,7 @@ function renderDiscountsChart(discounts) {
     font: { color: '#f3f4f6', family: 'Inter' },
     margin: { t: 20, r: 20, b: 60, l: 50 },
     xaxis: { gridcolor: 'rgba(255,255,255,0.05)', tickangle: -20 },
-    yaxis: { gridcolor: 'rgba(255,255,255,0.05)', title: 'Phần trăm chiết khấu (%)' }
+    yaxis: { gridcolor: 'rgba(255,255,255,0.05)', title: currentLang === 'en' ? 'Discount Percentage (%)' : (currentLang === 'zh' ? '折扣比例 (%)' : 'Phần trăm chiết khấu (%)') }
   };
 
   Plotly.newPlot('discounts-comparison-chart', [trace], layout, { displayModeBar: false });
@@ -1017,7 +1036,7 @@ async function loadEmployeesTab() {
   try {
     if (storeFilter.children.length === 0) {
       const stores = await fetchAPI('/api/stores');
-      storeFilter.innerHTML = currentUser.role === 'Director' ? '<option value="">Tất cả Cửa hàng</option>' : '';
+      storeFilter.innerHTML = currentUser.role === 'Director' ? `<option value="">${currentLang === 'en' ? 'All Stores' : (currentLang === 'zh' ? '所有门店' : 'Tất cả Cửa hàng')}</option>` : '';
       stores.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.store_id;
@@ -1088,9 +1107,12 @@ function renderEmployeesChart(employees) {
   const managers = employees.filter(e => e.role === 'Store Manager').length;
   const staff = employees.filter(e => e.role === 'Sales Staff').length;
 
+  const labelManager = currentLang === 'en' ? 'Manager' : (currentLang === 'zh' ? '经理' : 'Quản lý (Manager)');
+  const labelStaff = currentLang === 'en' ? 'Staff' : (currentLang === 'zh' ? '员工' : 'Nhân viên (Staff)');
+
   const data = [{
     values: [managers, staff],
-    labels: ['Quản lý (Manager)', 'Nhân viên (Staff)'],
+    labels: [labelManager, labelStaff],
     type: 'pie',
     marker: { colors: ['#10b981', '#6366f1'] }
   }];
@@ -1266,7 +1288,7 @@ function renderStoresChart(stores) {
   const traceSKUs = {
     x: names,
     y: skus,
-    name: 'Số SKU duy nhất',
+    name: currentLang === 'en' ? 'Unique SKUs' : (currentLang === 'zh' ? '独立SKU数' : 'Số SKU duy nhất'),
     type: 'bar',
     marker: { color: '#6366f1' }
   };
@@ -1274,7 +1296,7 @@ function renderStoresChart(stores) {
   const traceProducts = {
     x: names,
     y: products,
-    name: 'Dòng sản phẩm',
+    name: currentLang === 'en' ? 'Product Lines' : (currentLang === 'zh' ? '商品品类数' : 'Dòng sản phẩm'),
     type: 'bar',
     marker: { color: '#10b981' }
   };
@@ -1301,7 +1323,7 @@ async function loadTransactionsTab() {
     if (storeFilter.children.length === 0) {
       const stores = await fetchAPI('/api/stores');
       const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
-      storeFilter.innerHTML = hasAllStores ? '<option value="">Tất cả Cửa hàng</option>' : '';
+      storeFilter.innerHTML = hasAllStores ? `<option value="">${currentLang === 'en' ? 'All Stores' : (currentLang === 'zh' ? '所有门店' : 'Tất cả Cửa hàng')}</option>` : '';
       stores.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.store_id;
@@ -1386,7 +1408,7 @@ async function loadInventoryTab() {
       const stores = await fetchAPI('/api/stores');
       const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
       
-      storeSelect.innerHTML = hasAllStores ? '<option value="">Tất cả Cửa hàng</option>' : '';
+      storeSelect.innerHTML = hasAllStores ? `<option value="">${currentLang === 'en' ? 'All Stores' : (currentLang === 'zh' ? '所有门店' : 'Tất cả Cửa hàng')}</option>` : '';
       stores.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.store_id;
@@ -1986,7 +2008,8 @@ productForm.addEventListener('submit', async (e) => {
 
 // Logout click handler
 btnLogout.addEventListener('click', () => {
-  if (confirm('Ông có chắc chắn muốn đăng xuất?')) {
+  const msg = currentLang === 'en' ? 'Are you sure you want to log out?' : (currentLang === 'zh' ? '您确定要退出登录吗？' : 'Bạn có chắc chắn muốn đăng xuất?');
+  if (confirm(msg)) {
     logout();
   }
 });
@@ -1999,7 +2022,7 @@ async function loadAdminUsersTab() {
     const stores = await fetchAPI('/api/stores');
     
     const storeSelect = document.getElementById('admin-user-store-input');
-    storeSelect.innerHTML = '<option value="">Không gán (Global)</option>';
+    storeSelect.innerHTML = `<option value="">${currentLang === 'en' ? 'None (Global)' : (currentLang === 'zh' ? '无 (全局)' : 'Không gán (Global)')}</option>`;
     stores.forEach(s => {
       const opt = document.createElement('option');
       opt.value = s.store_id;
@@ -2012,8 +2035,8 @@ async function loadAdminUsersTab() {
     
     users.forEach(u => {
       const tr = document.createElement('tr');
-      const storeName = u.store_id ? (stores.find(s => s.store_id === u.store_id)?.store_name || `Store #${u.store_id}`) : 'Global (Tất cả)';
-      const mfaText = u.mfa_enabled ? '<span class="mfa-status-active"><i class="fa-solid fa-circle-check"></i> Đang bật</span>' : '<span class="mfa-status-inactive"><i class="fa-solid fa-circle-xmark"></i> Chưa bật</span>';
+      const storeName = u.store_id ? (stores.find(s => s.store_id === u.store_id)?.store_name || `Store #${u.store_id}`) : (currentLang === 'en' ? 'Global (All)' : (currentLang === 'zh' ? '全局 (所有)' : 'Global (Tất cả)'));
+      const mfaText = u.mfa_enabled ? `<span class="mfa-status-active"><i class="fa-solid fa-circle-check"></i> ${currentLang === 'en' ? 'Enabled' : (currentLang === 'zh' ? '已启用' : 'Đang bật')}</span>` : `<span class="mfa-status-inactive"><i class="fa-solid fa-circle-xmark"></i> ${currentLang === 'en' ? 'Disabled' : (currentLang === 'zh' ? '未启用' : 'Chưa bật')}</span>`;
       
       tr.innerHTML = `
         <td>${u.id}</td>
@@ -2035,11 +2058,11 @@ async function loadAdminUsersTab() {
 }
 
 window.openEditAdminUser = function(id, username, role, storeId) {
-  document.getElementById('admin-user-modal-title').textContent = 'Cập nhật tài khoản';
+  document.getElementById('admin-user-modal-title').textContent = currentLang === 'en' ? 'Update Account' : (currentLang === 'zh' ? '更新账户' : 'Cập nhật tài khoản');
   document.getElementById('admin-user-id-input').value = id;
   document.getElementById('admin-user-username-input').value = username;
   document.getElementById('admin-user-username-input').disabled = true;
-  document.getElementById('admin-user-password-input').placeholder = 'Bỏ trống nếu giữ nguyên mật khẩu';
+  document.getElementById('admin-user-password-input').placeholder = currentLang === 'en' ? 'Leave blank to keep password' : (currentLang === 'zh' ? '留空以保留密码' : 'Bỏ trống nếu giữ nguyên mật khẩu');
   document.getElementById('admin-user-password-input').required = false;
   document.getElementById('admin-user-role-input').value = role;
   document.getElementById('admin-user-store-input').value = storeId || '';
@@ -2048,13 +2071,14 @@ window.openEditAdminUser = function(id, username, role, storeId) {
 
 window.deleteAdminUser = async function(id) {
   if (id === currentUser.id) {
-    alert('Không thể tự xóa tài khoản của chính bạn!');
+    alert(currentLang === 'en' ? 'Cannot delete your own account!' : (currentLang === 'zh' ? '无法删除您自己的账户！' : 'Không thể tự xóa tài khoản của chính bạn!'));
     return;
   }
-  if (!confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) return;
+  const msg = currentLang === 'en' ? 'Are you sure you want to delete this account?' : (currentLang === 'zh' ? '您确定要删除此账户吗？' : 'Bạn có chắc chắn muốn xóa tài khoản này không?');
+  if (!confirm(msg)) return;
   try {
     const data = await fetchAPI(`/api/admin/users/${id}`, { method: 'DELETE' });
-    alert(data.message || 'Xóa thành công');
+    alert(data.message || (currentLang === 'en' ? 'Deleted successfully' : (currentLang === 'zh' ? '删除成功' : 'Xóa thành công')));
     loadAdminUsersTab();
   } catch (err) {
     console.error('Error deleting user:', err);
@@ -2062,13 +2086,101 @@ window.deleteAdminUser = async function(id) {
 };
 
 window.resetAdminUserMfa = async function(id) {
-  if (!confirm('Bạn có chắc muốn tắt và reset MFA cho tài khoản này không?')) return;
+  const msg = currentLang === 'en' ? 'Are you sure you want to disable and reset MFA for this account?' : (currentLang === 'zh' ? '您确定要禁用并重置此账户的MFA吗？' : 'Bạn có chắc muốn tắt và reset MFA cho tài khoản này không?');
+  if (!confirm(msg)) return;
   try {
     const data = await fetchAPI(`/api/admin/users/${id}/reset-mfa`, { method: 'POST' });
-    alert(data.message || 'Reset MFA thành công');
+    alert(data.message || (currentLang === 'en' ? 'Reset MFA successfully' : (currentLang === 'zh' ? '重置MFA成功' : 'Reset MFA thành công')));
     loadAdminUsersTab();
   } catch (err) {
     console.error('Error resetting MFA:', err);
+  }
+};
+
+const permissionTranslations = {
+  vi: {
+    'Dashboard & Cửa hàng': 'Dashboard & Cửa hàng',
+    'Xem Dashboard & Bản đồ': 'Xem Dashboard & Bản đồ',
+    'Xem Toàn bộ Cửa hàng (Global)': 'Xem Toàn bộ Cửa hàng (Global)',
+    'Xem Cửa hàng được gán (Local)': 'Xem Cửa hàng được gán (Local)',
+    'Khách hàng': 'Khách hàng',
+    'Xem danh sách Khách hàng': 'Xem danh sách Khách hàng',
+    'Thêm Khách hàng': 'Thêm Khách hàng',
+    'Xóa Khách hàng': 'Xóa Khách hàng',
+    'Khuyến mãi & Giảm giá': 'Khuyến mãi & Giảm giá',
+    'Xem danh sách Khuyến mãi': 'Xem danh sách Khuyến mãi',
+    'Thao tác Khuyến mãi (CRUD)': 'Thao tác Khuyến mãi (CRUD)',
+    'Nhân sự': 'Nhân sự',
+    'Xem danh sách Nhân sự': 'Xem danh sách Nhân sự',
+    'Thao tác Nhân sự (CRUD)': 'Thao tác Nhân sự (CRUD)',
+    'Sản phẩm': 'Sản phẩm',
+    'Xem danh mục Sản phẩm': 'Xem danh mục Sản phẩm',
+    'Thao tác Sản phẩm (CRUD)': 'Thao tác Sản phẩm (CRUD)',
+    'Giao dịch': 'Giao dịch',
+    'Xem lịch sử Giao dịch': 'Xem lịch sử Giao dịch',
+    'Quản trị hệ thống (IT Admin)': 'Quản trị hệ thống (IT Admin)',
+    'Quản lý Tài khoản': 'Quản lý Tài khoản',
+    'Thiết lập Phân quyền': 'Thiết lập Phân quyền',
+    'Xem Nhật ký Hoạt động (Audit Logs)': 'Xem Nhật ký Hoạt động (Audit Logs)',
+    'Quyền Hạn / Vai trò': 'Quyền Hạn / Vai trò',
+    'Lưu cấu hình thành công!': 'Lưu cấu hình thành công!',
+    'Lỗi lưu phân quyền: ': 'Lỗi lưu phân quyền: '
+  },
+  en: {
+    'Dashboard & Cửa hàng': 'Dashboard & Stores',
+    'Xem Dashboard & Bản đồ': 'View Dashboard & Map',
+    'Xem Toàn bộ Cửa hàng (Global)': 'View All Stores (Global)',
+    'Xem Cửa hàng được gán (Local)': 'View Assigned Store (Local)',
+    'Khách hàng': 'Customers',
+    'Xem danh sách Khách hàng': 'View Customer List',
+    'Thêm Khách hàng': 'Add Customer',
+    'Xóa Khách hàng': 'Delete Customer',
+    'Khuyến mãi & Giảm giá': 'Promotions & Discounts',
+    'Xem danh sách Khuyến mãi': 'View Promotions',
+    'Thao tác Khuyến mãi (CRUD)': 'Manage Promotions (CRUD)',
+    'Nhân sự': 'Staff',
+    'Xem danh sách Nhân sự': 'View Staff List',
+    'Thao tác Nhân sự (CRUD)': 'Manage Staff (CRUD)',
+    'Sản phẩm': 'Products',
+    'Xem danh mục Sản phẩm': 'View Product Catalog',
+    'Thao tác Sản phẩm (CRUD)': 'Manage Products (CRUD)',
+    'Giao dịch': 'Transactions',
+    'Xem lịch sử Giao dịch': 'View Transaction History',
+    'Quản trị hệ thống (IT Admin)': 'System Admin (IT Admin)',
+    'Quản lý Tài khoản': 'System User Management',
+    'Thiết lập Phân quyền': 'RBAC Configuration',
+    'Xem Nhật ký Hoạt động (Audit Logs)': 'View Audit Logs',
+    'Quyền Hạn / Vai trò': 'Permission / Role',
+    'Lưu cấu hình thành công!': 'Configuration saved successfully!',
+    'Lỗi lưu phân quyền: ': 'Error saving permissions: '
+  },
+  zh: {
+    'Dashboard & Cửa hàng': '地图与门店',
+    'Xem Dashboard & Bản đồ': '查看地图仪表盘',
+    'Xem Toàn bộ Cửa hàng (Global)': '查看所有门店 (全局)',
+    'Xem Cửa hàng được gán (Local)': '查看受管辖门店 (本地)',
+    'Khách hàng': '客户管理',
+    'Xem danh sách Khách hàng': '查看客户列表',
+    'Thêm Khách hàng': '添加客户',
+    'Xóa Khách hàng': '删除客户',
+    'Khuyến mãi & Giảm giá': '促销与折扣',
+    'Xem danh sách Khuyến mãi': '查看促销信息',
+    'Thao tác Khuyến mãi (CRUD)': '操作促销信息 (CRUD)',
+    'Nhân sự': '员工管理',
+    'Xem danh sách Nhân sự': '查看员工列表',
+    'Thao tác Nhân sự (CRUD)': '操作员工信息 (CRUD)',
+    'Sản phẩm': '商品管理',
+    'Xem danh mục Sản phẩm': '查看商品名册',
+    'Thao tác Sản phẩm (CRUD)': '操作商品信息 (CRUD)',
+    'Giao dịch': '交易历史',
+    'Xem lịch sử Giao dịch': '查看交易历史记录',
+    'Quản trị hệ thống (IT Admin)': '系统管理 (IT Admin)',
+    'Quản lý Tài khoản': '账户管理',
+    'Thiết lập Phân quyền': '系统权限设置',
+    'Xem Nhật ký Hoạt động (Audit Logs)': '查看操作日志 (审计日志)',
+    'Quyền Hạn / Vai trò': '权限 / 角色',
+    'Lưu cấu hình thành công!': '配置保存成功！',
+    'Lỗi lưu phân quyền: ': '保存权限出错: '
   }
 };
 
@@ -2149,7 +2261,8 @@ async function loadAdminPermissionsTab() {
     const roles = Object.keys(currentPermissionsMap);
 
     const headerRow = document.getElementById('permissions-table-header');
-    headerRow.innerHTML = '<th style="text-align: left; padding: 15px;">Quyền Hạn / Vai trò</th>';
+    const headerTitle = (permissionTranslations[currentLang] && permissionTranslations[currentLang]['Quyền Hạn / Vai trò']) || 'Quyền Hạn / Vai trò';
+    headerRow.innerHTML = `<th style="text-align: left; padding: 15px;">${headerTitle}</th>`;
     roles.forEach(role => {
       const th = document.createElement('th');
       th.style.padding = '15px';
@@ -2164,9 +2277,10 @@ async function loadAdminPermissionsTab() {
     permissionGroups.forEach(group => {
       // Category row
       const catTr = document.createElement('tr');
+      const catName = (permissionTranslations[currentLang] && permissionTranslations[currentLang][group.category]) || group.category;
       catTr.innerHTML = `
         <td colspan="${roles.length + 1}" style="background: rgba(255,255,255,0.02); font-weight: 700; padding: 12px 18px; border-left: 4px solid ${group.color}; color: ${group.color}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
-          <i class="fa-solid ${group.icon}" style="margin-right: 8px;"></i> ${group.category}
+          <i class="fa-solid ${group.icon}" style="margin-right: 8px;"></i> ${catName}
         </td>
       `;
       tbody.appendChild(catTr);
@@ -2174,9 +2288,10 @@ async function loadAdminPermissionsTab() {
       // Permission rows
       group.perms.forEach(perm => {
         const tr = document.createElement('tr');
+        const permName = (permissionTranslations[currentLang] && permissionTranslations[currentLang][perm.name]) || perm.name;
         
         let html = `<td style="padding: 12px 18px; border-left: 4px solid ${group.color}44;">
-          <div style="font-weight: 600; color: var(--text-main); font-size: 13px;">${perm.name}</div>
+          <div style="font-weight: 600; color: var(--text-main); font-size: 13px;">${permName}</div>
           <small style="color: var(--text-muted); font-family: monospace; font-size: 10px;">${perm.key}</small>
         </td>`;
         
@@ -2218,7 +2333,8 @@ document.getElementById('btn-save-permissions').addEventListener('click', async 
       method: 'PUT',
       body: JSON.stringify(updatedPermissions)
     });
-    alert(data.message || 'Lưu cấu hình thành công!');
+    const successMsg = (permissionTranslations[currentLang] && permissionTranslations[currentLang]['Lưu cấu hình thành công!']) || 'Lưu cấu hình thành công!';
+    alert(data.message || successMsg);
     
     if (updatedPermissions[currentUser.role]) {
       currentUser.permissions = updatedPermissions[currentUser.role];
@@ -2228,9 +2344,81 @@ document.getElementById('btn-save-permissions').addEventListener('click', async 
     
     loadAdminPermissionsTab();
   } catch (err) {
-    alert('Lỗi lưu phân quyền: ' + err.message);
+    const errorPrefix = (permissionTranslations[currentLang] && permissionTranslations[currentLang]['Lỗi lưu phân quyền: ']) || 'Lỗi lưu phân quyền: ';
+    alert(errorPrefix + err.message);
   }
 });
+
+function translateLogDetails(details) {
+  if (!details) return '';
+  if (currentLang === 'vi') return details;
+  
+  let translated = details;
+  const mappings = {
+    en: [
+      { regex: /Đăng nhập thành công/g, replacement: 'Logged in successfully' },
+      { regex: /Đăng nhập MFA thành công/g, replacement: 'MFA login successful' },
+      { regex: /Tạo khách hàng/g, replacement: 'Created customer' },
+      { regex: /Xóa khách hàng/g, replacement: 'Deleted customer' },
+      { regex: /Tạo khuyến mãi/g, replacement: 'Created promotion' },
+      { regex: /Cập nhật khuyến mãi/g, replacement: 'Updated promotion' },
+      { regex: /Xóa khuyến mãi/g, replacement: 'Deleted promotion' },
+      { regex: /Thêm nhân viên/g, replacement: 'Added employee' },
+      { regex: /Cập nhật nhân viên/g, replacement: 'Updated employee' },
+      { regex: /Xóa nhân viên/g, replacement: 'Deleted employee' },
+      { regex: /Tạo sản phẩm/g, replacement: 'Created product' },
+      { regex: /Cập nhật sản phẩm/g, replacement: 'Updated product' },
+      { regex: /Xóa sản phẩm/g, replacement: 'Deleted product' },
+      { regex: /Tạo tài khoản/g, replacement: 'Created system account' },
+      { regex: /Cập nhật tài khoản/g, replacement: 'Updated system account' },
+      { regex: /Xóa tài khoản/g, replacement: 'Deleted system account' },
+      { regex: /Bật MFA thành công/g, replacement: 'Enabled MFA successfully' },
+      { regex: /Tắt MFA thành công/g, replacement: 'Disabled MFA successfully' },
+      { regex: /Reset MFA thành công/g, replacement: 'Reset MFA successfully' },
+      { regex: /Nhập kho hàng thành công/g, replacement: 'Imported stock successfully' },
+      { regex: /Tạo giao dịch thành công/g, replacement: 'Created transaction successfully' },
+      { regex: /Cửa hàng/g, replacement: 'Store' },
+      { regex: /Vai trò/g, replacement: 'Role' },
+      { regex: /Mật khẩu/g, replacement: 'Password' },
+      { regex: /không thay đổi/g, replacement: 'unchanged' },
+      { regex: /thành/g, replacement: 'to' }
+    ],
+    zh: [
+      { regex: /Đăng nhập thành công/g, replacement: '登录成功' },
+      { regex: /Đăng nhập MFA thành công/g, replacement: 'MFA登录成功' },
+      { regex: /Tạo khách hàng/g, replacement: '创建客户' },
+      { regex: /Xóa khách hàng/g, replacement: '删除客户' },
+      { regex: /Tạo khuyến mãi/g, replacement: '创建促销' },
+      { regex: /Cập nhật khuyến mãi/g, replacement: '更新促销' },
+      { regex: /Xóa khuyến mãi/g, replacement: '删除促销' },
+      { regex: /Thêm nhân viên/g, replacement: '添加员工' },
+      { regex: /Cập nhật nhân viên/g, replacement: '更新员工' },
+      { regex: /Xóa nhân viên/g, replacement: '删除员工' },
+      { regex: /Tạo sản phẩm/g, replacement: '创建商品' },
+      { regex: /Cập nhật sản phẩm/g, replacement: '更新商品' },
+      { regex: /Xóa sản phẩm/g, replacement: '删除商品' },
+      { regex: /Tạo tài khoản/g, replacement: '创建系统账户' },
+      { regex: /Cập nhật tài khoản/g, replacement: '更新系统账户' },
+      { regex: /Xóa tài khoản/g, replacement: '删除系统账户' },
+      { regex: /Bật MFA thành công/g, replacement: '启用MFA成功' },
+      { regex: /Tắt MFA thành công/g, replacement: '禁用MFA成功' },
+      { regex: /Reset MFA thành công/g, replacement: '重置MFA成功' },
+      { regex: /Nhập kho hàng thành công/g, replacement: '成功入库商品' },
+      { regex: /Tạo giao dịch thành công/g, replacement: '交易创建成功' },
+      { regex: /Cửa hàng/g, replacement: '门店' },
+      { regex: /Vai trò/g, replacement: '角色' },
+      { regex: /Mật khẩu/g, replacement: '密码' },
+      { regex: /không thay đổi/g, replacement: '未更改' },
+      { regex: /thành/g, replacement: '为' }
+    ]
+  };
+
+  const list = mappings[currentLang] || [];
+  list.forEach(m => {
+    translated = translated.replace(m.regex, m.replacement);
+  });
+  return translated;
+}
 
 async function loadAdminLogsTab() {
   const filterAction = document.getElementById('admin-logs-action-filter').value;
@@ -2246,7 +2434,7 @@ async function loadAdminLogsTab() {
 
     filteredLogs.forEach(l => {
       const tr = document.createElement('tr');
-      const formattedTime = new Date(l.timestamp).toLocaleString('vi-VN');
+      const formattedTime = new Date(l.timestamp).toLocaleString(currentLang === 'en' ? 'en-US' : (currentLang === 'zh' ? 'zh-CN' : 'vi-VN'));
       
       let badgeClass = 'default';
       const actionLower = l.action.toLowerCase();
@@ -2261,7 +2449,7 @@ async function loadAdminLogsTab() {
         <td><strong>${l.username}</strong></td>
         <td><span class="badge">${l.role}</span></td>
         <td><span class="badge-action ${badgeClass}">${l.action}</span></td>
-        <td>${l.details}</td>
+        <td>${translateLogDetails(l.details)}</td>
         <td><code>${l.ip}</code></td>
       `;
       tbody.appendChild(tr);
@@ -2376,19 +2564,19 @@ const adminUserForm = document.getElementById('admin-user-form');
 const btnCancelAdminUser = document.getElementById('btn-cancel-admin-user');
 
 document.getElementById('btn-admin-add-user').addEventListener('click', async () => {
-  document.getElementById('admin-user-modal-title').textContent = 'Thêm Tài Khoản Mới';
+  document.getElementById('admin-user-modal-title').textContent = currentLang === 'en' ? 'Add New Account' : (currentLang === 'zh' ? '添加新账户' : 'Thêm Tài Khoản Mới');
   document.getElementById('admin-user-id-input').value = '';
   document.getElementById('admin-user-username-input').value = '';
   document.getElementById('admin-user-username-input').disabled = false;
   document.getElementById('admin-user-password-input').value = '';
-  document.getElementById('admin-user-password-input').placeholder = 'Nhập mật khẩu...';
+  document.getElementById('admin-user-password-input').placeholder = currentLang === 'en' ? 'Enter password...' : (currentLang === 'zh' ? '输入密码...' : 'Nhập mật khẩu...');
   document.getElementById('admin-user-password-input').required = true;
   document.getElementById('admin-user-role-input').value = 'Sales Staff';
   
   try {
     const stores = await fetchAPI('/api/stores');
     const storeSelect = document.getElementById('admin-user-store-input');
-    storeSelect.innerHTML = '<option value="">Không gán (Global)</option>';
+    storeSelect.innerHTML = `<option value="">${currentLang === 'en' ? 'None (Global)' : (currentLang === 'zh' ? '无 (全局)' : 'Không gán (Global)')}</option>`;
     stores.forEach(s => {
       const opt = document.createElement('option');
       opt.value = s.store_id;
@@ -2458,7 +2646,7 @@ let activeTxCustomers = [];
 let activeTxInventory = [];
 
 function renderTxCustomerOptions(items) {
-  txCustomerInput.innerHTML = '<option value="">-- Chọn khách hàng --</option>';
+  txCustomerInput.innerHTML = `<option value="">${currentLang === 'en' ? '-- Select customer --' : (currentLang === 'zh' ? '-- 选择客户 --' : '-- Chọn khách hàng --')}</option>`;
   items.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c.customer_id;
@@ -2470,26 +2658,26 @@ function renderTxCustomerOptions(items) {
 function renderTxSkuOptions(items) {
   txSkuInput.innerHTML = '';
   if (items.length === 0) {
-    txSkuInput.innerHTML = '<option value="">Không tìm thấy sản phẩm nào trong kho</option>';
+    txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'No products found in stock' : (currentLang === 'zh' ? '库存中未找到商品' : 'Không tìm thấy sản phẩm nào trong kho')}</option>`;
     return;
   }
   items.forEach(item => {
     const opt = document.createElement('option');
     opt.value = item.sku;
-    opt.textContent = `${item.sku} - ${item.product_name} (Tồn kho: ${item.stock_quantity})`;
+    opt.textContent = `${item.sku} - ${item.product_name} (${currentLang === 'en' ? 'In stock' : (currentLang === 'zh' ? '库存' : 'Tồn kho')}: ${item.stock_quantity})`;
     txSkuInput.appendChild(opt);
   });
 }
 
 async function loadStoreInventoryForTx(storeId) {
-  txSkuInput.innerHTML = '<option value="">Đang tải hàng tồn kho...</option>';
+  txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading inventory...' : (currentLang === 'zh' ? '正在加载库存...' : 'Đang tải hàng tồn kho...')}</option>`;
   try {
     const inventory = await fetchAPI(`/api/inventory?store_id=${storeId}`);
     activeTxInventory = inventory || [];
     renderTxSkuOptions(activeTxInventory);
   } catch (err) {
     console.error('Failed to load store inventory for tx modal:', err);
-    txSkuInput.innerHTML = '<option value="">Lỗi tải hàng tồn kho</option>';
+    txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Failed to load inventory' : (currentLang === 'zh' ? '加载库存失败' : 'Lỗi tải hàng tồn kho')}</option>`;
   }
 }
 
@@ -2661,6 +2849,7 @@ function updateThemeToggleIcon() {
 
 if (themeToggleBtn) {
   themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.add('no-transition');
     const wasLight = document.body.classList.contains('light-theme');
     if (wasLight) {
       document.body.classList.remove('light-theme');
@@ -2671,6 +2860,13 @@ if (themeToggleBtn) {
     }
     updateThemeToggleIcon();
     updateThemeCharts();
+    
+    // Force reflow
+    document.body.offsetHeight;
+    
+    setTimeout(() => {
+      document.body.classList.remove('no-transition');
+    }, 50);
   });
 }
 
@@ -2790,6 +2986,7 @@ const translations = {
     tx_col_price: "Đơn giá",
     tx_col_qty: "SL",
     tx_col_total: "Tổng tiền (USD)",
+    tx_btn_add: "Tạo Giao Dịch Mới",
 
     // Inventory Tab
     inv_title: "Quản lý Kho & Tồn Kho (Stock)",
@@ -2797,6 +2994,7 @@ const translations = {
     inv_btn_import: "Nhập Hàng Mới",
     inv_filter_store: "Cửa hàng:",
     inv_search_placeholder: "Tìm kiếm SKU, tên sản phẩm hoặc danh mục...",
+    inv_lbl_search: "Tìm kiếm:",
     inv_stock_status: "Trạng thái Tồn kho Thực tế",
     inv_import_history: "Nhật ký Nhập hàng Gần đây",
     inv_col_sku: "SKU",
@@ -2806,7 +3004,141 @@ const translations = {
     inv_col_date: "Ngày nhập",
     inv_col_sku_prod: "SKU / Sản phẩm",
     inv_col_qty_added: "S.Lượng",
-    inv_col_supplier: "Nhà cung cấp"
+    inv_col_supplier: "Nhà cung cấp",
+
+    // Admin & Modals Extra Translations
+    admin_users_title: "Quản lý Tài khoản Hệ thống",
+    admin_users_btn_add: "Thêm Tài Khoản",
+    admin_users_col_id: "ID",
+    admin_users_col_username: "Tên Đăng Nhập",
+    admin_users_col_role: "Vai trò",
+    admin_users_col_store: "Cửa hàng phụ trách",
+    admin_users_col_mfa: "Trạng thái MFA",
+    admin_users_col_actions: "Hành động",
+    admin_perms_title: "Thiết lập Phân quyền (Vai trò x Quyền hạn)",
+    admin_perms_btn_save: "Lưu Cấu Hình Phân Quyền",
+    admin_logs_title: "Nhật ký Hoạt động (Audit Logs)",
+    admin_logs_lbl_filter: "Lọc hành động:",
+    admin_logs_opt_all: "Tất cả",
+    admin_logs_opt_login: "Đăng nhập (Thường)",
+    admin_logs_opt_login_mfa: "Đăng nhập (MFA)",
+    admin_logs_opt_customer_create: "Tạo KH",
+    admin_logs_opt_customer_delete: "Xóa KH",
+    admin_logs_opt_discount_create: "Tạo Khuyến mãi",
+    admin_logs_opt_discount_update: "Sửa Khuyến mãi",
+    admin_logs_opt_discount_delete: "Xóa Khuyến mãi",
+    admin_logs_opt_employee_create: "Thêm Nhân viên",
+    admin_logs_opt_employee_update: "Sửa Nhân viên",
+    admin_logs_opt_employee_delete: "Xóa Nhân viên",
+    admin_logs_opt_product_create: "Tạo Sản phẩm",
+    admin_logs_opt_product_update: "Sửa Sản phẩm",
+    admin_logs_opt_product_delete: "Xóa Sản phẩm",
+    admin_logs_opt_user_create: "Tạo User",
+    admin_logs_opt_user_update: "Sửa User",
+    admin_logs_opt_user_delete: "Xóa User",
+    admin_logs_opt_mfa_enable: "Bật MFA",
+    admin_logs_opt_mfa_disable: "Tắt MFA",
+    admin_logs_btn_refresh: "Tải lại",
+    admin_logs_col_time: "Thời gian",
+    admin_logs_col_user: "Người dùng",
+    admin_logs_col_role: "Vai trò",
+    admin_logs_col_action: "Hành động",
+    admin_logs_col_details: "Chi tiết hoạt động",
+    admin_logs_col_ip: "Địa chỉ IP",
+    modal_add_customer_title: "Thêm Khách Hàng Mới",
+    modal_cust_name: "Họ và Tên:",
+    modal_cust_name_placeholder: "Nhập họ và tên...",
+    modal_cust_age: "Tuổi:",
+    modal_cust_age_placeholder: "Nhập tuổi...",
+    modal_cust_gender: "Giới tính:",
+    modal_cust_gender_male: "Nam (Male)",
+    modal_cust_gender_female: "Nữ (Female)",
+    modal_cust_gender_other: "Khác (Non-binary)",
+    modal_cust_country: "Quốc gia:",
+    modal_cust_country_placeholder: "Ví dụ: Vietnam, USA...",
+    modal_btn_create: "Thêm mới",
+    modal_btn_cancel: "Hủy",
+    modal_create_discount_title: "Tạo Khuyến Mãi Mới",
+    modal_edit_discount_title: "Cập nhật Chiết khấu Khuyến mãi",
+    modal_disc_store: "Cửa hàng:",
+    modal_disc_season: "Tên chương trình:",
+    modal_disc_season_placeholder: "Ví dụ: Summer Sale, Winter Sale...",
+    modal_disc_avg: "Mức chiết khấu trung bình (0.00 - 1.00):",
+    modal_disc_avg_placeholder: "Ví dụ: 0.15",
+    modal_disc_start: "Ngày bắt đầu:",
+    modal_disc_end: "Ngày kết thúc:",
+    modal_add_employee_title: "Thêm Nhân Viên Mới",
+    modal_edit_employee_title: "Cập nhật thông tin Nhân viên",
+    modal_emp_store: "Cửa hàng:",
+    modal_emp_name: "Họ và Tên:",
+    modal_emp_name_placeholder: "Nhập họ và tên...",
+    modal_emp_role: "Vai trò:",
+    modal_emp_role_staff: "Sales Staff (Nhân viên bán hàng)",
+    modal_emp_role_manager: "Store Manager (Quản lý cửa hàng)",
+    modal_add_product_title: "Thêm Sản Phẩm Mới",
+    modal_edit_product_title: "Cập nhật Sản Phẩm",
+    modal_prod_name: "Tên sản phẩm:",
+    modal_prod_name_placeholder: "Ví dụ: Áo thun Polo nam...",
+    modal_prod_cat: "Danh mục:",
+    modal_prod_cat_clothing: "Quần áo (Clothing)",
+    modal_prod_cat_shoes: "Giày dép (Shoes)",
+    modal_prod_cat_accessories: "Phụ kiện (Accessories)",
+    modal_prod_subcat: "Danh mục phụ:",
+    modal_prod_subcat_placeholder: "Ví dụ: T-Shirts, Sneakers...",
+    modal_prod_color: "Kiểu màu:",
+    modal_prod_color_placeholder: "Ví dụ: Black, White, Multi...",
+    modal_prod_desc: "Mô tả (tiếng Anh):",
+    modal_prod_desc_placeholder: "Mô tả chi tiết sản phẩm...",
+    modal_prod_image: "URL hình ảnh (Tùy chọn):",
+    modal_prod_image_placeholder: "Bỏ trống để tự động sinh ảnh...",
+    modal_prod_btn_save: "Lưu thay đổi",
+    modal_admin_user_title_add: "Thêm Tài Khoản Mới",
+    modal_admin_user_title_edit: "Cập nhật tài khoản",
+    modal_admin_user_username: "Tên đăng nhập:",
+    modal_admin_user_username_placeholder: "Nhập tên đăng nhập...",
+    modal_admin_user_password: "Mật khẩu:",
+    modal_admin_user_password_placeholder: "Nhập mật khẩu...",
+    modal_admin_user_password_placeholder_edit: "Bỏ trống nếu giữ nguyên mật khẩu",
+    modal_admin_user_role: "Vai trò:",
+    modal_admin_user_store: "Cửa hàng được gán (Nếu có):",
+    modal_admin_user_store_global: "Không gán (Global)",
+    modal_admin_user_btn_save: "Lưu",
+    modal_mfa_title: "Thiết lập Xác thực 2 lớp (MFA)",
+    modal_mfa_status: "Trạng thái hiện tại:",
+    modal_mfa_status_on: "Đang Bật",
+    modal_mfa_status_off: "Đã Tắt",
+    modal_mfa_desc_enable: "Hãy nhập mã khóa bên dưới vào ứng dụng Google Authenticator trên điện thoại để lấy mã xác nhận.",
+    modal_mfa_secret: "Khóa bí mật (Secret Key):",
+    modal_mfa_verify_code: "Nhập mã OTP xác thực (6 chữ số):",
+    modal_mfa_verify_placeholder: "Ví dụ: 123456",
+    modal_mfa_btn_enable: "Xác nhận Bật",
+    modal_mfa_desc_disable: "Nhập mã OTP hiện tại từ điện thoại để hủy kích hoạt bảo mật MFA.",
+    modal_mfa_btn_disable: "Hủy kích hoạt",
+    modal_import_title: "Nhập Kho Hàng Mới",
+    modal_import_store: "Cửa hàng nhận:",
+    modal_import_sku: "Chọn SKU sản phẩm:",
+    modal_import_qty: "Số lượng nhập (sản phẩm):",
+    modal_import_qty_placeholder: "Ví dụ: 100",
+    modal_import_supplier: "Nhà cung cấp / Đối tác:",
+    modal_import_supplier_placeholder: "Nhập tên nhà cung cấp...",
+    modal_import_btn: "Nhập kho",
+    modal_tx_title: "Tạo Giao Dịch Bán Hàng Mới",
+    modal_tx_store: "Cửa hàng thực hiện:",
+    modal_tx_customer: "Chọn Khách Hàng:",
+    modal_tx_customer_search: "Tìm nhanh khách hàng (nhập tên, ID, quốc gia)...",
+    modal_tx_sku: "Chọn SKU sản phẩm bán:",
+    modal_tx_sku_search: "Tìm nhanh sản phẩm (nhập SKU, tên)...",
+    modal_tx_qty: "Số lượng mua:",
+    modal_tx_price: "Đơn giá bán (USD):",
+    modal_tx_price_placeholder: "Nhập đơn giá...",
+    modal_tx_payment: "Hình thức thanh toán:",
+    modal_tx_payment_cc: "Thẻ tín dụng (Credit Card)",
+    modal_tx_payment_paypal: "PayPal",
+    modal_tx_payment_cash: "Tiền mặt (Cash)",
+    modal_tx_payment_apple: "Apple Pay",
+    modal_tx_btn_create: "Tạo giao dịch",
+    modal_tx_alert_stock: "Cảnh báo thiếu hàng tồn kho!",
+    modal_tx_alert_stock_desc: "Số lượng dự báo tuần tới vươt quá số lượng hàng còn lại trong kho."
   },
   en: {
     sidebar_dashboard: "Map Dashboard",
@@ -2903,6 +3235,7 @@ const translations = {
     tx_col_price: "Price",
     tx_col_qty: "Qty",
     tx_col_total: "Total (USD)",
+    tx_btn_add: "Create New Transaction",
 
     // Inventory Tab
     inv_title: "Inventory & Stock Management",
@@ -2910,6 +3243,7 @@ const translations = {
     inv_btn_import: "Import Stock",
     inv_filter_store: "Store:",
     inv_search_placeholder: "Search by SKU, product name, or category...",
+    inv_lbl_search: "Search:",
     inv_stock_status: "Real-time Stock Levels",
     inv_import_history: "Recent Stock Imports",
     inv_col_sku: "SKU",
@@ -2919,7 +3253,141 @@ const translations = {
     inv_col_date: "Import Date",
     inv_col_sku_prod: "SKU / Product",
     inv_col_qty_added: "Qty",
-    inv_col_supplier: "Supplier"
+    inv_col_supplier: "Supplier",
+
+    // Admin & Modals Extra Translations
+    admin_users_title: "System User Accounts Management",
+    admin_users_btn_add: "Add New User",
+    admin_users_col_id: "User ID",
+    admin_users_col_username: "Username",
+    admin_users_col_role: "Role",
+    admin_users_col_store: "Managed Store Location",
+    admin_users_col_mfa: "MFA Status",
+    admin_users_col_actions: "Actions",
+    admin_perms_title: "Access Permissions Grid (RBAC Matrix)",
+    admin_perms_btn_save: "Save RBAC Grid Configurations",
+    admin_logs_title: "System Audit Activity Logs",
+    admin_logs_lbl_filter: "Filter Actions:",
+    admin_logs_opt_all: "All Actions",
+    admin_logs_opt_login: "Login (Standard)",
+    admin_logs_opt_login_mfa: "Login (MFA)",
+    admin_logs_opt_customer_create: "Create Customer",
+    admin_logs_opt_customer_delete: "Delete Customer",
+    admin_logs_opt_discount_create: "Create Promotion",
+    admin_logs_opt_discount_update: "Update Promotion",
+    admin_logs_opt_discount_delete: "Delete Promotion",
+    admin_logs_opt_employee_create: "Add Employee",
+    admin_logs_opt_employee_update: "Update Employee",
+    admin_logs_opt_employee_delete: "Delete Employee",
+    admin_logs_opt_product_create: "Create Product",
+    admin_logs_opt_product_update: "Update Product",
+    admin_logs_opt_product_delete: "Delete Product",
+    admin_logs_opt_user_create: "Create User",
+    admin_logs_opt_user_update: "Update User",
+    admin_logs_opt_user_delete: "Delete User",
+    admin_logs_opt_mfa_enable: "Enable MFA",
+    admin_logs_opt_mfa_disable: "Disable MFA",
+    admin_logs_btn_refresh: "Refresh Logs",
+    admin_logs_col_time: "Timestamp",
+    admin_logs_col_user: "User Account",
+    admin_logs_col_role: "Account Role",
+    admin_logs_col_action: "Activity Type",
+    admin_logs_col_details: "Detailed Context",
+    admin_logs_col_ip: "IP Address",
+    modal_add_customer_title: "Add New Customer",
+    modal_cust_name: "Full Name:",
+    modal_cust_name_placeholder: "Enter full name...",
+    modal_cust_age: "Age:",
+    modal_cust_age_placeholder: "Enter age...",
+    modal_cust_gender: "Gender:",
+    modal_cust_gender_male: "Male",
+    modal_cust_gender_female: "Female",
+    modal_cust_gender_other: "Non-binary",
+    modal_cust_country: "Country:",
+    modal_cust_country_placeholder: "e.g., USA, UK, Vietnam...",
+    modal_btn_create: "Add New",
+    modal_btn_cancel: "Cancel",
+    modal_create_discount_title: "Configure New Season Promotion",
+    modal_edit_discount_title: "Update Promotion Discount",
+    modal_disc_store: "Store:",
+    modal_disc_season: "Promotion Name:",
+    modal_disc_season_placeholder: "e.g., Summer Clearance, New Year Discount...",
+    modal_disc_avg: "Average Discount Ratio (0.00 - 1.00):",
+    modal_disc_avg_placeholder: "e.g., 0.15",
+    modal_disc_start: "Start Date:",
+    modal_disc_end: "End Date:",
+    modal_add_employee_title: "Add New Employee Profile",
+    modal_edit_employee_title: "Update Employee Profile",
+    modal_emp_store: "Assigned Store Location:",
+    modal_emp_name: "Full Name:",
+    modal_emp_name_placeholder: "Enter full name...",
+    modal_emp_role: "Role Designation:",
+    modal_emp_role_staff: "Sales Staff",
+    modal_emp_role_manager: "Store Manager",
+    modal_add_product_title: "Add New Product Entry",
+    modal_edit_product_title: "Update Product Details",
+    modal_prod_name: "Product Name:",
+    modal_prod_name_placeholder: "e.g., Men's Polo Shirt...",
+    modal_prod_cat: "Parent Category:",
+    modal_prod_cat_clothing: "Clothing",
+    modal_prod_cat_shoes: "Shoes",
+    modal_prod_cat_accessories: "Accessories",
+    modal_prod_subcat: "Sub-category:",
+    modal_prod_subcat_placeholder: "e.g., T-Shirts, Sneakers...",
+    modal_prod_color: "Color Pattern:",
+    modal_prod_color_placeholder: "e.g., Black, White, Multi...",
+    modal_prod_desc: "Detailed Description (English):",
+    modal_prod_desc_placeholder: "Enter product details and specs...",
+    modal_prod_image: "Media Image URL (Optional):",
+    modal_prod_image_placeholder: "Leave empty to auto-generate image...",
+    modal_prod_btn_save: "Save Changes",
+    modal_admin_user_title_add: "Create System Account",
+    modal_admin_user_title_edit: "Update System Account",
+    modal_admin_user_username: "Username:",
+    modal_admin_user_username_placeholder: "Enter username...",
+    modal_admin_user_password: "Password:",
+    modal_admin_user_password_placeholder: "Enter password...",
+    modal_admin_user_password_placeholder_edit: "Leave blank to keep current password",
+    modal_admin_user_role: "System Role:",
+    modal_admin_user_store: "Assigned Store (If applicable):",
+    modal_admin_user_store_global: "None (Global Access)",
+    modal_admin_user_btn_save: "Save",
+    modal_mfa_title: "Configure 2-Factor Authentication (MFA)",
+    modal_mfa_status: "Current MFA Status:",
+    modal_mfa_status_on: "Enabled (Active)",
+    modal_mfa_status_off: "Disabled (Inactive)",
+    modal_mfa_desc_enable: "Enter the secret key below into your Google Authenticator mobile app to retrieve verification OTPs.",
+    modal_mfa_secret: "MFA Secret Key:",
+    modal_mfa_verify_code: "Enter 6-Digit Authenticator OTP:",
+    modal_mfa_verify_placeholder: "e.g., 123456",
+    modal_mfa_btn_enable: "Confirm Activation",
+    modal_mfa_desc_disable: "Enter your current 6-Digit Authenticator OTP to disable MFA protection.",
+    modal_mfa_btn_disable: "Deactivate MFA",
+    modal_import_title: "Import New Inventory Stock",
+    modal_import_store: "Receiving Store Location:",
+    modal_import_sku: "Select Target SKU:",
+    modal_import_qty: "Quantity to Import (items):",
+    modal_import_qty_placeholder: "e.g., 100",
+    modal_import_supplier: "Supplier / Partner:",
+    modal_import_supplier_placeholder: "Enter supplier name...",
+    modal_import_btn: "Import",
+    modal_tx_title: "Register New Sales Transaction",
+    modal_tx_store: "Originating Store:",
+    modal_tx_customer: "Select Customer profile:",
+    modal_tx_customer_search: "Quick search customer (name, ID, country)...",
+    modal_tx_sku: "Select SKU to sell:",
+    modal_tx_sku_search: "Quick search product (SKU, name)...",
+    modal_tx_qty: "Purchase Quantity:",
+    modal_tx_price: "Selling Unit Price (USD):",
+    modal_tx_price_placeholder: "Enter selling price...",
+    modal_tx_payment: "Payment Method:",
+    modal_tx_payment_cc: "Credit Card",
+    modal_tx_payment_paypal: "PayPal",
+    modal_tx_payment_cash: "Cash",
+    modal_tx_payment_apple: "Apple Pay",
+    modal_tx_btn_create: "Create Transaction",
+    modal_tx_alert_stock: "Out of Stock Warning!",
+    modal_tx_alert_stock_desc: "Weekly forecasted demand exceeds the remaining in-stock quantity."
   },
   zh: {
     sidebar_dashboard: "地图仪表盘",
@@ -3016,6 +3484,7 @@ const translations = {
     tx_col_price: "单价",
     tx_col_qty: "数量",
     tx_col_total: "总计 (USD)",
+    tx_btn_add: "登记新交易",
 
     // Inventory Tab
     inv_title: "库存与进销存管理",
@@ -3023,6 +3492,7 @@ const translations = {
     inv_btn_import: "办理商品入库",
     inv_filter_store: "门店:",
     inv_search_placeholder: "按 SKU、商品名称或品类搜索...",
+    inv_lbl_search: "搜索:",
     inv_stock_status: "实时库存状态",
     inv_import_history: "最近入库日志",
     inv_col_sku: "商品 SKU",
@@ -3032,7 +3502,141 @@ const translations = {
     inv_col_date: "入库时间",
     inv_col_sku_prod: "SKU / 商品",
     inv_col_qty_added: "数量",
-    inv_col_supplier: "供货商"
+    inv_col_supplier: "供货商",
+
+    // Admin & Modals Extra Translations
+    admin_users_title: "系统账户与权限管理",
+    admin_users_btn_add: "新增系统账户",
+    admin_users_col_id: "账户 ID",
+    admin_users_col_username: "登录账号",
+    admin_users_col_role: "所属角色",
+    admin_users_col_store: "负责管理门店",
+    admin_users_col_mfa: "MFA 状态",
+    admin_users_col_actions: "操作",
+    admin_perms_title: "动态角色权限配置矩阵 (RBAC Matrix)",
+    admin_perms_btn_save: "保存 RBAC 矩阵配置",
+    admin_logs_title: "系统操作审计日志 (Audit Logs)",
+    admin_logs_lbl_filter: "按操作过滤:",
+    admin_logs_opt_all: "所有操作",
+    admin_logs_opt_login: "登录 (普通)",
+    admin_logs_opt_login_mfa: "登录 (MFA)",
+    admin_logs_opt_customer_create: "创建客户",
+    admin_logs_opt_customer_delete: "删除客户",
+    admin_logs_opt_discount_create: "创建促销",
+    admin_logs_opt_discount_update: "更新促销",
+    admin_logs_opt_discount_delete: "删除促销",
+    admin_logs_opt_employee_create: "添加员工",
+    admin_logs_opt_employee_update: "更新员工",
+    admin_logs_opt_employee_delete: "删除员工",
+    admin_logs_opt_product_create: "创建商品",
+    admin_logs_opt_product_update: "更新商品",
+    admin_logs_opt_product_delete: "删除商品",
+    admin_logs_opt_user_create: "创建用户",
+    admin_logs_opt_user_update: "更新用户",
+    admin_logs_opt_user_delete: "删除用户",
+    admin_logs_opt_mfa_enable: "开启 MFA",
+    admin_logs_opt_mfa_disable: "关闭 MFA",
+    admin_logs_btn_refresh: "刷新日志",
+    admin_logs_col_time: "日志时间",
+    admin_logs_col_user: "操作用户",
+    admin_logs_col_role: "用户角色",
+    admin_logs_col_action: "操作动作",
+    admin_logs_col_details: "操作详情",
+    admin_logs_col_ip: "客户端 IP",
+    modal_add_customer_title: "添加新客户",
+    modal_cust_name: "客户姓名:",
+    modal_cust_name_placeholder: "请输入姓名...",
+    modal_cust_age: "年龄:",
+    modal_cust_age_placeholder: "请输入年龄...",
+    modal_cust_gender: "性别:",
+    modal_cust_gender_male: "男",
+    modal_cust_gender_female: "女",
+    modal_cust_gender_other: "其他 (Non-binary)",
+    modal_cust_country: "所属国家/地区:",
+    modal_cust_country_placeholder: "例如: 中国, 美国, 越南...",
+    modal_btn_create: "新增创建",
+    modal_btn_cancel: "取消",
+    modal_create_discount_title: "新增季度折扣配置",
+    modal_edit_discount_title: "更新折扣力度",
+    modal_disc_store: "门店:",
+    modal_disc_season: "促销计划名称:",
+    modal_disc_season_placeholder: "例如: 夏季清仓, 冬季酬宾...",
+    modal_disc_avg: "平均折扣力度 (0.00 - 1.00):",
+    modal_disc_avg_placeholder: "例如: 0.15",
+    modal_disc_start: "开始时间:",
+    modal_disc_end: "结束时间:",
+    modal_add_employee_title: "添加新员工档案",
+    modal_edit_employee_title: "更新员工信息",
+    modal_emp_store: "所属门店:",
+    modal_emp_name: "员工姓名:",
+    modal_emp_name_placeholder: "请输入员工姓名...",
+    modal_emp_role: "岗位职称:",
+    modal_emp_role_staff: "销售员工",
+    modal_emp_role_manager: "门店经理",
+    modal_add_product_title: "添加新商品名录",
+    modal_edit_product_title: "更新商品属性",
+    modal_prod_name: "商品名称:",
+    modal_prod_name_placeholder: "例如: 男式高档 Polo 衫...",
+    modal_prod_cat: "主类别:",
+    modal_prod_cat_clothing: "服装",
+    modal_prod_cat_shoes: "鞋履",
+    modal_prod_cat_accessories: "配饰",
+    modal_prod_subcat: "子类别:",
+    modal_prod_subcat_placeholder: "例如: T恤, 运动鞋...",
+    modal_prod_color: "商品颜色:",
+    modal_prod_color_placeholder: "例如: 黑色, 白色, 彩色...",
+    modal_prod_desc: "详细描述 (英文):",
+    modal_prod_desc_placeholder: "请输入详细的商品描述与规格...",
+    modal_prod_image: "商品图片 URL (选填):",
+    modal_prod_image_placeholder: "留空将自动生成图片...",
+    modal_prod_btn_save: "保存更改",
+    modal_admin_user_title_add: "创建系统账号",
+    modal_admin_user_title_edit: "更新系统账号",
+    modal_admin_user_username: "登录账号:",
+    modal_admin_user_username_placeholder: "请输入账号...",
+    modal_admin_user_password: "登录密码:",
+    modal_admin_user_password_placeholder: "请输入密码...",
+    modal_admin_user_password_placeholder_edit: "留空将保持当前密码不变",
+    modal_admin_user_role: "系统角色:",
+    modal_admin_user_store: "管辖门店 (若有):",
+    modal_admin_user_store_global: "无 (全局访问权)",
+    modal_admin_user_btn_save: "保存",
+    modal_mfa_title: "双重身份验证设置 (MFA)",
+    modal_mfa_status: "当前 MFA 状态:",
+    modal_mfa_status_on: "已开启 (Active)",
+    modal_mfa_status_off: "未开启 (Inactive)",
+    modal_mfa_desc_enable: "请在手机上的 Google Authenticator 应用程序中输入以下密钥以获取验证码。",
+    modal_mfa_secret: "MFA 密匙 (Secret Key):",
+    modal_mfa_verify_code: "输入 6 位数双重验证码 (OTP):",
+    modal_mfa_verify_placeholder: "例如: 123456",
+    modal_mfa_btn_enable: "确认开启",
+    modal_mfa_desc_disable: "请输入手机上当前的 6 位数验证码以禁用双重身份验证保护。",
+    modal_mfa_btn_disable: "解除 MFA 保护",
+    modal_import_title: "办理新商品入库",
+    modal_import_store: "收货门店:",
+    modal_import_sku: "选择入库 SKU:",
+    modal_import_qty: "入库数量 (件):",
+    modal_import_qty_placeholder: "例如: 100",
+    modal_import_supplier: "供货商 / 合作伙伴:",
+    modal_import_supplier_placeholder: "请输入供货商名称...",
+    modal_import_btn: "入库",
+    modal_tx_title: "登记销售交易流水",
+    modal_tx_store: "发生门店:",
+    modal_tx_customer: "选择客户档案:",
+    modal_tx_customer_search: "快速搜索客户 (姓名、ID、国家)...",
+    modal_tx_sku: "选择销售 SKU:",
+    modal_tx_sku_search: "快速搜索商品 (SKU、名称)...",
+    modal_tx_qty: "购买数量:",
+    modal_tx_price: "销售单价 (USD):",
+    modal_tx_price_placeholder: "请输入单价...",
+    modal_tx_payment: "付款方式:",
+    modal_tx_payment_cc: "信用卡 (Credit Card)",
+    modal_tx_payment_paypal: "PayPal",
+    modal_tx_payment_cash: "现金 (Cash)",
+    modal_tx_payment_apple: "Apple Pay",
+    modal_tx_btn_create: "创建销售单",
+    modal_tx_alert_stock: "库存不足警告！",
+    modal_tx_alert_stock_desc: "下周需求预测数量超出了目前该商品的剩余库存量。"
   }
 };
 
@@ -3167,7 +3771,12 @@ function translatePage() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (translations[currentLang] && translations[currentLang][key]) {
-      setElementTranslatedText(el, translations[currentLang][key]);
+      const text = translations[currentLang][key];
+      if ((el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') && el.hasAttribute('placeholder')) {
+        el.placeholder = text;
+      } else {
+        setElementTranslatedText(el, text);
+      }
     }
   });
 
@@ -3175,7 +3784,7 @@ function translatePage() {
   for (const [selector, key] of Object.entries(elementSelectors)) {
     const el = document.querySelector(selector);
     if (el && translations[currentLang] && translations[currentLang][key]) {
-      if (el.tagName === 'INPUT' && el.type === 'text') {
+      if ((el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') && el.type === 'text') {
         el.placeholder = translations[currentLang][key];
       } else {
         setElementTranslatedText(el, translations[currentLang][key]);

@@ -3,31 +3,31 @@
   <!-- Add Customer Modal -->
   <div id="customer-modal" class="modal">
     <div class="modal-content">
-      <h3>Thêm Khách Hàng Mới</h3>
+      <h3 data-i18n="modal_add_customer_title">Thêm Khách Hàng Mới</h3>
       <form id="customer-form">
         <div class="form-group">
-          <label for="customer-name-input">Họ và Tên:</label>
-          <input type="text" id="customer-name-input" required class="select-control" placeholder="Nhập họ và tên...">
+          <label for="customer-name-input" data-i18n="modal_cust_name">Họ và Tên:</label>
+          <input type="text" id="customer-name-input" required class="select-control" placeholder="Nhập họ và tên..." data-i18n="modal_cust_name_placeholder">
         </div>
         <div class="form-group">
-          <label for="customer-age-input">Tuổi:</label>
-          <input type="number" id="customer-age-input" required min="1" max="120" class="select-control" placeholder="Nhập tuổi...">
+          <label for="customer-age-input" data-i18n="modal_cust_age">Tuổi:</label>
+          <input type="number" id="customer-age-input" required min="1" max="120" class="select-control" placeholder="Nhập tuổi..." data-i18n="modal_cust_age_placeholder">
         </div>
         <div class="form-group">
-          <label for="customer-gender-input">Giới tính:</label>
+          <label for="customer-gender-input" data-i18n="modal_cust_gender">Giới tính:</label>
           <select id="customer-gender-input" required class="select-control">
-            <option value="Male">Nam (Male)</option>
-            <option value="Female">Nữ (Female)</option>
-            <option value="Non-binary">Khác (Non-binary)</option>
+            <option value="Male" data-i18n="modal_cust_gender_male">Nam (Male)</option>
+            <option value="Female" data-i18n="modal_cust_gender_female">Nữ (Female)</option>
+            <option value="Non-binary" data-i18n="modal_cust_gender_other">Khác (Non-binary)</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="customer-country-input">Quốc gia:</label>
-          <input type="text" id="customer-country-input" required class="select-control" placeholder="Ví dụ: Vietnam, USA...">
+          <label for="customer-country-input" data-i18n="modal_cust_country">Quốc gia:</label>
+          <input type="text" id="customer-country-input" required class="select-control" placeholder="Ví dụ: Vietnam, USA..." data-i18n="modal_cust_country_placeholder">
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary">Thêm mới</button>
-          <button type="button" id="btn-cancel-customer" class="btn-secondary">Hủy</button>
+          <button type="submit" class="btn-primary" data-i18n="modal_btn_create">Thêm mới</button>
+          <button type="button" id="btn-cancel-customer" class="btn-secondary" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </form>
     </div>
@@ -36,31 +36,31 @@
   <!-- Create Discount Modal -->
   <div id="discount-create-modal" class="modal">
     <div class="modal-content">
-      <h3>Tạo Khuyến Mãi Mới</h3>
+      <h3 data-i18n="modal_create_discount_title">Tạo Khuyến Mãi Mới</h3>
       <form id="discount-create-form">
         <div class="form-group create-discount-store-container">
-          <label for="discount-store-input">Cửa hàng:</label>
+          <label for="discount-store-input" data-i18n="modal_disc_store">Cửa hàng:</label>
           <select id="discount-store-input" required class="select-control"></select>
         </div>
         <div class="form-group">
-          <label for="discount-season-input">Tên chương trình:</label>
-          <input type="text" id="discount-season-input" required class="select-control" placeholder="Ví dụ: Summer Sale, Winter Sale...">
+          <label for="discount-season-input" data-i18n="modal_disc_season">Tên chương trình:</label>
+          <input type="text" id="discount-season-input" required class="select-control" placeholder="Ví dụ: Summer Sale, Winter Sale..." data-i18n="modal_disc_season_placeholder">
         </div>
         <div class="form-group">
-          <label for="discount-avg-input">Mức chiết khấu trung bình (0.00 - 1.00):</label>
-          <input type="number" id="discount-avg-input" required step="0.01" min="0" max="1" class="select-control" placeholder="Ví dụ: 0.15">
+          <label for="discount-avg-input" data-i18n="modal_disc_avg">Mức chiết khấu trung bình (0.00 - 1.00):</label>
+          <input type="number" id="discount-avg-input" required step="0.01" min="0" max="1" class="select-control" placeholder="Ví dụ: 0.15" data-i18n="modal_disc_avg_placeholder">
         </div>
         <div class="form-group">
-          <label for="discount-start-input">Ngày bắt đầu:</label>
+          <label for="discount-start-input" data-i18n="modal_disc_start">Ngày bắt đầu:</label>
           <input type="date" id="discount-start-input" required class="select-control">
         </div>
         <div class="form-group">
-          <label for="discount-end-input">Ngày kết thúc:</label>
+          <label for="discount-end-input" data-i18n="modal_disc_end">Ngày kết thúc:</label>
           <input type="date" id="discount-end-input" required class="select-control">
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary">Tạo mới</button>
-          <button type="button" id="btn-cancel-create-discount" class="btn-secondary">Hủy</button>
+          <button type="submit" class="btn-primary" data-i18n="modal_btn_create">Tạo mới</button>
+          <button type="button" id="btn-cancel-create-discount" class="btn-secondary" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </form>
     </div>
@@ -69,26 +69,26 @@
   <!-- Create Employee Modal -->
   <div id="employee-create-modal" class="modal">
     <div class="modal-content">
-      <h3>Thêm Nhân Viên Mới</h3>
+      <h3 data-i18n="modal_add_employee_title">Thêm Nhân Viên Mới</h3>
       <form id="employee-create-form">
         <div class="form-group create-employee-store-container">
-          <label for="employee-store-input">Cửa hàng:</label>
+          <label for="employee-store-input" data-i18n="modal_emp_store">Cửa hàng:</label>
           <select id="employee-store-input" required class="select-control"></select>
         </div>
         <div class="form-group">
-          <label for="employee-name-input">Họ và Tên:</label>
-          <input type="text" id="employee-name-input" required class="select-control" placeholder="Nhập họ và tên...">
+          <label for="employee-name-input" data-i18n="modal_emp_name">Họ và Tên:</label>
+          <input type="text" id="employee-name-input" required class="select-control" placeholder="Nhập họ và tên..." data-i18n="modal_emp_name_placeholder">
         </div>
         <div class="form-group">
-          <label for="employee-role-input">Vai trò:</label>
+          <label for="employee-role-input" data-i18n="modal_emp_role">Vai trò:</label>
           <select id="employee-role-input" required class="select-control">
-            <option value="Sales Staff">Sales Staff (Nhân viên bán hàng)</option>
-            <option value="Store Manager">Store Manager (Quản lý cửa hàng)</option>
+            <option value="Sales Staff" data-i18n="modal_emp_role_staff">Sales Staff (Nhân viên bán hàng)</option>
+            <option value="Store Manager" data-i18n="modal_emp_role_manager">Store Manager (Quản lý cửa hàng)</option>
           </select>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary">Thêm mới</button>
-          <button type="button" id="btn-cancel-create-employee" class="btn-secondary">Hủy</button>
+          <button type="submit" class="btn-primary" data-i18n="modal_btn_create">Thêm mới</button>
+          <button type="button" id="btn-cancel-create-employee" class="btn-secondary" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </form>
     </div>
@@ -97,40 +97,40 @@
   <!-- Product Create/Edit Modal -->
   <div id="product-modal" class="modal">
     <div class="modal-content">
-      <h3 id="product-modal-title">Thêm Sản Phẩm Mới</h3>
+      <h3 id="product-modal-title" data-i18n="modal_add_product_title">Thêm Sản Phẩm Mới</h3>
       <form id="product-form">
         <input type="hidden" id="product-id-input">
         <div class="form-group">
-          <label for="product-name-input">Tên sản phẩm:</label>
-          <input type="text" id="product-name-input" required class="select-control" placeholder="Ví dụ: Áo thun Polo nam...">
+          <label for="product-name-input" data-i18n="modal_prod_name">Tên sản phẩm:</label>
+          <input type="text" id="product-name-input" required class="select-control" placeholder="Ví dụ: Áo thun Polo nam..." data-i18n="modal_prod_name_placeholder">
         </div>
         <div class="form-group">
-          <label for="product-category-input">Danh mục:</label>
+          <label for="product-category-input" data-i18n="modal_prod_cat">Danh mục:</label>
           <select id="product-category-input" required class="select-control">
-            <option value="Clothing">Quần áo (Clothing)</option>
-            <option value="Shoes">Giày dép (Shoes)</option>
-            <option value="Accessories">Phụ kiện (Accessories)</option>
+            <option value="Clothing" data-i18n="modal_prod_cat_clothing">Quần áo (Clothing)</option>
+            <option value="Shoes" data-i18n="modal_prod_cat_shoes">Giày dép (Shoes)</option>
+            <option value="Accessories" data-i18n="modal_prod_cat_accessories">Phụ kiện (Accessories)</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="product-subcategory-input">Danh mục phụ:</label>
-          <input type="text" id="product-subcategory-input" required class="select-control" placeholder="Ví dụ: T-Shirts, Sneakers...">
+          <label for="product-subcategory-input" data-i18n="modal_prod_subcat">Danh mục phụ:</label>
+          <input type="text" id="product-subcategory-input" required class="select-control" placeholder="Ví dụ: T-Shirts, Sneakers..." data-i18n="modal_prod_subcat_placeholder">
         </div>
         <div class="form-group">
-          <label for="product-color-input">Kiểu màu:</label>
-          <input type="text" id="product-color-input" required class="select-control" placeholder="Ví dụ: Black, White, Multi...">
+          <label for="product-color-input" data-i18n="modal_prod_color">Kiểu màu:</label>
+          <input type="text" id="product-color-input" required class="select-control" placeholder="Ví dụ: Black, White, Multi..." data-i18n="modal_prod_color_placeholder">
         </div>
         <div class="form-group">
-          <label for="product-description-input">Mô tả (tiếng Anh):</label>
-          <textarea id="product-description-input" required class="select-control" style="height: 80px; padding: 10px; resize: none;" placeholder="Mô tả chi tiết sản phẩm..."></textarea>
+          <label for="product-description-input" data-i18n="modal_prod_desc">Mô tả (tiếng Anh):</label>
+          <textarea id="product-description-input" required class="select-control" style="height: 80px; padding: 10px; resize: none;" placeholder="Mô tả chi tiết sản phẩm..." data-i18n="modal_prod_desc_placeholder"></textarea>
         </div>
         <div class="form-group">
-          <label for="product-image-input">URL hình ảnh (Tùy chọn):</label>
-          <input type="url" id="product-image-input" class="select-control" placeholder="Bỏ trống để tự động sinh ảnh...">
+          <label for="product-image-input" data-i18n="modal_prod_image">URL hình ảnh (Tùy chọn):</label>
+          <input type="url" id="product-image-input" class="select-control" placeholder="Bỏ trống để tự động sinh ảnh..." data-i18n="modal_prod_image_placeholder">
         </div>
         <div class="modal-actions">
-          <button type="submit" id="btn-save-product-submit" class="btn-primary">Lưu thay đổi</button>
-          <button type="button" id="btn-cancel-product" class="btn-secondary">Hủy</button>
+          <button type="submit" id="btn-save-product-submit" class="btn-primary" data-i18n="modal_prod_btn_save">Lưu thay đổi</button>
+          <button type="button" id="btn-cancel-product" class="btn-secondary" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </form>
     </div>
@@ -139,19 +139,19 @@
   <!-- IT Admin: Add/Edit User Modal -->
   <div id="admin-user-modal" class="modal">
     <div class="modal-content" style="max-width: 450px;">
-      <h3 id="admin-user-modal-title">Thêm Tài Khoản Mới</h3>
+      <h3 id="admin-user-modal-title" data-i18n="modal_admin_user_title_add">Thêm Tài Khoản Mới</h3>
       <form id="admin-user-form">
         <input type="hidden" id="admin-user-id-input">
         <div class="form-group">
-          <label for="admin-user-username-input">Tên đăng nhập:</label>
-          <input type="text" id="admin-user-username-input" required class="select-control" placeholder="Nhập tên đăng nhập...">
+          <label for="admin-user-username-input" data-i18n="modal_admin_user_username">Tên đăng nhập:</label>
+          <input type="text" id="admin-user-username-input" required class="select-control" placeholder="Nhập tên đăng nhập..." data-i18n="modal_admin_user_username_placeholder">
         </div>
         <div class="form-group" id="admin-user-password-container">
-          <label for="admin-user-password-input">Mật khẩu:</label>
-          <input type="password" id="admin-user-password-input" class="select-control" placeholder="Nhập mật khẩu...">
+          <label for="admin-user-password-input" data-i18n="modal_admin_user_password">Mật khẩu:</label>
+          <input type="password" id="admin-user-password-input" class="select-control" placeholder="Nhập mật khẩu..." data-i18n="modal_admin_user_password_placeholder">
         </div>
         <div class="form-group">
-          <label for="admin-user-role-input">Vai trò:</label>
+          <label for="admin-user-role-input" data-i18n="modal_admin_user_role">Vai trò:</label>
           <select id="admin-user-role-input" required class="select-control">
             <option value="IT Admin">IT Admin (Quản trị viên)</option>
             <option value="Director">Director (Giám đốc)</option>
@@ -163,14 +163,14 @@
           </select>
         </div>
         <div class="form-group" id="admin-user-store-container">
-          <label for="admin-user-store-input">Cửa hàng được gán (Nếu có):</label>
+          <label for="admin-user-store-input" data-i18n="modal_admin_user_store">Cửa hàng được gán (Nếu có):</label>
           <select id="admin-user-store-input" class="select-control">
-            <option value="">Không gán (Global)</option>
+            <option value="" data-i18n="modal_admin_user_store_global">Không gán (Global)</option>
           </select>
         </div>
         <div class="modal-actions">
-          <button type="submit" id="btn-save-admin-user" class="btn-primary">Lưu</button>
-          <button type="button" id="btn-cancel-admin-user" class="btn-secondary">Hủy</button>
+          <button type="submit" id="btn-save-admin-user" class="btn-primary" data-i18n="modal_admin_user_btn_save">Lưu</button>
+          <button type="button" id="btn-cancel-admin-user" class="btn-secondary" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </form>
     </div>
@@ -179,17 +179,17 @@
   <!-- User Self-Service MFA Security Setup Modal -->
   <div id="mfa-setup-modal" class="modal">
     <div class="modal-content" style="max-width: 450px;">
-      <h3>Thiết lập Xác thực 2 lớp (MFA)</h3>
+      <h3 data-i18n="modal_mfa_title">Thiết lập Xác thực 2 lớp (MFA)</h3>
       <div id="mfa-status-view" class="mfa-status-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
-        <p style="margin: 0; font-size: 15px;">Trạng thái hiện tại: <strong id="mfa-current-status-text" style="color: var(--danger-color);">Đã Tắt</strong></p>
+        <p style="margin: 0; font-size: 15px;"><span data-i18n="modal_mfa_status">Trạng thái hiện tại:</span> <strong id="mfa-current-status-text" style="color: var(--danger-color);" data-i18n="modal_mfa_status_off">Đã Tắt</strong></p>
       </div>
       
       <!-- Enable MFA Panel -->
       <div id="mfa-enable-panel" class="hidden">
-        <p style="margin-bottom:15px; font-size:13px; color:#9ca3af; line-height: 1.4;">Hãy nhập mã khóa bên dưới vào ứng dụng Google Authenticator trên điện thoại để lấy mã xác nhận.</p>
+        <p style="margin-bottom:15px; font-size:13px; color:#9ca3af; line-height: 1.4;" data-i18n="modal_mfa_desc_enable">Hãy nhập mã khóa bên dưới vào ứng dụng Google Authenticator trên điện thoại để lấy mã xác nhận.</p>
         <div class="mfa-setup-box" style="margin-bottom: 20px;">
           <div class="form-group">
-            <label>Khóa bí mật (Secret Key):</label>
+            <label data-i18n="modal_mfa_secret">Khóa bí mật (Secret Key):</label>
             <div style="display:flex; gap: 8px;">
               <input type="text" id="mfa-secret-key" readonly class="select-control" style="font-family: monospace; font-size: 15px; text-align: center; letter-spacing: 1px; background: rgba(0,0,0,0.2);">
               <button type="button" id="btn-copy-mfa-secret" class="btn-secondary" style="white-space:nowrap; padding: 0 15px;"><i class="fa-solid fa-copy"></i> Copy</button>
@@ -197,25 +197,25 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="mfa-verify-code">Nhập mã OTP xác thực (6 chữ số):</label>
-          <input type="text" id="mfa-verify-code" class="select-control" placeholder="Ví dụ: 123456" maxlength="6" style="text-align: center; font-size:18px; letter-spacing: 4px;">
+          <label for="mfa-verify-code" data-i18n="modal_mfa_verify_code">Nhập mã OTP xác thực (6 chữ số):</label>
+          <input type="text" id="mfa-verify-code" class="select-control" placeholder="Ví dụ: 123456" maxlength="6" style="text-align: center; font-size:18px; letter-spacing: 4px;" data-i18n="modal_mfa_verify_placeholder">
         </div>
         <div class="modal-actions" style="margin-top: 20px;">
-          <button type="button" id="btn-confirm-enable-mfa" class="btn-primary" style="width: 100%;">Xác nhận Bật</button>
-          <button type="button" id="btn-close-mfa-setup" class="btn-secondary" style="width: 100%;">Hủy</button>
+          <button type="button" id="btn-confirm-enable-mfa" class="btn-primary" style="width: 100%;" data-i18n="modal_mfa_btn_enable">Xác nhận Bật</button>
+          <button type="button" id="btn-close-mfa-setup" class="btn-secondary" style="width: 100%;" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </div>
 
       <!-- Disable MFA Panel -->
       <div id="mfa-disable-panel" class="hidden">
-        <p style="margin-bottom:15px; font-size:13px; color:#9ca3af; line-height: 1.4;">Nhập mã OTP hiện tại từ điện thoại để hủy kích hoạt bảo mật MFA.</p>
+        <p style="margin-bottom:15px; font-size:13px; color:#9ca3af; line-height: 1.4;" data-i18n="modal_mfa_desc_disable">Nhập mã OTP hiện tại từ điện thoại để hủy kích hoạt bảo mật MFA.</p>
         <div class="form-group">
-          <label for="mfa-disable-code">Nhập mã OTP xác thực (6 chữ số):</label>
-          <input type="text" id="mfa-disable-code" class="select-control" placeholder="Ví dụ: 123456" maxlength="6" style="text-align: center; font-size:18px; letter-spacing: 4px;">
+          <label for="mfa-disable-code" data-i18n="modal_mfa_verify_code">Nhập mã OTP xác thực (6 chữ số):</label>
+          <input type="text" id="mfa-disable-code" class="select-control" placeholder="Ví dụ: 123456" maxlength="6" style="text-align: center; font-size:18px; letter-spacing: 4px;" data-i18n="modal_mfa_verify_placeholder">
         </div>
         <div class="modal-actions" style="margin-top: 20px;">
-          <button type="button" id="btn-confirm-disable-mfa" class="btn-primary" style="background-color: var(--danger-color); width: 100%;">Hủy kích hoạt</button>
-          <button type="button" id="btn-close-mfa-disable" class="btn-secondary" style="width: 100%;">Hủy</button>
+          <button type="button" id="btn-confirm-disable-mfa" class="btn-primary" style="background-color: var(--danger-color); width: 100%;" data-i18n="modal_mfa_btn_disable">Hủy kích hoạt</button>
+          <button type="button" id="btn-close-mfa-disable" class="btn-secondary" style="width: 100%;" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </div>
     </div>
@@ -224,27 +224,27 @@
   <!-- Inventory Import Modal -->
   <div id="inventory-import-modal" class="modal">
     <div class="modal-content">
-      <h3>Nhập Kho Hàng Mới</h3>
+      <h3 data-i18n="modal_import_title">Nhập Kho Hàng Mới</h3>
       <form id="inventory-import-form">
         <div class="form-group import-store-container">
-          <label for="import-store-input">Cửa hàng nhận:</label>
+          <label for="import-store-input" data-i18n="modal_import_store">Cửa hàng nhận:</label>
           <select id="import-store-input" required class="select-control"></select>
         </div>
         <div class="form-group">
-          <label for="import-sku-input">Chọn SKU sản phẩm:</label>
+          <label for="import-sku-input" data-i18n="modal_import_sku">Chọn SKU sản phẩm:</label>
           <select id="import-sku-input" required class="select-control"></select>
         </div>
         <div class="form-group">
-          <label for="import-qty-input">Số lượng nhập (sản phẩm):</label>
-          <input type="number" id="import-qty-input" required min="1" class="select-control" placeholder="Ví dụ: 100">
+          <label for="import-qty-input" data-i18n="modal_import_qty">Số lượng nhập (sản phẩm):</label>
+          <input type="number" id="import-qty-input" required min="1" class="select-control" placeholder="Ví dụ: 100" data-i18n="modal_import_qty_placeholder">
         </div>
         <div class="form-group">
-          <label for="import-supplier-input">Nhà cung cấp / Đối tác:</label>
-          <input type="text" id="import-supplier-input" required class="select-control" placeholder="Nhập tên nhà cung cấp...">
+          <label for="import-supplier-input" data-i18n="modal_import_supplier">Nhà cung cấp / Đối tác:</label>
+          <input type="text" id="import-supplier-input" required class="select-control" placeholder="Nhập tên nhà cung cấp..." data-i18n="modal_import_supplier_placeholder">
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary">Nhập kho</button>
-          <button type="button" id="btn-cancel-import" class="btn-secondary">Hủy</button>
+          <button type="submit" class="btn-primary" data-i18n="modal_import_btn">Nhập kho</button>
+          <button type="button" id="btn-cancel-import" class="btn-secondary" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </form>
     </div>
@@ -253,42 +253,42 @@
   <!-- Create Transaction Modal -->
   <div id="transaction-create-modal" class="modal">
     <div class="modal-content">
-      <h3>Tạo Giao Dịch Bán Hàng Mới</h3>
+      <h3 data-i18n="modal_tx_title">Tạo Giao Dịch Bán Hàng Mới</h3>
       <form id="transaction-create-form">
         <div class="form-group tx-store-container">
-          <label for="tx-store-input">Cửa hàng thực hiện:</label>
+          <label for="tx-store-input" data-i18n="modal_tx_store">Cửa hàng thực hiện:</label>
           <select id="tx-store-input" required class="select-control"></select>
         </div>
         <div class="form-group">
-          <label for="tx-customer-input">Chọn Khách Hàng:</label>
-          <input type="text" id="tx-customer-search" class="select-control" placeholder="Tìm nhanh khách hàng (nhập tên, ID, quốc gia)..." style="margin-bottom: 8px; height: 34px; font-size: 13px; padding: 6px 10px;">
+          <label for="tx-customer-input" data-i18n="modal_tx_customer">Chọn Khách Hàng:</label>
+          <input type="text" id="tx-customer-search" class="select-control" placeholder="Tìm nhanh khách hàng (nhập tên, ID, quốc gia)..." style="margin-bottom: 8px; height: 34px; font-size: 13px; padding: 6px 10px;" data-i18n="modal_tx_customer_search">
           <select id="tx-customer-input" required class="select-control"></select>
         </div>
         <div class="form-group">
-          <label for="tx-sku-input">Chọn SKU sản phẩm bán:</label>
-          <input type="text" id="tx-sku-search" class="select-control" placeholder="Tìm nhanh sản phẩm (nhập SKU, tên)..." style="margin-bottom: 8px; height: 34px; font-size: 13px; padding: 6px 10px;">
+          <label for="tx-sku-input" data-i18n="modal_tx_sku">Chọn SKU sản phẩm bán:</label>
+          <input type="text" id="tx-sku-search" class="select-control" placeholder="Tìm nhanh sản phẩm (nhập SKU, tên)..." style="margin-bottom: 8px; height: 34px; font-size: 13px; padding: 6px 10px;" data-i18n="modal_tx_sku_search">
           <select id="tx-sku-input" required class="select-control"></select>
         </div>
         <div class="form-group">
-          <label for="tx-qty-input">Số lượng mua:</label>
+          <label for="tx-qty-input" data-i18n="modal_tx_qty">Số lượng mua:</label>
           <input type="number" id="tx-qty-input" required min="1" class="select-control" value="1">
         </div>
         <div class="form-group">
-          <label for="tx-price-input">Đơn giá bán (USD):</label>
-          <input type="number" id="tx-price-input" required step="0.01" min="0.01" class="select-control" placeholder="Nhập đơn giá...">
+          <label for="tx-price-input" data-i18n="modal_tx_price">Đơn giá bán (USD):</label>
+          <input type="number" id="tx-price-input" required step="0.01" min="0.01" class="select-control" placeholder="Nhập đơn giá..." data-i18n="modal_tx_price_placeholder">
         </div>
         <div class="form-group">
-          <label for="tx-payment-input">Hình thức thanh toán:</label>
+          <label for="tx-payment-input" data-i18n="modal_tx_payment">Hình thức thanh toán:</label>
           <select id="tx-payment-input" required class="select-control">
-            <option value="Credit Card">Thẻ tín dụng (Credit Card)</option>
-            <option value="PayPal">PayPal</option>
-            <option value="Cash">Tiền mặt (Cash)</option>
-            <option value="Apple Pay">Apple Pay</option>
+            <option value="Credit Card" data-i18n="modal_tx_payment_cc">Thẻ tín dụng (Credit Card)</option>
+            <option value="PayPal" data-i18n="modal_tx_payment_paypal">PayPal</option>
+            <option value="Cash" data-i18n="modal_tx_payment_cash">Tiền mặt (Cash)</option>
+            <option value="Apple Pay" data-i18n="modal_tx_payment_apple">Apple Pay</option>
           </select>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary">Tạo giao dịch</button>
-          <button type="button" id="btn-cancel-tx" class="btn-secondary">Hủy</button>
+          <button type="submit" class="btn-primary" data-i18n="modal_tx_btn_create">Tạo giao dịch</button>
+          <button type="button" id="btn-cancel-tx" class="btn-secondary" data-i18n="modal_btn_cancel">Hủy</button>
         </div>
       </form>
     </div>

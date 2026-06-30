@@ -3,18 +3,18 @@
         <div class="filter-bar">
           <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="products-search" placeholder="Tìm tên sản phẩm hoặc mô tả...">
+            <input type="text" id="products-search" placeholder="Tìm tên sản phẩm hoặc mô tả..." data-i18n="prod_search_placeholder">
           </div>
           <div class="filter-group">
-            <label>Danh mục:</label>
+            <label data-i18n="prod_filter_cat">Danh mục:</label>
             <select id="products-category-filter" class="select-control">
-              <option value="">Tất cả</option>
-              <option value="Clothing">Quần áo (Clothing)</option>
-              <option value="Shoes">Giày dép (Shoes)</option>
-              <option value="Accessories">Phụ kiện (Accessories)</option>
+              <option value="" data-i18n="cust_filter_gender">Tất cả</option>
+              <option value="Clothing" data-i18n="modal_prod_cat_clothing">Quần áo (Clothing)</option>
+              <option value="Shoes" data-i18n="modal_prod_cat_shoes">Giày dép (Shoes)</option>
+              <option value="Accessories" data-i18n="modal_prod_cat_accessories">Phụ kiện (Accessories)</option>
             </select>
           </div>
-          <button id="btn-add-product" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-plus"></i> Thêm Sản Phẩm</button>
+          <button id="btn-add-product" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-plus"></i> <span data-i18n="prod_btn_add">Thêm Sản Phẩm</span></button>
         </div>
         
         <div class="products-grid-container" id="products-grid">
