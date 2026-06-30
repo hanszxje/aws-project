@@ -5,9 +5,23 @@
   <%- include('partials/sidebar') %>
   
   <main class="content-area">
-    <header class="content-header">
+    <header class="content-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
       <h1 id="page-title">Dashboard Bản đồ</h1>
-      <div class="header-actions">
+      <div class="header-actions" style="display: flex; align-items: center; gap: 12px;">
+        <!-- Language Selector -->
+        <div class="lang-select-container">
+          <select id="lang-select" class="select-control" style="height: 38px; min-width: 130px; font-size: 13px; font-weight: 500; padding: 0 10px; border-radius: 8px; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); cursor: pointer;">
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="zh">🇨🇳 中文 (Chinese)</option>
+          </select>
+        </div>
+        
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; padding: 0; border-radius: 50%; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); font-size: 16px; cursor: pointer; transition: var(--transition);">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+
         <div class="db-mode-badge" id="db-mode-badge">
           <i class="fa-solid fa-database"></i> <span id="db-mode-text">Mock Mode</span>
         </div>

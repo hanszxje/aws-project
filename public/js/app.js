@@ -1,3 +1,32 @@
+// Theme Initialization
+const savedTheme = localStorage.getItem('theme') || 'dark';
+if (savedTheme === 'light') {
+  document.body.classList.add('light-theme');
+}
+
+// Plotly Theme Interceptor
+if (window.Plotly) {
+  const originalNewPlot = Plotly.newPlot;
+  Plotly.newPlot = function(id, data, layout, config) {
+    if (layout) {
+      const isLight = document.body.classList.contains('light-theme');
+      const textColor = isLight ? '#1f2937' : '#f3f4f6';
+      const gridColor = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.05)';
+      
+      if (!layout.font) layout.font = {};
+      layout.font.color = textColor;
+      
+      if (layout.xaxis) {
+        layout.xaxis.gridcolor = gridColor;
+      }
+      if (layout.yaxis) {
+        layout.yaxis.gridcolor = gridColor;
+      }
+    }
+    return originalNewPlot.call(Plotly, id, data, layout, config);
+  };
+}
+
 // ================= GLOBAL STATE =================
 let token = localStorage.getItem('token') || null;
 let currentUser = JSON.parse(localStorage.getItem('user')) || null;
@@ -283,20 +312,24 @@ function switchTab(tabName) {
   });
 
   // Update Page Title
-  const titles = {
-    dashboard: 'Dashboard Bản đồ Cửa hàng',
-    customers: 'Quản lý Khách hàng',
-    discounts: 'Cơ chế Khuyến mãi',
-    employees: 'Danh sách Nhân sự',
-    products: 'Lưới Sản phẩm (GenAI Showcase)',
-    stores: 'Danh sách Cửa hàng Toàn cầu',
-    transactions: 'Lịch sử Giao dịch',
-    inventory: 'Quản lý Kho hàng & Nhập kho',
-    'admin-users': 'Quản lý Tài khoản Hệ thống',
-    'admin-permissions': 'Thiết lập Phân quyền Dynamic',
-    'admin-logs': 'Nhật ký Hoạt động Hệ thống'
-  };
-  pageTitle.textContent = titles[tabName] || 'G-Fashion BI';
+  if (typeof dynamicTitles !== 'undefined' && dynamicTitles[tabName] && typeof currentLang !== 'undefined') {
+    pageTitle.textContent = dynamicTitles[tabName][currentLang] || 'G-Fashion BI';
+  } else {
+    const titles = {
+      dashboard: 'Dashboard Bản đồ Cửa hàng',
+      customers: 'Quản lý Khách hàng',
+      discounts: 'Cơ chế Khuyến mãi',
+      employees: 'Danh sách Nhân sự',
+      products: 'Lưới Sản phẩm (GenAI Showcase)',
+      stores: 'Danh sách Cửa hàng Toàn cầu',
+      transactions: 'Lịch sử Giao dịch',
+      inventory: 'Quản lý Kho hàng & Nhập kho',
+      'admin-users': 'Quản lý Tài khoản Hệ thống',
+      'admin-permissions': 'Thiết lập Phân quyền Dynamic',
+      'admin-logs': 'Nhật ký Hoạt động Hệ thống'
+    };
+    pageTitle.textContent = titles[tabName] || 'G-Fashion BI';
+  }
 
   // Toggle Tab Content Visibility
   tabContents.forEach(content => {
@@ -742,14 +775,20 @@ async function loadCustomersTab() {
     res.data.forEach(c => {
       const isDirector = currentUser.role === 'Director';
       const tr = document.createElement('tr');
+      const genderText = c.gender === 'Male' ? (currentLang === 'en' ? 'Male' : (currentLang === 'zh' ? '男' : 'Nam')) :
+                         (c.gender === 'Female' ? (currentLang === 'en' ? 'Female' : (currentLang === 'zh' ? '女' : 'Nữ')) : 
+                         (currentLang === 'en' ? 'Non-binary' : (currentLang === 'zh' ? '其他' : 'Khác')));
+      const deleteText = currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa');
+      const lockedText = currentLang === 'en' ? 'Locked' : (currentLang === 'zh' ? '锁定' : 'Khóa');
+      
       tr.innerHTML = `
         <td><code>#${c.customer_id}</code></td>
         <td><strong>${c.customer_name}</strong></td>
         <td>${c.age}</td>
-        <td><span class="badge badge-gender">${c.gender}</span></td>
+        <td><span class="badge badge-gender">${genderText}</span></td>
         <td><i class="fa-solid fa-map-pin"></i> ${c.country}</td>
         <td>
-          ${isDirector ? `<button class="btn-action-delete" onclick="deleteCustomer(${c.customer_id})"><i class="fa-solid fa-trash"></i> Xóa</button>` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> Khóa</span>`}
+          ${isDirector ? `<button class="btn-action-delete" onclick="deleteCustomer(${c.customer_id})"><i class="fa-solid fa-trash"></i> ${deleteText}</button>` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> ${lockedText}</span>`}
         </td>
       `;
       tbody.appendChild(tr);
@@ -857,10 +896,21 @@ async function loadDiscountsTab() {
       const discountPct = (d.total_discount_avg * 100).toFixed(2);
       const isEditable = currentUser.role === 'Director' || currentUser.store_id === d.store_id;
       
+      const seasonMap = {
+        'Mùa đông 2024': { vi: 'Mùa đông 2024', en: 'Winter 2024', zh: '2024年冬季' },
+        'Mùa xuân 2024': { vi: 'Mùa xuân 2024', en: 'Spring 2024', zh: '2024年春季' },
+        'Mùa hè 2024': { vi: 'Mùa hè 2024', en: 'Summer 2024', zh: '2024年夏季' },
+        'Mùa thu 2024': { vi: 'Mùa thu 2024', en: 'Autumn 2024', zh: '2024年秋季' }
+      };
+      const seasonNameVal = seasonMap[d.season_name] ? seasonMap[d.season_name][currentLang] : d.season_name;
+      const editText = currentLang === 'en' ? 'Edit' : (currentLang === 'zh' ? '编辑' : 'Sửa');
+      const deleteText = currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa');
+      const lockedText = currentLang === 'en' ? 'Locked' : (currentLang === 'zh' ? '锁定' : 'Khóa');
+
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><code>#DISC-${d.discount_id}</code></td>
-        <td><strong>${d.season_name}</strong></td>
+        <td><strong>${seasonNameVal}</strong></td>
         <td>
           <div style="display: flex; align-items: center; gap: 8px;">
             <div style="flex-grow:1; background:rgba(255,255,255,0.05); height:8px; border-radius:4px; overflow:hidden;">
@@ -874,10 +924,10 @@ async function loadDiscountsTab() {
         <td>
           ${isEditable ? `
             <div style="display: flex; gap: 8px;">
-              <button class="btn-action-edit" onclick="openEditDiscount(${d.discount_id}, ${d.total_discount_avg})"><i class="fa-solid fa-pen-to-square"></i> Sửa</button>
-              <button class="btn-action-delete" onclick="deleteDiscount(${d.discount_id})"><i class="fa-solid fa-trash"></i> Xóa</button>
+              <button class="btn-action-edit" onclick="openEditDiscount(${d.discount_id}, ${d.total_discount_avg})"><i class="fa-solid fa-pen-to-square"></i> ${editText}</button>
+              <button class="btn-action-delete" onclick="deleteDiscount(${d.discount_id})"><i class="fa-solid fa-trash"></i> ${deleteText}</button>
             </div>
-          ` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> Khóa</span>`}
+          ` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> ${lockedText}</span>`}
         </td>
       `;
       tbody.appendChild(tr);
@@ -988,19 +1038,34 @@ async function loadEmployeesTab() {
 
     employees.forEach(e => {
       const isEditable = currentUser.role === 'Director' || currentUser.store_id === e.store_id;
+      
+      const roleMap = {
+        'Sales Staff': { vi: 'Nhân viên bán hàng', en: 'Sales Staff', zh: '销售员工' },
+        'Store Manager': { vi: 'Quản lý cửa hàng', en: 'Store Manager', zh: '门店经理' },
+        'Director': { vi: 'Giám đốc', en: 'Director', zh: '董事/总监' },
+        'Inventory Manager': { vi: 'Quản lý kho', en: 'Inventory Manager', zh: '库存经理' },
+        'Marketing Manager': { vi: 'Quản lý Marketing', en: 'Marketing Manager', zh: '营销经理' },
+        'Finance/Auditor': { vi: 'Tài chính / Kiểm toán', en: 'Finance/Auditor', zh: '财务与审计' },
+        'IT Admin': { vi: 'Quản trị IT', en: 'IT Admin', zh: 'IT管理员' }
+      };
+      const roleVal = roleMap[e.role] ? roleMap[e.role][currentLang] : e.role;
+      const editText = currentLang === 'en' ? 'Edit' : (currentLang === 'zh' ? '编辑' : 'Sửa');
+      const deleteText = currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa');
+      const lockedText = currentLang === 'en' ? 'Locked' : (currentLang === 'zh' ? '锁定' : 'Khóa');
+
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><code>#EMP-${e.employee_id}</code></td>
         <td><strong>${e.name}</strong></td>
         <td>Store ${e.store_id}</td>
-        <td><span class="badge" style="background:${e.role === 'Store Manager' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.05)'}; color:${e.role === 'Store Manager' ? 'var(--secondary)' : 'var(--text-main)'}; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">${e.role}</span></td>
+        <td><span class="badge" style="background:${e.role === 'Store Manager' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.05)'}; color:${e.role === 'Store Manager' ? 'var(--secondary)' : 'var(--text-main)'}; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">${roleVal}</span></td>
         <td>
           ${isEditable ? `
             <div style="display: flex; gap: 8px;">
-              <button class="btn-action-edit" onclick="openEditEmployee(${e.employee_id}, '${e.name.replace(/'/g, "\\'")}', '${e.role}')"><i class="fa-solid fa-user-pen"></i> Sửa</button>
-              <button class="btn-action-delete" onclick="deleteEmployee(${e.employee_id})"><i class="fa-solid fa-trash"></i> Xóa</button>
+              <button class="btn-action-edit" onclick="openEditEmployee(${e.employee_id}, '${e.name.replace(/'/g, "\\'")}', '${e.role}')"><i class="fa-solid fa-user-pen"></i> ${editText}</button>
+              <button class="btn-action-delete" onclick="deleteEmployee(${e.employee_id})"><i class="fa-solid fa-trash"></i> ${deleteText}</button>
             </div>
-          ` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> Khóa</span>`}
+          ` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> ${lockedText}</span>`}
         </td>
       `;
       tbody.appendChild(tr);
@@ -1093,7 +1158,8 @@ async function loadProductsTab() {
     container.innerHTML = '';
 
     if (products.length === 0) {
-      container.innerHTML = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-muted);">Không tìm thấy sản phẩm nào.</div>';
+      const emptyText = currentLang === 'en' ? 'No products found.' : (currentLang === 'zh' ? '没有找到任何商品。' : 'Không tìm thấy sản phẩm nào.');
+      container.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-muted);">${emptyText}</div>`;
       return;
     }
 
@@ -1102,6 +1168,17 @@ async function loadProductsTab() {
       const card = document.createElement('div');
       card.className = 'product-card';
       
+      const categoryMap = {
+        'Clothing': { vi: 'Quần áo', en: 'Clothing', zh: '服装' },
+        'Shoes': { vi: 'Giày dép', en: 'Shoes', zh: '鞋履' },
+        'Accessories': { vi: 'Phụ kiện', en: 'Accessories', zh: '配饰' }
+      };
+      const categoryVal = categoryMap[p.category] ? categoryMap[p.category][currentLang] : p.category;
+      const colorLabel = currentLang === 'en' ? 'Color:' : (currentLang === 'zh' ? '颜色款式:' : 'Kiểu màu:');
+      const subCategoryLabel = currentLang === 'en' ? 'Sub-category:' : (currentLang === 'zh' ? '子分类:' : 'Phân loại phụ:');
+      const editText = currentLang === 'en' ? 'Edit' : (currentLang === 'zh' ? '编辑' : 'Sửa');
+      const deleteText = currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa');
+
       const escName = p.product_name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
       const escCategory = p.category.replace(/'/g, "\\'");
       const escSubCategory = p.sub_category.replace(/'/g, "\\'");
@@ -1111,22 +1188,22 @@ async function loadProductsTab() {
 
       card.innerHTML = `
         <div class="product-img-wrapper">
-          <span class="product-category-badge">${p.category}</span>
+          <span class="product-category-badge">${categoryVal}</span>
           <img src="${p.image_url}" class="product-img" alt="${p.product_name}" onerror="this.src='https://placehold.co/300x300?text=Product+Image'">
         </div>
         <div class="product-info-wrapper" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <h4 class="product-title">${p.product_name}</h4>
             <div class="product-details">
-              <span><strong>Kiểu màu:</strong> ${p.color_type}</span>
-              <span><strong>Phân loại phụ:</strong> ${p.sub_category}</span>
+              <span><strong>${colorLabel}</strong> ${p.color_type}</span>
+              <span><strong>${subCategoryLabel}</strong> ${p.sub_category}</span>
             </div>
             <p class="product-desc"><em>${p.description_en}</em></p>
           </div>
           ${hasAdminRights ? `
             <div style="display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-              <button class="btn-action-edit" style="flex: 1;" onclick="openEditProduct(${p.product_id}, '${escName}', '${escCategory}', '${escSubCategory}', '${escColor}', '${escDesc}', '${escImg}')"><i class="fa-solid fa-pen-to-square"></i> Sửa</button>
-              <button class="btn-action-delete" style="flex: 1;" onclick="deleteProduct(${p.product_id})"><i class="fa-solid fa-trash"></i> Xóa</button>
+              <button class="btn-action-edit" style="flex: 1;" onclick="openEditProduct(${p.product_id}, '${escName}', '${escCategory}', '${escSubCategory}', '${escColor}', '${escDesc}', '${escImg}')"><i class="fa-solid fa-pen-to-square"></i> ${editText}</button>
+              <button class="btn-action-delete" style="flex: 1;" onclick="deleteProduct(${p.product_id})"><i class="fa-solid fa-trash"></i> ${deleteText}</button>
             </div>
           ` : ''}
         </div>
@@ -1253,6 +1330,14 @@ async function loadTransactionsTab() {
           hour: '2-digit', minute: '2-digit', second: '2-digit'
         });
       }
+      const payMap = {
+        'Credit Card': { vi: 'Thẻ tín dụng', en: 'Credit Card', zh: '信用卡' },
+        'PayPal': { vi: 'PayPal', en: 'PayPal', zh: 'PayPal' },
+        'Cash': { vi: 'Tiền mặt', en: 'Cash', zh: '现金' },
+        'Apple Pay': { vi: 'Apple Pay', en: 'Apple Pay', zh: 'Apple Pay' }
+      };
+      const payVal = payMap[t.payment_method] ? payMap[t.payment_method][currentLang] : t.payment_method;
+      const fallbackName = (currentLang === 'en' ? 'Product ' : (currentLang === 'zh' ? '商品 ' : 'Sản phẩm ')) + t.product_id;
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><code>#TX-${t.transaction_id}</code></td>
@@ -1260,8 +1345,8 @@ async function loadTransactionsTab() {
         <td><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-light); font-weight: normal;">${t.salesperson || 'System'}</span></td>
         <td><span style="font-size: 12px; color: var(--text-muted);">${formattedDate}</span></td>
         <td><code>${t.sku}</code></td>
-        <td>${t.product_name || 'Sản phẩm ' + t.product_id}</td>
-        <td><span class="badge">${t.payment_method}</span></td>
+        <td>${t.product_name || fallbackName}</td>
+        <td><span class="badge">${payVal}</span></td>
         <td>${t.local_price} ${t.currency}</td>
         <td><strong>x${t.quantity}</strong></td>
         <td><strong style="color:var(--primary-light);">$${t.line_total.toFixed(2)}</strong></td>
@@ -1345,24 +1430,32 @@ async function loadInventoryStock() {
   const search = document.getElementById('inventory-search').value;
   const tbody = document.getElementById('inventory-stock-tbody');
   
-  tbody.innerHTML = '<tr><td colspan="4" class="text-center">Đang tải dữ liệu kho...</td></tr>';
+  const loadingText = currentLang === 'en' ? 'Loading inventory data...' : (currentLang === 'zh' ? '正在加载库存数据...' : 'Đang tải dữ liệu kho...');
+  tbody.innerHTML = `<tr><td colspan="4" class="text-center">${loadingText}</td></tr>`;
   
   try {
     const stockItems = await fetchAPI(`/api/inventory?store_id=${storeId}&search=${encodeURIComponent(search)}`);
     tbody.innerHTML = '';
     
     if (stockItems.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Không tìm thấy sản phẩm nào trong kho.</td></tr>';
+      const emptyText = currentLang === 'en' ? 'No products found in stock.' : (currentLang === 'zh' ? '库存中未找到任何商品。' : 'Không tìm thấy sản phẩm nào trong kho.');
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">${emptyText}</td></tr>`;
       return;
     }
 
     stockItems.forEach(item => {
+      const categoryMap = {
+        'Clothing': { vi: 'Quần áo', en: 'Clothing', zh: '服装' },
+        'Shoes': { vi: 'Giày dép', en: 'Shoes', zh: '鞋履' },
+        'Accessories': { vi: 'Phụ kiện', en: 'Accessories', zh: '配饰' }
+      };
+      const catVal = categoryMap[item.category] ? categoryMap[item.category][currentLang] : item.category;
       const tr = document.createElement('tr');
       tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.03)';
       tr.innerHTML = `
         <td style="padding: 10px;"><code>${item.sku}</code></td>
         <td style="padding: 10px; color: var(--text-light); font-weight: 500;">${item.product_name}</td>
-        <td style="padding: 10px;"><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">${item.category}</span></td>
+        <td style="padding: 10px;"><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">${catVal}</span></td>
         <td style="padding: 10px; text-align: right; font-weight: bold; color: ${item.stock_quantity <= 15 ? '#ef4444' : '#10b981'}">
           ${item.stock_quantity}
         </td>
@@ -1371,7 +1464,8 @@ async function loadInventoryStock() {
     });
   } catch (err) {
     console.error('Error loading inventory stock:', err);
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Lỗi tải dữ liệu kho.</td></tr>';
+    const errorText = currentLang === 'en' ? 'Failed to load stock data.' : (currentLang === 'zh' ? '加载库存数据失败。' : 'Lỗi tải dữ liệu kho.');
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">${errorText}</td></tr>`;
   }
 }
 
@@ -1379,14 +1473,16 @@ async function loadInventoryImports() {
   const storeId = document.getElementById('inventory-store-select').value;
   const tbody = document.getElementById('inventory-imports-tbody');
   
-  tbody.innerHTML = '<tr><td colspan="4" class="text-center">Đang tải lịch sử nhập...</td></tr>';
+  const loadingText = currentLang === 'en' ? 'Loading import history...' : (currentLang === 'zh' ? '正在加载入库历史...' : 'Đang tải lịch sử nhập...');
+  tbody.innerHTML = `<tr><td colspan="4" class="text-center">${loadingText}</td></tr>`;
   
   try {
     const imports = await fetchAPI(`/api/inventory/imports?store_id=${storeId}`);
     tbody.innerHTML = '';
     
     if (imports.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Chưa có lịch sử nhập hàng nào.</td></tr>';
+      const emptyText = currentLang === 'en' ? 'No stock imports found.' : (currentLang === 'zh' ? '暂无入库记录。' : 'Chưa có lịch sử nhập hàng nào.');
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">${emptyText}</td></tr>`;
       return;
     }
 
@@ -1410,7 +1506,8 @@ async function loadInventoryImports() {
     });
   } catch (err) {
     console.error('Error loading inventory imports:', err);
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Lỗi tải lịch sử nhập hàng.</td></tr>';
+    const errorText = currentLang === 'en' ? 'Failed to load import history.' : (currentLang === 'zh' ? '加载入库历史失败。' : 'Lỗi tải lịch sử nhập hàng.');
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">${errorText}</td></tr>`;
   }
 }
 
@@ -2543,6 +2640,579 @@ if (txForm) {
     }
   });
 }
+
+// ================= INTERACTIVE THEME TOGGLER =================
+const themeToggleBtn = document.getElementById('theme-toggle');
+
+function updateThemeToggleIcon() {
+  if (!themeToggleBtn) return;
+  const isLight = document.body.classList.contains('light-theme');
+  const icon = themeToggleBtn.querySelector('i');
+  if (icon) {
+    if (isLight) {
+      icon.className = 'fa-solid fa-sun';
+      themeToggleBtn.style.color = '#f59e0b'; // Gold sun color
+    } else {
+      icon.className = 'fa-solid fa-moon';
+      themeToggleBtn.style.color = 'var(--text-main)';
+    }
+  }
+}
+
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener('click', () => {
+    const wasLight = document.body.classList.contains('light-theme');
+    if (wasLight) {
+      document.body.classList.remove('light-theme');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.add('light-theme');
+      localStorage.setItem('theme', 'light');
+    }
+    updateThemeToggleIcon();
+    updateThemeCharts();
+  });
+}
+
+function updateThemeCharts() {
+  if (activeTab === 'dashboard' && activeForecastStoreId) {
+    const selector = document.getElementById('forecast-sku-selector');
+    if (selector && selector.value) {
+      renderForecastChart(selector.value);
+    }
+  } else if (activeTab === 'stores') {
+    loadStoresTab();
+  } else if (activeTab === 'discounts') {
+    loadDiscountsTab();
+  }
+}
+
+// Call update theme icon initially
+updateThemeToggleIcon();
+
+// ================= MULTI-LANGUAGE (i18n) SYSTEM =================
+const langSelect = document.getElementById('lang-select');
+let currentLang = localStorage.getItem('preferred-language') || 'vi';
+
+const translations = {
+  vi: {
+    sidebar_dashboard: "Dashboard Bản đồ",
+    sidebar_customers: "Khách hàng",
+    sidebar_discounts: "Khuyến mãi",
+    sidebar_employees: "Nhân viên",
+    sidebar_products: "Sản phẩm Grid",
+    sidebar_stores: "Cửa hàng",
+    sidebar_transactions: "Giao dịch",
+    sidebar_inventory: "Quản lý Kho",
+    sidebar_admin_users: "Quản lý User",
+    sidebar_admin_perms: "Phân quyền Vai trò",
+    sidebar_admin_logs: "Nhật ký Hoạt động",
+    sidebar_logout: "Đăng xuất",
+
+    // Dashboard Tab
+    db_instruction_title: "Chỉ dẫn",
+    db_instruction_desc: "Nhấp vào một cửa hàng (icon cửa hàng) để xem dữ liệu dự báo nhu cầu thời trang theo tuần sinh ra từ mô hình học máy LightGBM.",
+    db_total_skus: "Tổng SKU dự báo",
+    db_next_week_demand: "Dự kiến tuần tới",
+    db_select_sku: "Chọn SKU sản phẩm:",
+    db_chart_type: "Loại biểu đồ:",
+    db_chart_line: "Đường (Line)",
+    db_chart_column: "Cột (Column)",
+    db_time_group: "Gom nhóm:",
+    db_group_week: "Tuần (Week)",
+    db_group_month: "Tháng (Month)",
+
+    // Customers Tab
+    cust_btn_add: "Thêm Khách Hàng",
+    cust_search_placeholder: "Tìm theo tên hoặc mã KH...",
+    cust_filter_gender: "Tất cả",
+    cust_gender_male: "Nam (Male)",
+    cust_gender_female: "Nữ (Female)",
+    cust_gender_nonbinary: "Khác (Non-binary)",
+    cust_col_id: "Mã Khách Hàng",
+    cust_col_name: "Họ và Tên",
+    cust_col_age: "Tuổi",
+    cust_col_gender: "Giới tính",
+    cust_col_country: "Quốc gia",
+    cust_col_actions: "Hành động",
+
+    // Discounts Tab
+    disc_filter_store: "Lọc theo cửa hàng:",
+    disc_btn_add: "Thêm Khuyến Mãi",
+    disc_col_id: "Mã Khuyến Mãi",
+    disc_col_season: "Tên Chương Trình",
+    disc_col_avg: "Chiết khấu Trung Bình (total_discount_avg)",
+    disc_col_start: "Ngày Bắt Đầu",
+    disc_col_end: "Ngày Kết Thúc",
+    disc_col_actions: "Hành động",
+    disc_chart_title: "So sánh Mức chiết khấu trung bình giữa các đợt",
+
+    // Employees Tab
+    emp_filter_store: "Lọc theo cửa hàng:",
+    emp_btn_add: "Thêm Nhân Viên",
+    emp_col_id: "Mã Nhân Viên",
+    emp_col_name: "Họ và Tên",
+    emp_col_store: "Cửa hàng",
+    emp_col_role: "Vai trò",
+    emp_col_actions: "Hành động",
+    emp_chart_title: "Thống kê Quy mô Nhân sự",
+
+    // Products Tab
+    prod_search_placeholder: "Tìm tên sản phẩm hoặc mô tả...",
+    prod_filter_cat: "Danh mục:",
+    prod_filter_all: "Tất cả",
+    prod_filter_clothing: "Quần áo (Clothing)",
+    prod_filter_shoes: "Giày dép (Shoes)",
+    prod_filter_accessories: "Phụ kiện (Accessories)",
+    prod_btn_add: "Thêm Sản Phẩm",
+
+    // Stores Tab
+    store_col_id: "Mã Store",
+    store_col_name: "Tên Cửa Hàng",
+    store_col_lat: "Vĩ độ (Lat)",
+    store_col_lng: "Kinh độ (Lng)",
+    store_col_country: "Quốc gia",
+    store_col_skus: "Tổng số SKU duy nhất",
+    store_col_products: "Tổng số dòng sản phẩm",
+    store_chart_title: "Phân bố số lượng sản phẩm & SKU theo Cửa hàng",
+
+    // Transactions Tab
+    tx_filter_store: "Lọc theo cửa hàng:",
+    tx_filter_payment: "Hình thức thanh toán:",
+    tx_btn_create: "Tạo Giao Dịch Mới",
+    tx_col_id: "Mã Giao Dịch",
+    tx_col_store: "Cửa hàng",
+    tx_col_salesperson: "Người thực hiện",
+    tx_col_time: "Thời gian",
+    tx_col_sku: "SKU",
+    tx_col_product: "Sản phẩm",
+    tx_col_payment: "Thanh toán",
+    tx_col_price: "Đơn giá",
+    tx_col_qty: "SL",
+    tx_col_total: "Tổng tiền (USD)",
+
+    // Inventory Tab
+    inv_title: "Quản lý Kho & Tồn Kho (Stock)",
+    inv_desc: "Theo dõi lượng hàng tồn kho thực tế và nhật ký nhập hàng từ nhà cung cấp.",
+    inv_btn_import: "Nhập Hàng Mới",
+    inv_filter_store: "Cửa hàng:",
+    inv_search_placeholder: "Tìm kiếm SKU, tên sản phẩm hoặc danh mục...",
+    inv_stock_status: "Trạng thái Tồn kho Thực tế",
+    inv_import_history: "Nhật ký Nhập hàng Gần đây",
+    inv_col_sku: "SKU",
+    inv_col_product: "Tên sản phẩm",
+    inv_col_cat: "Danh mục",
+    inv_col_qty: "Tồn kho",
+    inv_col_date: "Ngày nhập",
+    inv_col_sku_prod: "SKU / Sản phẩm",
+    inv_col_qty_added: "S.Lượng",
+    inv_col_supplier: "Nhà cung cấp"
+  },
+  en: {
+    sidebar_dashboard: "Map Dashboard",
+    sidebar_customers: "Customers",
+    sidebar_discounts: "Discounts",
+    sidebar_employees: "Employees",
+    sidebar_products: "Product Grid",
+    sidebar_stores: "Stores Grid",
+    sidebar_transactions: "Transactions",
+    sidebar_inventory: "Stock Management",
+    sidebar_admin_users: "System Users",
+    sidebar_admin_perms: "Role Permissions",
+    sidebar_admin_logs: "System Audit Logs",
+    sidebar_logout: "Log Out",
+
+    // Dashboard Tab
+    db_instruction_title: "Instructions",
+    db_instruction_desc: "Click on any store icon to view weekly fashion demand forecasting generated by the LightGBM machine learning model.",
+    db_total_skus: "Total Forecasted SKUs",
+    db_next_week_demand: "Next Week Demand",
+    db_select_sku: "Select Product SKU:",
+    db_chart_type: "Chart Type:",
+    db_chart_line: "Line Chart",
+    db_chart_column: "Column Chart",
+    db_time_group: "Group By:",
+    db_group_week: "Week",
+    db_group_month: "Month",
+
+    // Customers Tab
+    cust_btn_add: "Add Customer",
+    cust_search_placeholder: "Search by name or ID...",
+    cust_filter_gender: "All Genders",
+    cust_gender_male: "Male",
+    cust_gender_female: "Female",
+    cust_gender_nonbinary: "Non-binary",
+    cust_col_id: "Customer ID",
+    cust_col_name: "Full Name",
+    cust_col_age: "Age",
+    cust_col_gender: "Gender",
+    cust_col_country: "Country",
+    cust_col_actions: "Actions",
+
+    // Discounts Tab
+    disc_filter_store: "Filter by store:",
+    disc_btn_add: "Add Promotion",
+    disc_col_id: "Promo ID",
+    disc_col_season: "Program Name",
+    disc_col_avg: "Average Discount",
+    disc_col_start: "Start Date",
+    disc_col_end: "End Date",
+    disc_col_actions: "Actions",
+    disc_chart_title: "Average Discount Comparison Across Seasons",
+
+    // Employees Tab
+    emp_filter_store: "Filter by store:",
+    emp_btn_add: "Add Employee",
+    emp_col_id: "Staff ID",
+    emp_col_name: "Full Name",
+    emp_col_store: "Store",
+    emp_col_role: "Role",
+    emp_col_actions: "Actions",
+    emp_chart_title: "Staff Scale Statistics",
+
+    // Products Tab
+    prod_search_placeholder: "Search by product name or description...",
+    prod_filter_cat: "Category:",
+    prod_filter_all: "All Categories",
+    prod_filter_clothing: "Clothing",
+    prod_filter_shoes: "Shoes",
+    prod_filter_accessories: "Accessories",
+    prod_btn_add: "Add Product",
+
+    // Stores Tab
+    store_col_id: "Store ID",
+    store_col_name: "Store Name",
+    store_col_lat: "Latitude (Lat)",
+    store_col_lng: "Longitude (Lng)",
+    store_col_country: "Country",
+    store_col_skus: "Total Unique SKUs",
+    store_col_products: "Total Product Lines",
+    store_chart_title: "Product & SKU Distribution across Stores",
+
+    // Transactions Tab
+    tx_filter_store: "Filter by store:",
+    tx_filter_payment: "Payment method:",
+    tx_btn_create: "Create Transaction",
+    tx_col_id: "Transaction ID",
+    tx_col_store: "Store",
+    tx_col_salesperson: "Salesperson",
+    tx_col_time: "Time",
+    tx_col_sku: "SKU",
+    tx_col_product: "Product",
+    tx_col_payment: "Payment",
+    tx_col_price: "Price",
+    tx_col_qty: "Qty",
+    tx_col_total: "Total (USD)",
+
+    // Inventory Tab
+    inv_title: "Inventory & Stock Management",
+    inv_desc: "Track real-time stock levels and import logs from suppliers.",
+    inv_btn_import: "Import Stock",
+    inv_filter_store: "Store:",
+    inv_search_placeholder: "Search by SKU, product name, or category...",
+    inv_stock_status: "Real-time Stock Levels",
+    inv_import_history: "Recent Stock Imports",
+    inv_col_sku: "SKU",
+    inv_col_product: "Product Name",
+    inv_col_cat: "Category",
+    inv_col_qty: "In-Stock",
+    inv_col_date: "Import Date",
+    inv_col_sku_prod: "SKU / Product",
+    inv_col_qty_added: "Qty",
+    inv_col_supplier: "Supplier"
+  },
+  zh: {
+    sidebar_dashboard: "地图仪表盘",
+    sidebar_customers: "客户管理",
+    sidebar_discounts: "折扣优惠",
+    sidebar_employees: "员工名册",
+    sidebar_products: "商品列表",
+    sidebar_stores: "门店列表",
+    sidebar_transactions: "交易流水",
+    sidebar_inventory: "库存管理",
+    sidebar_admin_users: "用户管理",
+    sidebar_admin_perms: "角色与权限",
+    sidebar_admin_logs: "操作日志",
+    sidebar_logout: "退出登录",
+
+    // Dashboard Tab
+    db_instruction_title: "操作指南",
+    db_instruction_desc: "点击地图上的门店图标，查看由 LightGBM 机器学习模型生成的每周服装需求预测数据。",
+    db_total_skus: "预测 SKU 总数",
+    db_next_week_demand: "下周需求预测",
+    db_select_sku: "选择商品 SKU:",
+    db_chart_type: "图表类型:",
+    db_chart_line: "折线图",
+    db_chart_column: "柱状图",
+    db_time_group: "时间分组:",
+    db_group_week: "按周",
+    db_group_month: "按月",
+
+    // Customers Tab
+    cust_btn_add: "新增客户",
+    cust_search_placeholder: "按姓名或客户编号搜索...",
+    cust_filter_gender: "所有性别",
+    cust_gender_male: "男",
+    cust_gender_female: "女",
+    cust_gender_nonbinary: "其他",
+    cust_col_id: "客户编号",
+    cust_col_name: "姓名",
+    cust_col_age: "年龄",
+    cust_col_gender: "性别",
+    cust_col_country: "国家",
+    cust_col_actions: "操作",
+
+    // Discounts Tab
+    disc_filter_store: "按门店过滤:",
+    disc_btn_add: "新增促销",
+    disc_col_id: "优惠编号",
+    disc_col_season: "活动名称",
+    disc_col_avg: "平均折扣",
+    disc_col_start: "开始日期",
+    disc_col_end: "结束日期",
+    disc_col_actions: "操作",
+    disc_chart_title: "各季度平均折扣对比",
+
+    // Employees Tab
+    emp_filter_store: "按门店过滤:",
+    emp_btn_add: "新增员工",
+    emp_col_id: "员工编号",
+    emp_col_name: "姓名",
+    emp_col_store: "所属门店",
+    emp_col_role: "职位",
+    emp_col_actions: "操作",
+    emp_chart_title: "员工规模构成统计",
+
+    // Products Tab
+    prod_search_placeholder: "搜索商品名称或描述...",
+    prod_filter_cat: "商品类别:",
+    prod_filter_all: "所有类别",
+    prod_filter_clothing: "服装",
+    prod_filter_shoes: "鞋履",
+    prod_filter_accessories: "配饰",
+    prod_btn_add: "新增商品",
+
+    // Stores Tab
+    store_col_id: "门店编号",
+    store_col_name: "门店名称",
+    store_col_lat: "纬度 (Lat)",
+    store_col_lng: "经度 (Lng)",
+    store_col_country: "国家",
+    store_col_skus: "单品 SKU 总数",
+    store_col_products: "款式总数",
+    store_chart_title: "各门店商品与 SKU 数量分布图",
+
+    // Transactions Tab
+    tx_filter_store: "按门店过滤:",
+    tx_filter_payment: "支付方式:",
+    tx_btn_create: "创建交易",
+    tx_col_id: "交易单号",
+    tx_col_store: "门店",
+    tx_col_salesperson: "经办人",
+    tx_col_time: "交易时间",
+    tx_col_sku: "商品 SKU",
+    tx_col_product: "商品名称",
+    tx_col_payment: "支付方式",
+    tx_col_price: "单价",
+    tx_col_qty: "数量",
+    tx_col_total: "总计 (USD)",
+
+    // Inventory Tab
+    inv_title: "库存与进销存管理",
+    inv_desc: "实时追踪库存水平及来自供应商的入库日志。",
+    inv_btn_import: "办理商品入库",
+    inv_filter_store: "门店:",
+    inv_search_placeholder: "按 SKU、商品名称或品类搜索...",
+    inv_stock_status: "实时库存状态",
+    inv_import_history: "最近入库日志",
+    inv_col_sku: "商品 SKU",
+    inv_col_product: "商品名称",
+    inv_col_cat: "品类",
+    inv_col_qty: "库存余量",
+    inv_col_date: "入库时间",
+    inv_col_sku_prod: "SKU / 商品",
+    inv_col_qty_added: "数量",
+    inv_col_supplier: "供货商"
+  }
+};
+
+const dynamicTitles = {
+  dashboard: { vi: 'Dashboard Bản đồ Cửa hàng', en: 'Store Map Dashboard', zh: '门店地图仪表盘' },
+  customers: { vi: 'Quản lý Khách hàng', en: 'Customer Management', zh: '客户管理' },
+  discounts: { vi: 'Cơ chế Khuyến mãi', en: 'Discount Configuration', zh: '促销折扣配置' },
+  employees: { vi: 'Danh sách Nhân sự', en: 'Staff Directory', zh: '员工名册' },
+  products: { vi: 'Lưới Sản phẩm (GenAI Showcase)', en: 'Product Catalog (GenAI)', zh: '商品目录 (GenAI)' },
+  stores: { vi: 'Danh sách Cửa hàng Toàn cầu', en: 'Global Store Locations', zh: '全球门店列表' },
+  transactions: { vi: 'Lịch sử Giao dịch', en: 'Transaction History', zh: '交易历史记录' },
+  inventory: { vi: 'Quản lý Kho hàng & Nhập kho', en: 'Inventory & Stock Management', zh: '库存与进销存管理' },
+  'admin-users': { vi: 'Quản lý Tài khoản Hệ thống', en: 'System Users', zh: '系统用户管理' },
+  'admin-permissions': { vi: 'Thiết lập Phân quyền Dynamic', en: 'RBAC Dynamic Permissions', zh: 'RBAC动态权限配置' },
+  'admin-logs': { vi: 'Nhật ký Hoạt động Hệ thống', en: 'System Audit Logs', zh: '系统审计日志' }
+};
+
+const elementSelectors = {
+  // Dashboard
+  '#tab-dashboard .map-overlay-info h3': 'db_instruction_title',
+  '#tab-dashboard .map-overlay-info p': 'db_instruction_desc',
+  '#tab-dashboard .stat-card:nth-child(1) .stat-label': 'db_total_skus',
+  '#tab-dashboard .stat-card:nth-child(2) .stat-label': 'db_next_week_demand',
+  '#tab-dashboard label[for="forecast-sku-selector"]': 'db_select_sku',
+  '#tab-dashboard label[for="forecast-chart-type"]': 'db_chart_type',
+  '#tab-dashboard #forecast-chart-type option[value="line"]': 'db_chart_line',
+  '#tab-dashboard #forecast-chart-type option[value="column"]': 'db_chart_column',
+  
+  // Customers
+  '#tab-customers #btn-add-customer': 'cust_btn_add',
+  '#tab-customers #customers-search': 'cust_search_placeholder',
+  '#tab-customers label': 'cust_col_gender',
+  '#tab-customers #customers-gender-filter option[value=""]': 'cust_filter_gender',
+  '#tab-customers #customers-gender-filter option[value="Male"]': 'cust_gender_male',
+  '#tab-customers #customers-gender-filter option[value="Female"]': 'cust_gender_female',
+  '#tab-customers #customers-gender-filter option[value="Non-binary"]': 'cust_gender_nonbinary',
+  '#customers-table th:nth-child(1)': 'cust_col_id',
+  '#customers-table th:nth-child(2)': 'cust_col_name',
+  '#customers-table th:nth-child(3)': 'cust_col_age',
+  '#customers-table th:nth-child(4)': 'cust_col_gender',
+  '#customers-table th:nth-child(5)': 'cust_col_country',
+  '#customers-table th:nth-child(6)': 'cust_col_actions',
+
+  // Discounts
+  '#tab-discounts label': 'disc_filter_store',
+  '#tab-discounts #btn-add-discount': 'disc_btn_add',
+  '#discounts-table th:nth-child(1)': 'disc_col_id',
+  '#discounts-table th:nth-child(2)': 'disc_col_season',
+  '#discounts-table th:nth-child(3)': 'disc_col_avg',
+  '#discounts-table th:nth-child(4)': 'disc_col_start',
+  '#discounts-table th:nth-child(5)': 'disc_col_end',
+  '#discounts-table th:nth-child(6)': 'disc_col_actions',
+  '#tab-discounts .discount-chart-card h3': 'disc_chart_title',
+
+  // Employees
+  '#tab-employees label': 'emp_filter_store',
+  '#tab-employees #btn-add-employee': 'emp_btn_add',
+  '#employees-table th:nth-child(1)': 'emp_col_id',
+  '#employees-table th:nth-child(2)': 'emp_col_name',
+  '#employees-table th:nth-child(3)': 'emp_col_store',
+  '#employees-table th:nth-child(4)': 'emp_col_role',
+  '#employees-table th:nth-child(5)': 'emp_col_actions',
+  '#tab-employees h3': 'emp_chart_title',
+
+  // Products
+  '#tab-products #products-search': 'prod_search_placeholder',
+  '#tab-products label': 'prod_filter_cat',
+  '#tab-products #products-category-filter option[value=""]': 'prod_filter_all',
+  '#tab-products #products-category-filter option[value="Clothing"]': 'prod_filter_clothing',
+  '#tab-products #products-category-filter option[value="Shoes"]': 'prod_filter_shoes',
+  '#tab-products #products-category-filter option[value="Accessories"]': 'prod_filter_accessories',
+  '#tab-products #btn-add-product': 'prod_btn_add',
+
+  // Stores
+  '#stores-table th:nth-child(1)': 'store_col_id',
+  '#stores-table th:nth-child(2)': 'store_col_name',
+  '#stores-table th:nth-child(3)': 'store_col_lat',
+  '#stores-table th:nth-child(4)': 'store_col_lng',
+  '#stores-table th:nth-child(5)': 'store_col_country',
+  '#stores-table th:nth-child(6)': 'store_col_skus',
+  '#stores-table th:nth-child(7)': 'store_col_products',
+  '#tab-stores h3': 'store_chart_title',
+
+  // Transactions
+  '#tab-transactions label[for="transactions-store-filter"]': 'tx_filter_store',
+  '#tab-transactions label[for="transactions-payment-filter"]': 'tx_filter_payment',
+  '#tab-transactions #btn-add-transaction': 'tx_btn_create',
+  '#transactions-table th:nth-child(1)': 'tx_col_id',
+  '#transactions-table th:nth-child(2)': 'tx_col_store',
+  '#transactions-table th:nth-child(3)': 'tx_col_salesperson',
+  '#transactions-table th:nth-child(4)': 'tx_col_time',
+  '#transactions-table th:nth-child(5)': 'tx_col_sku',
+  '#transactions-table th:nth-child(6)': 'tx_col_product',
+  '#transactions-table th:nth-child(7)': 'tx_col_payment',
+  '#transactions-table th:nth-child(8)': 'tx_col_price',
+  '#transactions-table th:nth-child(9)': 'tx_col_qty',
+  '#transactions-table th:nth-child(10)': 'tx_col_total',
+
+  // Inventory
+  '#tab-inventory h1.page-title': 'inv_title',
+  '#tab-inventory .inventory-header p.text-muted': 'inv_desc',
+  '#tab-inventory #btn-open-import': 'inv_btn_import',
+  '#tab-inventory label[for="inventory-store-select"]': 'inv_filter_store',
+  '#tab-inventory #inventory-search': 'inv_search_placeholder',
+  '#tab-inventory .grid-container > div:nth-child(1) h3': 'inv_stock_status',
+  '#tab-inventory .grid-container > div:nth-child(2) h3': 'inv_import_history',
+  '#tab-inventory .grid-container > div:nth-child(1) th:nth-child(1)': 'inv_col_sku',
+  '#tab-inventory .grid-container > div:nth-child(1) th:nth-child(2)': 'inv_col_product',
+  '#tab-inventory .grid-container > div:nth-child(1) th:nth-child(3)': 'inv_col_cat',
+  '#tab-inventory .grid-container > div:nth-child(1) th:nth-child(4)': 'inv_col_qty',
+  '#tab-inventory .grid-container > div:nth-child(2) th:nth-child(1)': 'inv_col_date',
+  '#tab-inventory .grid-container > div:nth-child(2) th:nth-child(2)': 'inv_col_sku_prod',
+  '#tab-inventory .grid-container > div:nth-child(2) th:nth-child(3)': 'inv_col_qty_added',
+  '#tab-inventory .grid-container > div:nth-child(2) th:nth-child(4)': 'inv_col_supplier'
+};
+
+function setElementTranslatedText(el, text) {
+  if (!el) return;
+  const icon = el.querySelector('i');
+  if (icon) {
+    const newIcon = icon.cloneNode(true);
+    el.innerHTML = '';
+    el.appendChild(newIcon);
+    el.appendChild(document.createTextNode(' ' + text));
+  } else {
+    el.textContent = text;
+  }
+}
+
+function translatePage() {
+  // Translate standard data-i18n attributes
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[currentLang] && translations[currentLang][key]) {
+      setElementTranslatedText(el, translations[currentLang][key]);
+    }
+  });
+
+  // Translate tab contents using CSS selectors mapping
+  for (const [selector, key] of Object.entries(elementSelectors)) {
+    const el = document.querySelector(selector);
+    if (el && translations[currentLang] && translations[currentLang][key]) {
+      if (el.tagName === 'INPUT' && el.type === 'text') {
+        el.placeholder = translations[currentLang][key];
+      } else {
+        setElementTranslatedText(el, translations[currentLang][key]);
+      }
+    }
+  }
+
+  // Update dynamic page title
+  const pageTitle = document.getElementById('page-title');
+  if (pageTitle && dynamicTitles[activeTab]) {
+    pageTitle.textContent = dynamicTitles[activeTab][currentLang];
+  }
+
+  // Translate DB Mode badge
+  const dbModeText = document.getElementById('db-mode-text');
+  if (dbModeText) {
+    const isMock = dbModeText.textContent.includes('Mock') || dbModeText.textContent.includes('mô phỏng') || dbModeText.textContent.includes('模拟');
+    if (isMock) {
+      dbModeText.textContent = currentLang === 'vi' ? 'Chế độ mô phỏng (JSON)' : (currentLang === 'en' ? 'Mock Mode (JSON)' : '模拟模式 (JSON)');
+    } else {
+      dbModeText.textContent = currentLang === 'vi' ? 'Cơ sở dữ liệu đám mây (RDS)' : (currentLang === 'en' ? 'Cloud Database (RDS)' : '云数据库 (RDS)');
+    }
+  }
+}
+
+if (langSelect) {
+  langSelect.value = currentLang;
+  langSelect.addEventListener('change', (e) => {
+    currentLang = e.target.value;
+    localStorage.setItem('preferred-language', currentLang);
+    translatePage();
+    switchTab(activeTab);
+  });
+}
+
+// Call translatePage initially
+translatePage();
 
 // Run auth check on page load
 checkAuth();

@@ -313,5 +313,14 @@
     "action": "LOGIN",
     "details": "Đăng nhập thành công",
     "ip": "::1"
+  },
+  {
+    "id": 1782730246475,
+    "timestamp": "2026-06-29T10:50:45.970Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
   }
 ]
