@@ -320,7 +320,7 @@ function switchTab(tabName) {
       customers: 'Quản lý Khách hàng',
       discounts: 'Cơ chế Khuyến mãi',
       employees: 'Danh sách Nhân sự',
-      products: 'Lưới Sản phẩm (GenAI Showcase)',
+      products: 'Sản phẩm',
       stores: 'Danh sách Cửa hàng Toàn cầu',
       transactions: 'Lịch sử Giao dịch',
       inventory: 'Quản lý Kho hàng & Nhập kho',
@@ -464,8 +464,8 @@ async function initDashboardMap() {
         <div style="color: #f3f4f6; font-family: 'Inter', sans-serif;">
           <h4 style="margin: 0 0 4px 0; color: #818cf8; font-family: 'Outfit', sans-serif; font-size: 14px;">${store.store_name}</h4>
           <p style="margin: 0 0 4px 0; font-size: 11px; color: #9ca3af;"><i class="fa-solid fa-earth-americas"></i> ${store.country}</p>
-          <p style="margin: 0 0 8px 0; font-size: 11px; color: #9ca3af;"><i class="fa-solid fa-box"></i> SKU: ${store.num_distinct_skus} | Sp: ${store.num_distinct_products}</p>
-          <button onclick="window.openForecastPanel(${store.store_id}, '${store.store_name.replace(/'/g, "\\'")}')" style="width: 100%; font-size: 11px; padding: 6px; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; border-radius: 6px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#6366f1'; this.style.color='white';" onmouseout="this.style.background='rgba(99, 102, 241, 0.15)'; this.style.color='#818cf8';">Xem Dự Báo</button>
+          <p style="margin: 0 0 8px 0; font-size: 11px; color: #9ca3af;"><i class="fa-solid fa-box"></i> SKU: ${store.num_distinct_skus} | ${translations[currentLang].db_products_abbr || 'Sp'}: ${store.num_distinct_products}</p>
+          <button data-i18n="db_view_forecast" onclick="window.openForecastPanel(${store.store_id}, '${store.store_name.replace(/'/g, "\\'")}')" style="width: 100%; font-size: 11px; padding: 6px; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; border-radius: 6px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#6366f1'; this.style.color='white';" onmouseout="this.style.background='rgba(99, 102, 241, 0.15)'; this.style.color='#818cf8';">${translations[currentLang].db_view_forecast || 'Xem Dự Báo'}</button>
         </div>
       `);
 
@@ -1059,15 +1059,22 @@ async function loadEmployeesTab() {
       const isEditable = currentUser.role === 'Director' || currentUser.store_id === e.store_id;
       
       const roleMap = {
-        'Sales Staff': { vi: 'Nhân viên bán hàng', en: 'Sales Staff', zh: '销售员工' },
-        'Store Manager': { vi: 'Quản lý cửa hàng', en: 'Store Manager', zh: '门店经理' },
-        'Director': { vi: 'Giám đốc', en: 'Director', zh: '董事/总监' },
-        'Inventory Manager': { vi: 'Quản lý kho', en: 'Inventory Manager', zh: '库存经理' },
-        'Marketing Manager': { vi: 'Quản lý Marketing', en: 'Marketing Manager', zh: '营销经理' },
-        'Finance/Auditor': { vi: 'Tài chính / Kiểm toán', en: 'Finance/Auditor', zh: '财务与审计' },
-        'IT Admin': { vi: 'Quản trị IT', en: 'IT Admin', zh: 'IT管理员' }
+        'SALES STAFF': { vi: 'Nhân viên bán hàng', en: 'Sales Staff', zh: '销售员工' },
+        'SALES ASSOCIATE': { vi: 'Nhân viên bán hàng', en: 'Sales Associate', zh: '销售助理' },
+        'STORE MANAGER': { vi: 'Quản lý cửa hàng', en: 'Store Manager', zh: '门店经理' },
+        'ASSISTANT MANAGER': { vi: 'Trợ lý quản lý', en: 'Assistant Manager', zh: '助理经理' },
+        'CASHIER': { vi: 'Thu ngân', en: 'Cashier', zh: '收银员' },
+        'STOCK CLERK': { vi: 'Nhân viên kho', en: 'Stock Clerk', zh: '库存员' },
+        'DIRECTOR': { vi: 'Giám đốc', en: 'Director', zh: '董事/总监' },
+        'INVENTORY MANAGER': { vi: 'Quản lý kho', en: 'Inventory Manager', zh: '库存经理' },
+        'MARKETING MANAGER': { vi: 'Quản lý Marketing', en: 'Marketing Manager', zh: '营销经理' },
+        'FINANCE/AUDITOR': { vi: 'Tài chính / Kiểm toán', en: 'Finance/Auditor', zh: '财务与审计' },
+        'IT ADMIN': { vi: 'Quản trị IT', en: 'IT Admin', zh: 'IT管理员' }
       };
-      const roleVal = roleMap[e.role] ? roleMap[e.role][currentLang] : e.role;
+      const normalizedRole = (e.role || '').toUpperCase();
+      const roleVal = roleMap[normalizedRole] ? roleMap[normalizedRole][currentLang] : e.role;
+      const isManager = normalizedRole.includes('MANAGER') || normalizedRole.includes('DIRECTOR');
+      
       const editText = currentLang === 'en' ? 'Edit' : (currentLang === 'zh' ? '编辑' : 'Sửa');
       const deleteText = currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa');
       const lockedText = currentLang === 'en' ? 'Locked' : (currentLang === 'zh' ? '锁定' : 'Khóa');
@@ -1077,7 +1084,7 @@ async function loadEmployeesTab() {
         <td><code>#EMP-${e.employee_id}</code></td>
         <td><strong>${e.name}</strong></td>
         <td>Store ${e.store_id}</td>
-        <td><span class="badge" style="background:${e.role === 'Store Manager' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.05)'}; color:${e.role === 'Store Manager' ? 'var(--secondary)' : 'var(--text-main)'}; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">${roleVal}</span></td>
+        <td><span class="badge" style="background:${isManager ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.05)'}; color:${isManager ? 'var(--secondary)' : 'var(--text-main)'}; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">${roleVal}</span></td>
         <td>
           ${isEditable ? `
             <div style="display: flex; gap: 8px;">
@@ -1104,8 +1111,11 @@ function renderEmployeesChart(employees) {
   }
 
   // Count managers vs staff
-  const managers = employees.filter(e => e.role === 'Store Manager').length;
-  const staff = employees.filter(e => e.role === 'Sales Staff').length;
+  const managers = employees.filter(e => {
+    const roleUpper = (e.role || '').toUpperCase();
+    return roleUpper.includes('MANAGER') || roleUpper.includes('DIRECTOR');
+  }).length;
+  const staff = employees.length - managers;
 
   const labelManager = currentLang === 'en' ? 'Manager' : (currentLang === 'zh' ? '经理' : 'Quản lý (Manager)');
   const labelStaff = currentLang === 'en' ? 'Staff' : (currentLang === 'zh' ? '员工' : 'Nhân viên (Staff)');
@@ -1132,7 +1142,16 @@ function renderEmployeesChart(employees) {
 window.openEditEmployee = function(id, name, role) {
   activeEditEmployee = id;
   document.getElementById('edit-employee-name').value = name;
-  document.getElementById('edit-employee-role').value = role;
+  
+  const select = document.getElementById('edit-employee-role');
+  let matchedValue = role;
+  for (let i = 0; i < select.options.length; i++) {
+    if (select.options[i].value.toUpperCase() === (role || '').toUpperCase()) {
+      matchedValue = select.options[i].value;
+      break;
+    }
+  }
+  select.value = matchedValue;
   document.getElementById('employee-modal').classList.add('active');
 };
 
@@ -3074,7 +3093,16 @@ const translations = {
     modal_emp_name_placeholder: "Nhập họ và tên...",
     modal_emp_role: "Vai trò:",
     modal_emp_role_staff: "Sales Staff (Nhân viên bán hàng)",
+    modal_emp_role_associate: "Sales Associate (Nhân viên bán hàng)",
     modal_emp_role_manager: "Store Manager (Quản lý cửa hàng)",
+    modal_emp_role_assistant: "Assistant Manager (Trợ lý quản lý)",
+    modal_emp_role_cashier: "Cashier (Thu ngân)",
+    modal_emp_role_stock_clerk: "Stock Clerk (Nhân viên kho)",
+    modal_emp_role_director: "Director (Giám đốc)",
+    modal_emp_role_inventory: "Inventory Manager (Quản lý kho)",
+    modal_emp_role_marketing: "Marketing Manager (Quản lý Marketing)",
+    modal_emp_role_finance: "Finance/Auditor (Tài chính / Kiểm toán)",
+    modal_emp_role_it: "IT Admin (Quản trị IT)",
     modal_add_product_title: "Thêm Sản Phẩm Mới",
     modal_edit_product_title: "Cập nhật Sản Phẩm",
     modal_prod_name: "Tên sản phẩm:",
@@ -3138,7 +3166,10 @@ const translations = {
     modal_tx_payment_apple: "Apple Pay",
     modal_tx_btn_create: "Tạo giao dịch",
     modal_tx_alert_stock: "Cảnh báo thiếu hàng tồn kho!",
-    modal_tx_alert_stock_desc: "Số lượng dự báo tuần tới vươt quá số lượng hàng còn lại trong kho."
+    modal_tx_alert_stock_desc: "Số lượng dự báo tuần tới vươt quá số lượng hàng còn lại trong kho.",
+    db_view_forecast: "Xem Dự Báo",
+    db_sovereignty: "Chủ quyền",
+    db_products_abbr: "Sp"
   },
   en: {
     sidebar_dashboard: "Map Dashboard",
@@ -3323,7 +3354,16 @@ const translations = {
     modal_emp_name_placeholder: "Enter full name...",
     modal_emp_role: "Role Designation:",
     modal_emp_role_staff: "Sales Staff",
+    modal_emp_role_associate: "Sales Associate",
     modal_emp_role_manager: "Store Manager",
+    modal_emp_role_assistant: "Assistant Manager",
+    modal_emp_role_cashier: "Cashier",
+    modal_emp_role_stock_clerk: "Stock Clerk",
+    modal_emp_role_director: "Director",
+    modal_emp_role_inventory: "Inventory Manager",
+    modal_emp_role_marketing: "Marketing Manager",
+    modal_emp_role_finance: "Finance/Auditor",
+    modal_emp_role_it: "IT Admin",
     modal_add_product_title: "Add New Product Entry",
     modal_edit_product_title: "Update Product Details",
     modal_prod_name: "Product Name:",
@@ -3387,7 +3427,10 @@ const translations = {
     modal_tx_payment_apple: "Apple Pay",
     modal_tx_btn_create: "Create Transaction",
     modal_tx_alert_stock: "Out of Stock Warning!",
-    modal_tx_alert_stock_desc: "Weekly forecasted demand exceeds the remaining in-stock quantity."
+    modal_tx_alert_stock_desc: "Weekly forecasted demand exceeds the remaining in-stock quantity.",
+    db_view_forecast: "View Forecast",
+    db_sovereignty: "Sovereignty",
+    db_products_abbr: "Prod"
   },
   zh: {
     sidebar_dashboard: "地图仪表盘",
@@ -3572,7 +3615,16 @@ const translations = {
     modal_emp_name_placeholder: "请输入员工姓名...",
     modal_emp_role: "岗位职称:",
     modal_emp_role_staff: "销售员工",
+    modal_emp_role_associate: "销售助理 (Sales Associate)",
     modal_emp_role_manager: "门店经理",
+    modal_emp_role_assistant: "助理经理 (Assistant Manager)",
+    modal_emp_role_cashier: "收银员 (Cashier)",
+    modal_emp_role_stock_clerk: "理货员 (Stock Clerk)",
+    modal_emp_role_director: "总监 (Director)",
+    modal_emp_role_inventory: "库存经理 (Inventory Manager)",
+    modal_emp_role_marketing: "营销经理 (Marketing Manager)",
+    modal_emp_role_finance: "财务审计 (Finance/Auditor)",
+    modal_emp_role_it: "IT管理员 (IT Admin)",
     modal_add_product_title: "添加新商品名录",
     modal_edit_product_title: "更新商品属性",
     modal_prod_name: "商品名称:",
@@ -3636,7 +3688,10 @@ const translations = {
     modal_tx_payment_apple: "Apple Pay",
     modal_tx_btn_create: "创建销售单",
     modal_tx_alert_stock: "库存不足警告！",
-    modal_tx_alert_stock_desc: "下周需求预测数量超出了目前该商品的剩余库存量。"
+    modal_tx_alert_stock_desc: "下周需求预测数量超出了目前该商品的剩余库存量。",
+    db_view_forecast: "查看预测",
+    db_sovereignty: "主权",
+    db_products_abbr: "商品"
   }
 };
 
@@ -3645,7 +3700,7 @@ const dynamicTitles = {
   customers: { vi: 'Quản lý Khách hàng', en: 'Customer Management', zh: '客户管理' },
   discounts: { vi: 'Cơ chế Khuyến mãi', en: 'Discount Configuration', zh: '促销折扣配置' },
   employees: { vi: 'Danh sách Nhân sự', en: 'Staff Directory', zh: '员工名册' },
-  products: { vi: 'Lưới Sản phẩm (GenAI Showcase)', en: 'Product Catalog (GenAI)', zh: '商品目录 (GenAI)' },
+  products: { vi: 'Sản phẩm', en: 'Product Catalog', zh: '商品目录' },
   stores: { vi: 'Danh sách Cửa hàng Toàn cầu', en: 'Global Store Locations', zh: '全球门店列表' },
   transactions: { vi: 'Lịch sử Giao dịch', en: 'Transaction History', zh: '交易历史记录' },
   inventory: { vi: 'Quản lý Kho hàng & Nhập kho', en: 'Inventory & Stock Management', zh: '库存与进销存管理' },
