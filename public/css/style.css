@@ -31,6 +31,12 @@
   
   --border-radius: 12px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Skeleton theme variables */
+  --skeleton-bg-start: rgba(255, 255, 255, 0.03);
+  --skeleton-bg-mid: rgba(255, 255, 255, 0.08);
+  --skeleton-bg-end: rgba(255, 255, 255, 0.03);
+  --skeleton-box-bg: rgba(255, 255, 255, 0.01);
 }
 
 body.light-theme {
@@ -49,6 +55,12 @@ body.light-theme {
   --primary-light: #4f46e5;
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.1);
+
+  /* Skeleton theme variables */
+  --skeleton-bg-start: rgba(0, 0, 0, 0.05);
+  --skeleton-bg-mid: rgba(0, 0, 0, 0.1);
+  --skeleton-bg-end: rgba(0, 0, 0, 0.05);
+  --skeleton-box-bg: rgba(0, 0, 0, 0.015);
 }
 
 .no-transition,
@@ -1367,4 +1379,177 @@ select:focus,
   border-radius: 8px;
   padding: 16px;
   border: 1px solid var(--border-color);
+}
+
+/* Skeleton Loading Shimmer Animation */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-bg-start) 25%,
+    var(--skeleton-bg-mid) 37%,
+    var(--skeleton-bg-end) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.skeleton-text {
+  height: 12px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: 100%;
+}
+
+.skeleton-text.short {
+  width: 40%;
+}
+
+.skeleton-text.medium {
+  width: 70%;
+}
+
+.skeleton-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.skeleton-table-row {
+  display: table-row;
+}
+
+.skeleton-table-row td {
+  padding: 16px 12px;
+}
+
+.skeleton-chart-box {
+  width: 100%;
+  height: 250px;
+  border-radius: var(--border-radius);
+  background: var(--skeleton-box-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--border-color);
+}
+
+/* ================= RESPONSIVE MEDIA QUERIES ================= */
+
+/* Tablet & Mobile Viewports (< 1024px) */
+@media (max-width: 1024px) {
+  #sidebar-toggle {
+    display: flex !important;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100vh;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.sidebar-open {
+    left: 0;
+  }
+
+  .content-area {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .content-header {
+    padding: 16px 20px;
+  }
+
+  .tab-content {
+    padding: 20px;
+  }
+
+  .data-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+
+  .table-card {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .search-box {
+    width: 100% !important;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .select-control {
+    width: 100% !important;
+  }
+
+  .filter-bar button, 
+  .filter-bar .btn-primary {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* Mobile Viewports (< 768px) */
+@media (max-width: 768px) {
+  .content-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .header-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .dashboard-layout {
+    height: 480px !important;
+  }
+
+  /* Mobile Bottom Sheet style for Forecast Panel */
+  .forecast-panel {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 80vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    transform: translateY(110%);
+    box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+  }
+
+  .forecast-panel.hidden {
+    display: none !important;
+  }
 }

@@ -8,6 +8,12 @@ if (savedTheme === 'light') {
 if (window.Plotly) {
   const originalNewPlot = Plotly.newPlot;
   Plotly.newPlot = function(id, data, layout, config) {
+    const container = typeof id === 'string' ? document.getElementById(id) : id;
+    if (container) {
+      if (container.querySelector('.skeleton') || container.querySelector('.skeleton-chart-box')) {
+        container.innerHTML = '';
+      }
+    }
     if (layout) {
       const isLight = document.body.classList.contains('light-theme');
       const textColor = isLight ? '#1f2937' : '#f3f4f6';
@@ -302,6 +308,14 @@ async function loadDBModeStatus() {
 function switchTab(tabName) {
   activeTab = tabName;
   
+  // Close sidebar on mobile
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar && sidebar.classList.contains('sidebar-open')) {
+    sidebar.classList.remove('sidebar-open');
+    if (overlay) overlay.style.display = 'none';
+  }
+  
   // Update Nav Active state
   navItems.forEach(item => {
     if (item.getAttribute('data-tab') === tabName) {
@@ -517,6 +531,8 @@ window.openForecastPanel = async function(storeId, storeName) {
   
   document.getElementById('forecast-store-name').textContent = storeName;
   activeForecastStoreId = storeId;
+
+  showForecastPanelSkeleton();
 
   try {
     const data = await fetchAPI(`/api/predict?store_id=${storeId}`);
@@ -769,10 +785,65 @@ document.getElementById('btn-close-forecast').addEventListener('click', () => {
   document.getElementById('forecast-panel').classList.add('hidden');
 });
 
+// ================= SKELETON LOADING HELPERS =================
+function showTableSkeleton(tbodyId, colCount, rowCount = 5) {
+  const tbody = document.querySelector(tbodyId);
+  if (!tbody) return;
+  let html = '';
+  for (let r = 0; r < rowCount; r++) {
+    html += '<tr class="skeleton-table-row">';
+    for (let c = 0; c < colCount; c++) {
+      const widthClass = c === 0 ? 'short' : (c === 1 ? 'medium' : '');
+      html += `<td><span class="skeleton skeleton-text ${widthClass}"></span></td>`;
+    }
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function showChartSkeleton(chartId) {
+  const el = document.getElementById(chartId);
+  if (!el) return;
+  el.innerHTML = '<div class="skeleton skeleton-chart-box"><span class="skeleton skeleton-text short" style="width: 50px;"></span></div>';
+}
+
+function showGridSkeleton(gridId, cardCount = 8) {
+  const grid = document.querySelector(gridId);
+  if (!grid) return;
+  let html = '';
+  for (let i = 0; i < cardCount; i++) {
+    html += `
+      <div class="card skeleton-card" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border-color); border-radius: var(--border-radius); background: var(--bg-card); box-sizing: border-box;">
+        <div class="skeleton" style="width: 100%; height: 180px; border-radius: var(--border-radius);"></div>
+        <div class="skeleton skeleton-text" style="width: 80%;"></div>
+        <div class="skeleton skeleton-text short" style="width: 40%;"></div>
+        <div class="skeleton skeleton-text medium" style="width: 60%;"></div>
+      </div>
+    `;
+  }
+  grid.innerHTML = html;
+}
+
+function showForecastPanelSkeleton() {
+  const countEl = document.getElementById('forecast-sku-count');
+  const qtyEl = document.getElementById('forecast-next-week-qty');
+  const selector = document.getElementById('forecast-sku-selector');
+  
+  if (countEl) countEl.innerHTML = '<span class="skeleton skeleton-text short" style="display:inline-block; width:30px; height:12px; margin:0;"></span>';
+  if (qtyEl) qtyEl.innerHTML = '<span class="skeleton skeleton-text short" style="display:inline-block; width:30px; height:12px; margin:0;"></span>';
+  if (selector) selector.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading SKUs...' : (currentLang === 'zh' ? '正在加载商品...' : 'Đang tải danh sách hàng...')}</option>`;
+  
+  showChartSkeleton('forecast-chart');
+}
+
 // ================= CUSTOMERS TAB LOGIC =================
 async function loadCustomersTab() {
   const { page, limit, search, gender } = pagState.customers;
   
+  showTableSkeleton('#customers-table tbody', 6);
+  showChartSkeleton('customers-gender-chart');
+  showChartSkeleton('customers-age-chart');
+
   try {
     const res = await fetchAPI(`/api/customers?page=${page}&limit=${limit}&search=${search}&gender=${gender}`);
     
@@ -895,6 +966,8 @@ async function loadDiscountsTab() {
     }
 
     const storeId = storeFilter.value;
+    showTableSkeleton('#discounts-table tbody', 6);
+    showChartSkeleton('discounts-chart');
     const discounts = await fetchAPI(`/api/discounts?store_id=${storeId}`);
     
     // Render Table
@@ -1050,6 +1123,8 @@ async function loadEmployeesTab() {
     }
 
     const storeId = storeFilter.value;
+    showTableSkeleton('#employees-table tbody', 5);
+    showChartSkeleton('employees-chart');
     const employees = await fetchAPI(`/api/employees?store_id=${storeId}`);
     
     const tbody = document.querySelector('#employees-table tbody');
@@ -1192,6 +1267,8 @@ async function loadProductsTab() {
   const category = document.getElementById('products-category-filter').value;
   const search = document.getElementById('products-search').value;
 
+  showGridSkeleton('#products-grid', 8);
+
   try {
     const products = await fetchAPI(`/api/products?category=${category}&search=${search}`);
     
@@ -1267,6 +1344,8 @@ document.getElementById('products-category-filter').addEventListener('change', (
 
 // ================= STORES TAB LOGIC =================
 async function loadStoresTab() {
+  showTableSkeleton('#stores-table tbody', 7);
+  showChartSkeleton('stores-chart');
   try {
     const stores = await fetchAPI('/api/stores');
     
@@ -1357,7 +1436,7 @@ async function loadTransactionsTab() {
 
     const { page, limit, payment_method } = pagState.transactions;
     const storeId = storeFilter.value;
-    
+    showTableSkeleton('#transactions-table tbody', 10);
     const res = await fetchAPI(`/api/transactions?page=${page}&limit=${limit}&store_id=${storeId}&payment_method=${payment_method}`);
     
     const tbody = document.querySelector('#transactions-table tbody');
@@ -1471,8 +1550,7 @@ async function loadInventoryStock() {
   const search = document.getElementById('inventory-search').value;
   const tbody = document.getElementById('inventory-stock-tbody');
   
-  const loadingText = currentLang === 'en' ? 'Loading inventory data...' : (currentLang === 'zh' ? '正在加载库存数据...' : 'Đang tải dữ liệu kho...');
-  tbody.innerHTML = `<tr><td colspan="4" class="text-center">${loadingText}</td></tr>`;
+  showTableSkeleton('#inventory-stock-tbody', 4);
   
   try {
     const stockItems = await fetchAPI(`/api/inventory?store_id=${storeId}&search=${encodeURIComponent(search)}`);
@@ -1514,8 +1592,7 @@ async function loadInventoryImports() {
   const storeId = document.getElementById('inventory-store-select').value;
   const tbody = document.getElementById('inventory-imports-tbody');
   
-  const loadingText = currentLang === 'en' ? 'Loading import history...' : (currentLang === 'zh' ? '正在加载入库历史...' : 'Đang tải lịch sử nhập...');
-  tbody.innerHTML = `<tr><td colspan="4" class="text-center">${loadingText}</td></tr>`;
+  showTableSkeleton('#inventory-imports-tbody', 4);
   
   try {
     const imports = await fetchAPI(`/api/inventory/imports?store_id=${storeId}`);
@@ -1707,7 +1784,24 @@ function renderPagination(tab, total, page, limit) {
   container.appendChild(nextBtn);
 }
 
-// ================= INITIALIZATION & SETUP =================
+// Mobile Sidebar Toggle event listeners
+document.getElementById('sidebar-toggle').addEventListener('click', () => {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar && overlay) {
+    sidebar.classList.toggle('sidebar-open');
+    overlay.style.display = sidebar.classList.contains('sidebar-open') ? 'block' : 'none';
+  }
+});
+
+document.getElementById('sidebar-overlay').addEventListener('click', () => {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar && overlay) {
+    sidebar.classList.remove('sidebar-open');
+    overlay.style.display = 'none';
+  }
+});
 
 // Sidebar Navigation click handlers
 navItems.forEach(item => {
@@ -2950,6 +3044,7 @@ const translations = {
     cust_col_gender: "Giới tính",
     cust_col_country: "Quốc gia",
     cust_col_actions: "Hành động",
+    cust_chart_title: "Phân tích Cơ cấu Khách hàng",
 
     // Discounts Tab
     disc_filter_store: "Lọc theo cửa hàng:",
@@ -3012,6 +3107,7 @@ const translations = {
     inv_desc: "Theo dõi lượng hàng tồn kho thực tế và nhật ký nhập hàng từ nhà cung cấp.",
     inv_btn_import: "Nhập Hàng Mới",
     inv_filter_store: "Cửa hàng:",
+    inv_all_stores: "Tất cả Cửa hàng",
     inv_search_placeholder: "Tìm kiếm SKU, tên sản phẩm hoặc danh mục...",
     inv_lbl_search: "Tìm kiếm:",
     inv_stock_status: "Trạng thái Tồn kho Thực tế",
@@ -3211,6 +3307,7 @@ const translations = {
     cust_col_gender: "Gender",
     cust_col_country: "Country",
     cust_col_actions: "Actions",
+    cust_chart_title: "Customer Profile Analysis",
 
     // Discounts Tab
     disc_filter_store: "Filter by store:",
@@ -3273,6 +3370,7 @@ const translations = {
     inv_desc: "Track real-time stock levels and import logs from suppliers.",
     inv_btn_import: "Import Stock",
     inv_filter_store: "Store:",
+    inv_all_stores: "All Stores",
     inv_search_placeholder: "Search by SKU, product name, or category...",
     inv_lbl_search: "Search:",
     inv_stock_status: "Real-time Stock Levels",
@@ -3472,6 +3570,7 @@ const translations = {
     cust_col_gender: "性别",
     cust_col_country: "国家",
     cust_col_actions: "操作",
+    cust_chart_title: "客户结构分析",
 
     // Discounts Tab
     disc_filter_store: "按门店过滤:",
@@ -3534,6 +3633,7 @@ const translations = {
     inv_desc: "实时追踪库存水平及来自供应商的入库日志。",
     inv_btn_import: "办理商品入库",
     inv_filter_store: "门店:",
+    inv_all_stores: "所有门店",
     inv_search_placeholder: "按 SKU、商品名称或品类搜索...",
     inv_lbl_search: "搜索:",
     inv_stock_status: "实时库存状态",
@@ -3734,6 +3834,7 @@ const elementSelectors = {
   '#customers-table th:nth-child(4)': 'cust_col_gender',
   '#customers-table th:nth-child(5)': 'cust_col_country',
   '#customers-table th:nth-child(6)': 'cust_col_actions',
+  '#tab-customers h3': 'cust_chart_title',
 
   // Discounts
   '#tab-discounts label': 'disc_filter_store',
@@ -3795,6 +3896,10 @@ const elementSelectors = {
   '#tab-inventory .inventory-header p.text-muted': 'inv_desc',
   '#tab-inventory #btn-open-import': 'inv_btn_import',
   '#tab-inventory label[for="inventory-store-select"]': 'inv_filter_store',
+  '#inventory-store-select option[value=""]': 'inv_all_stores',
+  '#discounts-store-filter option[value=""]': 'inv_all_stores',
+  '#employees-store-filter option[value=""]': 'inv_all_stores',
+  '#transactions-store-filter option[value=""]': 'inv_all_stores',
   '#tab-inventory #inventory-search': 'inv_search_placeholder',
   '#tab-inventory .grid-container > div:nth-child(1) h3': 'inv_stock_status',
   '#tab-inventory .grid-container > div:nth-child(2) h3': 'inv_import_history',

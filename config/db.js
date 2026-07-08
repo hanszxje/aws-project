@@ -358,18 +358,18 @@ const db = {
       }));
 
       if (storeId && storeId !== 'null') {
-        list = list.filter(d => d.store_id.toString() === storeId.toString());
+        list = list.filter(d => isNaN(d.store_id) || d.store_id === null || d.store_id.toString() === storeId.toString());
       }
       return list;
     } else if (isMockMode) {
       let data = readMockFile('discounts.json');
       if (storeId) {
-        data = data.filter(d => d.store_id === parseInt(storeId));
+        data = data.filter(d => !d.store_id || d.store_id === parseInt(storeId));
       }
       return data;
     } else {
       if (storeId) {
-        const res = await pool.query('SELECT * FROM discounts WHERE store_id = $1 ORDER BY start_date DESC', [storeId]);
+        const res = await pool.query('SELECT * FROM discounts WHERE store_id = $1 OR store_id IS NULL ORDER BY start_date DESC', [storeId]);
         return res.rows;
       } else {
         const res = await pool.query('SELECT * FROM discounts ORDER BY start_date DESC');

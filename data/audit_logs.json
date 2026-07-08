@@ -88,5 +88,41 @@
     "action": "EMPLOYEE_UPDATE",
     "details": "Cập nhật nhân viên #ID: 10 (Tên: Mrs. Melissa Caldwell DDS, Chức vụ: Store Manager)",
     "ip": "::1"
+  },
+  {
+    "id": 1783515866641,
+    "timestamp": "2026-07-08T13:04:26.172Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783520899108,
+    "timestamp": "2026-07-08T14:28:18.162Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783520919750,
+    "timestamp": "2026-07-08T14:28:39.408Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783521077746,
+    "timestamp": "2026-07-08T14:31:17.192Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
   }
 ]
