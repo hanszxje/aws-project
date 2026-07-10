@@ -1,23 +1,47 @@
       <!-- ================= TAB CONTENT: PRODUCTS ================= -->
       <section id="tab-products" class="tab-content">
-        <div class="filter-bar">
+        <div class="filter-bar" style="flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
           <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="products-search" placeholder="Tìm tên sản phẩm hoặc mô tả..." data-i18n="prod_search_placeholder">
           </div>
+          
+          <div class="filter-group" id="products-store-filter-group" style="display: none;">
+            <label id="products-store-filter-label" data-i18n="prod_filter_store">Cửa hàng:</label>
+            <select id="products-store-filter" class="select-control">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
           <div class="filter-group">
-            <label data-i18n="prod_filter_cat">Danh mục:</label>
-            <select id="products-category-filter" class="select-control">
-              <option value="" data-i18n="cust_filter_gender">Tất cả</option>
+            <label id="products-category-filter-label" data-i18n="prod_filter_cat">Danh mục:</label>
+            <select id="products-category-filter" class="select-control notranslate" translate="no">
+              <option value="" data-i18n="prod_filter_all">Tất cả</option>
               <option value="Children" data-i18n="modal_prod_cat_children">Trẻ em (Children)</option>
               <option value="Masculine" data-i18n="modal_prod_cat_masculine">Nam giới (Masculine)</option>
               <option value="Feminine" data-i18n="modal_prod_cat_feminine">Nữ giới (Feminine)</option>
             </select>
           </div>
+          
           <button id="btn-add-product" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-plus"></i> <span data-i18n="prod_btn_add">Thêm Sản Phẩm</span></button>
         </div>
         
-        <div class="products-grid-container" id="products-grid">
-          <!-- Dynamically populated products cards -->
+        <div class="table-card full-width" style="overflow-x: auto; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+          <table class="data-table" id="products-table">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <th style="width: 70px; text-align: center;" data-i18n="prod_col_visual">Xem</th>
+                <th data-i18n="prod_col_name">Tên Sản Phẩm</th>
+                <th data-i18n="prod_col_category">Danh mục</th>
+                <th data-i18n="prod_col_subcategory">Phân loại phụ</th>
+                <th data-i18n="prod_col_color">Kiểu màu</th>
+                <th style="text-align: right; width: 120px;" data-i18n="prod_col_stock">Tồn kho</th>
+                <th style="text-align: center; width: 180px;" data-i18n="prod_col_actions">Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody">
+              <!-- Dynamically populated products rows -->
+            </tbody>
+          </table>
         </div>
       </section>

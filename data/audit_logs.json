@@ -907,5 +907,275 @@
     "action": "INVENTORY_IMPORT",
     "details": "Nhập hàng mới cho store #2: SKU CHAC1783682556410--, Số lượng: 55, Nhà CC: g",
     "ip": "::1"
+  },
+  {
+    "id": 1783685315527,
+    "timestamp": "2026-07-10T12:08:34.620Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao polo nam (#ID: 1783685314545)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783699233524,
+    "timestamp": "2026-07-10T16:00:32.526Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783699373943,
+    "timestamp": "2026-07-10T16:02:53.167Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783699428843,
+    "timestamp": "2026-07-10T16:03:48.503Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783703217304,
+    "timestamp": "2026-07-10T17:06:57.026Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783703268268,
+    "timestamp": "2026-07-10T17:07:47.730Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783703268047,
+    "timestamp": "2026-07-10T17:07:47.811Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao khoac gio nam 2026 (#ID: 1783703268565)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783703637405,
+    "timestamp": "2026-07-10T17:13:57.144Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783703676111,
+    "timestamp": "2026-07-10T17:14:35.261Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao polo nam (#ID: 1783703675379)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783706424994,
+    "timestamp": "2026-07-10T18:00:24.716Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1000247, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783708945640,
+    "timestamp": "2026-07-10T18:42:25.156Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783708969844,
+    "timestamp": "2026-07-10T18:42:48.875Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: ao polo (#ID: 1783708969125)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783709198618,
+    "timestamp": "2026-07-10T18:46:37.636Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783709198684,
+    "timestamp": "2026-07-10T18:46:37.689Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao khoac gio nam 2026 (#ID: 1783709198389)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783710454539,
+    "timestamp": "2026-07-10T19:07:33.955Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783710454195,
+    "timestamp": "2026-07-10T19:07:34.026Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao khoac gio nam 2026 (#ID: 1783710454083)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783710666888,
+    "timestamp": "2026-07-10T19:11:06.377Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783710666926,
+    "timestamp": "2026-07-10T19:11:06.449Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao khoac gio nam 2026 (#ID: 1783710666613)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783710753364,
+    "timestamp": "2026-07-10T19:12:33.172Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: ao (#ID: 1783710753459)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783710794597,
+    "timestamp": "2026-07-10T19:13:13.861Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU CHAC1783710753459--, Số lượng: 5, Nhà CC: v",
+    "ip": "::1"
+  },
+  {
+    "id": 1783710834658,
+    "timestamp": "2026-07-10T19:13:54.034Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: quan (#ID: 1783710834702)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783710834495,
+    "timestamp": "2026-07-10T19:13:54.243Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU CHAC1783710834702--, Số lượng: 2, Nhà CC: a",
+    "ip": "::1"
+  },
+  {
+    "id": 1783711113851,
+    "timestamp": "2026-07-10T19:18:33.356Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783711114431,
+    "timestamp": "2026-07-10T19:18:33.432Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao khoac gio nam 2026 (#ID: 1783711113564)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783711178141,
+    "timestamp": "2026-07-10T19:19:37.315Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783708969125",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783711177929,
+    "timestamp": "2026-07-10T19:19:37.328Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783708969125",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": 1783711650192,
+    "timestamp": "2026-07-10T19:27:29.216Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783703675379",
+    "ip": "::1"
+  },
+  {
+    "id": 1783711654075,
+    "timestamp": "2026-07-10T19:27:34.068Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783710753459",
+    "ip": "::1"
+  },
+  {
+    "id": 1783711715498,
+    "timestamp": "2026-07-10T19:28:34.596Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783710666613",
+    "ip": "::1"
+  },
+  {
+    "id": 1783711803065,
+    "timestamp": "2026-07-10T19:30:02.245Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783708969125",
+    "ip": "::1"
   }
 ]

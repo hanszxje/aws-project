@@ -63,6 +63,45 @@ function writeMockFile(fileName, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
+function initializeProductStock(sku) {
+  try {
+    const inventory = readMockFile('inventory.json') || [];
+    let modified = false;
+    for (let sId = 1; sId <= 35; sId++) {
+      const exists = inventory.some(item => item.store_id === sId && item.sku === sku);
+      if (!exists) {
+        inventory.push({
+          store_id: sId,
+          sku: sku,
+          stock_quantity: 0
+        });
+        modified = true;
+      }
+    }
+    if (modified) {
+      writeMockFile('inventory.json', inventory);
+    }
+  } catch (err) {
+    console.warn(`Failed to initialize stock to 0 for SKU ${sku}:`, err.message);
+  }
+}
+
+function removeProductStock(productId, sku) {
+  try {
+    const possibleSkus = [`SKU-${productId}`, `CHAC${productId}--`, `FEAC${productId}--`, `MAAC${productId}--`];
+    if (sku) {
+      possibleSkus.push(sku);
+    }
+    const inventory = readMockFile('inventory.json') || [];
+    const filtered = inventory.filter(item => !possibleSkus.includes(item.sku));
+    if (inventory.length !== filtered.length) {
+      writeMockFile('inventory.json', filtered);
+    }
+  } catch (err) {
+    console.warn(`Failed to clean up stock for product ${productId}:`, err.message);
+  }
+}
+
 // Generic API helper in API Mode
 async function apiCall(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
@@ -640,6 +679,7 @@ const db = {
           })
           .map(p => ({
             product_id: parseInt(p.product_id),
+            sku: p.sku || `SKU-${p.product_id}`,
             product_name: p.description_en || p.name_en || `Sản phẩm #${p.product_id}`,
             category: p.category || 'Children',
             sub_category: p.sub_category || 'Other',
@@ -649,6 +689,27 @@ const db = {
           }))
           // Only show allowed categories
           .filter(p => ['Children', 'Masculine', 'Feminine'].includes(p.category));
+
+        // Merge local created_products.json to resolve newly created items
+        try {
+          const filePath = path.join(__dirname, '../data/created_products.json');
+          if (fs.existsSync(filePath)) {
+            const localCreated = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            if (Array.isArray(localCreated)) {
+              localCreated.forEach(localProd => {
+                const exists = list.some(p => p.product_id === localProd.product_id);
+                if (!exists) {
+                  // Filter by category if requested
+                  if (!category || localProd.category === category) {
+                    list.push(localProd);
+                  }
+                }
+              });
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to load local created products in getProducts:', err.message);
+        }
 
         if (search) {
           const q = search.toLowerCase();
@@ -766,12 +827,22 @@ const db = {
         console.error('Failed to save newly created product locally:', err);
       }
 
+      initializeProductStock(newProduct.sku);
       return newProduct;
     } else if (isMockMode) {
       const products = readMockFile('products.json');
       const newId = products.length > 0 ? Math.max(...products.map(p => p.product_id)) + 1 : 1000;
+      
+      let skuPrefix = 'SKU';
+      const cat = productData.category || '';
+      if (cat.toLowerCase() === 'children') skuPrefix = 'CHAC';
+      else if (cat.toLowerCase() === 'feminine') skuPrefix = 'FEAC';
+      else if (cat.toLowerCase() === 'masculine') skuPrefix = 'MAAC';
+      const sku = `${skuPrefix}${newId}--`;
+
       const newProduct = {
         product_id: newId,
+        sku: sku,
         product_name: productData.product_name,
         category: productData.category,
         sub_category: productData.sub_category,
@@ -781,13 +852,24 @@ const db = {
       };
       products.push(newProduct);
       writeMockFile('products.json', products);
+      
+      initializeProductStock(sku);
       return newProduct;
     } else {
       const res = await pool.query(
         'INSERT INTO products (product_name, category, sub_category, color_type, description_en, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
         [productData.product_name, productData.category, productData.sub_category, productData.color_type, productData.description_en, productData.image_url]
       );
-      return res.rows[0];
+      const created = res.rows[0];
+      let skuPrefix = 'SKU';
+      const cat = created.category || '';
+      if (cat.toLowerCase() === 'children') skuPrefix = 'CHAC';
+      else if (cat.toLowerCase() === 'feminine') skuPrefix = 'FEAC';
+      else if (cat.toLowerCase() === 'masculine') skuPrefix = 'MAAC';
+      const sku = `${skuPrefix}${created.product_id}--`;
+      
+      initializeProductStock(sku);
+      return created;
     }
   },
 
@@ -840,8 +922,57 @@ const db = {
   },
 
   deleteProduct: async (productId) => {
+    let sku = null;
+
+    // Try to find the SKU of the product to delete
+    try {
+      if (isApiMode) {
+        const filePath = path.join(__dirname, '../data/created_products.json');
+        if (fs.existsSync(filePath)) {
+          const list = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          const found = list.find(p => p.product_id === parseInt(productId));
+          if (found) {
+            sku = found.sku;
+          }
+        }
+      } else if (isMockMode) {
+        const products = readMockFile('products.json');
+        const found = products.find(p => p.product_id === parseInt(productId));
+        if (found) {
+          sku = found.sku;
+        }
+      } else {
+        const res = await pool.query('SELECT sku FROM products WHERE product_id = $1', [productId]);
+        if (res.rows && res.rows[0]) {
+          sku = res.rows[0].sku;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to resolve SKU for deletion lookup:', e.message);
+    }
+
+    // Clean up corresponding stock records in all stores (inventory.json)
+    removeProductStock(productId, sku);
+
     if (isApiMode) {
-      await apiCall(`/products/${productId}`, { method: 'DELETE' });
+      // 1. Delete from local created_products.json
+      try {
+        const filePath = path.join(__dirname, '../data/created_products.json');
+        if (fs.existsSync(filePath)) {
+          let list = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          list = list.filter(p => p.product_id !== parseInt(productId));
+          fs.writeFileSync(filePath, JSON.stringify(list, null, 2));
+        }
+      } catch (err) {
+        console.warn('Failed to delete locally created product file:', err.message);
+      }
+
+      // 2. Call remote API. If it fails, ignore (since product is removed locally anyway)
+      try {
+        await apiCall(`/products/${productId}`, { method: 'DELETE' });
+      } catch (apiErr) {
+        console.warn(`Remote delete for product ${productId} failed:`, apiErr.message);
+      }
       return true;
     } else if (isMockMode) {
       const products = readMockFile('products.json');
@@ -1506,6 +1637,30 @@ const db = {
               store_id: parseInt(storeId),
               sku: stockItem.sku,
               stock_quantity: parseInt(stockItem.quantity) || 0,
+              product_name: productName,
+              category: category
+            });
+          }
+        }
+      });
+
+      // Merge local inventory items that are not in data to ensure immediate visibility of local creations/fallback stock
+      localInventory.forEach(localStock => {
+        if (localStock.store_id.toString() === storeId.toString()) {
+          const exists = data.some(d => d.sku === localStock.sku);
+          if (!exists) {
+            let category = 'Clothing';
+            const skuUpper = localStock.sku.toUpperCase();
+            if (skuUpper.startsWith('CH')) category = 'Children';
+            else if (skuUpper.startsWith('FE')) category = 'Feminine';
+            else if (skuUpper.startsWith('MA')) category = 'Masculine';
+
+            const productName = resolveProductName(null, localStock.sku);
+
+            data.push({
+              store_id: parseInt(storeId),
+              sku: localStock.sku,
+              stock_quantity: localStock.stock_quantity,
               product_name: productName,
               category: category
             });

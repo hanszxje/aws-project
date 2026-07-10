@@ -5,6 +5,7 @@
     "view_audit_logs",
     "view_inventory",
     "manage_inventory",
+    "edit_products",
     "create_transaction"
   ],
   "Director": [
@@ -14,6 +15,7 @@
     "view_discounts",
     "view_employees",
     "view_products",
+    "edit_products",
     "view_transactions",
     "view_inventory",
     "manage_inventory",
@@ -48,6 +50,7 @@
     "view_employees",
     "edit_employees",
     "view_products",
+    "edit_products",
     "view_inventory",
     "manage_inventory",
     "create_transaction",

@@ -8,5 +8,75 @@
     "color_type": "Cor Unica",
     "description_en": "Ao len tre em",
     "image_url": "https://picsum.photos/300/300?random=1783682556410"
+  },
+  {
+    "product_id": 1783685314545,
+    "sku": "MAAC1783685314545--",
+    "product_name": "Ao polo nam",
+    "category": "Masculine",
+    "sub_category": "POLO",
+    "color_type": "Cor Unica",
+    "description_en": "Ao polo nam",
+    "image_url": "https://product.hstatic.net/200000690725/product/3_cd5be09aa3a74a0c997ee4143116cc77.png"
+  },
+  {
+    "product_id": 1783685976832,
+    "sku": "CHAC1783685976832--",
+    "product_name": "Test Product 1783685976497",
+    "category": "Children",
+    "sub_category": "Girl and Boy (1-5 years, 6-14 years)",
+    "color_type": "Cor Unica",
+    "description_en": "Test Product 1783685976497",
+    "image_url": "https://picsum.photos/seed/1783685976832/300/300"
+  },
+  {
+    "product_id": 1783703268565,
+    "sku": "MAAC1783703268565--",
+    "product_name": "Ao khoac gio nam 2026",
+    "category": "Masculine",
+    "sub_category": "Coats and Blazers",
+    "color_type": "Cor Unica",
+    "description_en": "Ao khoac gio nam 2026",
+    "image_url": "https://picsum.photos/seed/1783703268565/300/300"
+  },
+  {
+    "product_id": 1783709198389,
+    "sku": "MAAC1783709198389--",
+    "product_name": "Ao khoac gio nam 2026",
+    "category": "Masculine",
+    "sub_category": "Coats and Blazers",
+    "color_type": "Cor Unica",
+    "description_en": "Ao khoac gio nam 2026",
+    "image_url": "https://picsum.photos/seed/1783709198389/300/300"
+  },
+  {
+    "product_id": 1783710454083,
+    "sku": "MAAC1783710454083--",
+    "product_name": "Ao khoac gio nam 2026",
+    "category": "Masculine",
+    "sub_category": "Coats and Blazers",
+    "color_type": "Cor Unica",
+    "description_en": "Ao khoac gio nam 2026",
+    "image_url": "https://picsum.photos/seed/1783710454083/300/300"
+  },
+  {
+    "product_id": 1783710834702,
+    "sku": "CHAC1783710834702--",
+    "product_name": "quan",
+    "category": "Children",
+    "sub_category": "New Import",
+    "color_type": "Cor Unica",
+    "description_en": "quan",
+    "image_url": "https://picsum.photos/seed/1783710834702/300/300"
+  },
+  {
+    "product_id": 1783711113564,
+    "sku": "MAAC1783711113564--",
+    "product_name": "Ao khoac gio nam 2026",
+    "category": "Masculine",
+    "sub_category": "Coats and Blazers",
+    "color_type": "Cor Unica",
+    "description_en": "Ao khoac gio nam 2026",
+    "image_url": "https://picsum.photos/seed/1783711113564/300/300"
   }
 ]

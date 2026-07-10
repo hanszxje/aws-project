@@ -1,21 +1,4 @@
-// Product Image Loading Handler
-// Picsum.photos loads instantly (~200ms) so we just need simple error handling
-(function() {
-  window.handleProductImageLoad = function(img) {
-    // Image loaded successfully - fade in and remove skeleton
-    img.style.opacity = '1';
-    const wrapper = img.closest('.product-img-wrapper');
-    if (wrapper) wrapper.classList.remove('skeleton-loading');
-  };
 
-  window.handleProductImageError = function(img) {
-    // Fallback to placeholder with product name
-    img.src = 'https://placehold.co/300x300/1a1e27/555555?text=' + encodeURIComponent(img.alt || 'Product');
-    img.style.opacity = '1';
-    const wrapper = img.closest('.product-img-wrapper');
-    if (wrapper) wrapper.classList.remove('skeleton-loading');
-  };
-})();
 
 // Theme Initialization
 const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -1388,36 +1371,94 @@ document.getElementById('employees-store-filter').addEventListener('change', () 
 
 // ================= PRODUCTS TAB LOGIC =================
 async function loadProductsTab() {
+  const storeSelect = document.getElementById('products-store-filter');
+  const storeFilterGroup = document.getElementById('products-store-filter-group');
+
+  // Populate store filter once if empty
+  if (storeSelect.children.length === 0) {
+    try {
+      const stores = await fetchAPI('/api/stores');
+      const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
+      
+      storeSelect.innerHTML = hasAllStores ? `<option value="">${currentLang === 'en' ? 'All Stores' : (currentLang === 'zh' ? '所有门店' : 'Tất cả Cửa hàng')}</option>` : '';
+      
+      stores.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.store_id;
+        opt.textContent = s.store_name;
+        storeSelect.appendChild(opt);
+      });
+
+      if (hasAllStores) {
+        storeFilterGroup.style.display = 'block';
+      } else {
+        storeSelect.value = currentUser.store_id || '';
+        storeFilterGroup.style.display = 'none';
+      }
+
+      // Add listener to reload products tab when store filter changes
+      storeSelect.addEventListener('change', () => {
+        loadProductsTab();
+      });
+    } catch (e) {
+      console.error('Error populating store filter in products tab:', e);
+    }
+  }
+
   const category = document.getElementById('products-category-filter').value;
   const search = document.getElementById('products-search').value;
+  const storeId = storeSelect.value || '';
 
-  showGridSkeleton('#products-grid', 8);
+  showTableSkeleton('#products-tbody', 7);
 
   try {
     const products = await fetchAPI(`/api/products?category=${category}&search=${search}`);
     
-    const container = document.getElementById('products-grid');
+    // Fetch inventory for the selected store/all stores to display stock quantity
+    let inventoryItems = [];
+    try {
+      inventoryItems = await fetchAPI(`/api/inventory?store_id=${storeId}`);
+    } catch (err) {
+      console.warn('Failed to load inventory for stock display:', err);
+    }
+
+    const container = document.getElementById('products-tbody');
     container.innerHTML = '';
 
     if (products.length === 0) {
       const emptyText = currentLang === 'en' ? 'No products found.' : (currentLang === 'zh' ? '没有找到任何商品。' : 'Không tìm thấy sản phẩm nào.');
-      container.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-muted);">${emptyText}</div>`;
+      container.innerHTML = `<tr><td colspan="7" style="padding: 40px; text-align: center; color: var(--text-muted);">${emptyText}</td></tr>`;
       return;
     }
 
     const hasAdminRights = currentUser.role === 'Director' || currentUser.role === 'Store Manager';
     products.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      
+      // Find matching items by SKU digits, or exact name match, or SKU prefix
+      const matchingItems = inventoryItems.filter(item => {
+        // 1. By SKU digits
+        const skuDigits = item.sku ? item.sku.match(/\d+/) : null;
+        const pId = skuDigits ? parseInt(skuDigits[0]) : null;
+        if (pId === p.product_id) return true;
+
+        // 2. By exact name match (case-insensitive)
+        if (item.product_name && p.product_name && item.product_name.toLowerCase().trim() === p.product_name.toLowerCase().trim()) return true;
+
+        // 3. By SKU prefix match
+        if (p.sku && item.sku && item.sku.startsWith(p.sku.replace(/-+$/, ''))) return true;
+
+        return false;
+      });
+
+      // Sum stock_quantity across matching items
+      const stockQty = matchingItems.reduce((sum, item) => sum + (item.stock_quantity || 0), 0);
+
       const categoryMap = {
         'Children': { vi: 'Trẻ em (Children)', en: 'Children', zh: '儿童 (Children)' },
         'Masculine': { vi: 'Nam giới (Masculine)', en: 'Masculine', zh: '男装 (Masculine)' },
         'Feminine': { vi: 'Nữ giới (Feminine)', en: 'Feminine', zh: '女装 (Feminine)' }
       };
       const categoryVal = categoryMap[p.category] ? categoryMap[p.category][currentLang] : p.category;
-      const colorLabel = currentLang === 'en' ? 'Color:' : (currentLang === 'zh' ? '颜色款式:' : 'Kiểu màu:');
-      const subCategoryLabel = currentLang === 'en' ? 'Sub-category:' : (currentLang === 'zh' ? '子分类:' : 'Phân loại phụ:');
+      const outOfStockText = currentLang === 'en' ? 'Out of stock' : (currentLang === 'zh' ? '无库存' : 'Hết hàng');
       const editText = currentLang === 'en' ? 'Edit' : (currentLang === 'zh' ? '编辑' : 'Sửa');
       const deleteText = currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa');
 
@@ -1428,33 +1469,64 @@ async function loadProductsTab() {
       const escDesc = p.description_en.replace(/'/g, "\\'").replace(/"/g, '&quot;');
       const escImg = p.image_url ? p.image_url.replace(/'/g, "\\'") : '';
 
-      card.innerHTML = `
-        <div class="product-img-wrapper skeleton-loading">
-          <span class="product-category-badge">${categoryVal}</span>
-          <img src="${p.image_url}" class="product-img" alt="${p.product_name}" style="opacity:0" onload="handleProductImageLoad(this)" onerror="handleProductImageError(this)">
-        </div>
-        <div class="product-info-wrapper" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <h4 class="product-title">${p.product_name}</h4>
-            <div class="product-details">
-              <span><strong>${colorLabel}</strong> ${p.color_type}</span>
-              <span><strong>${subCategoryLabel}</strong> ${p.sub_category}</span>
-            </div>
-            <p class="product-desc"><em>${p.description_en}</em></p>
+      // Pick icon based on sub_category / product name keywords
+      const nameLower = p.product_name.toLowerCase();
+      const subLower = (p.sub_category || '').toLowerCase();
+      let fashionIcon = 'fa-shirt'; // default
+      if (subLower.includes('dress') || nameLower.includes('dress') || nameLower.includes('skirt')) {
+        fashionIcon = 'fa-person-dress';
+      } else if (subLower.includes('coat') || subLower.includes('blazer') || nameLower.includes('coat') || nameLower.includes('blazer') || nameLower.includes('jacket')) {
+        fashionIcon = 'fa-vest-patches';
+      } else if (subLower.includes('pants') || subLower.includes('jeans') || nameLower.includes('pants') || nameLower.includes('jeans') || nameLower.includes('trouser')) {
+        fashionIcon = 'fa-socks';
+      } else if (subLower.includes('shoe') || nameLower.includes('shoe') || nameLower.includes('sneaker') || nameLower.includes('boot')) {
+        fashionIcon = 'fa-shoe-prints';
+      } else if (subLower.includes('hat') || nameLower.includes('hat') || nameLower.includes('cap')) {
+        fashionIcon = 'fa-hat-cowboy';
+      } else if (subLower.includes('bag') || nameLower.includes('bag') || nameLower.includes('purse')) {
+        fashionIcon = 'fa-bag-shopping';
+      } else if (subLower.includes('suit') || nameLower.includes('suit') || nameLower.includes('tuxedo')) {
+        fashionIcon = 'fa-user-tie';
+      }
+
+      // Category gradient class
+      const catClass = p.category === 'Children' ? 'cat-children' 
+                      : p.category === 'Feminine' ? 'cat-feminine'
+                      : p.category === 'Masculine' ? 'cat-masculine'
+                      : 'cat-default';
+
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--border-color)';
+      
+      tr.innerHTML = `
+        <td style="text-align: center; vertical-align: middle; padding: 12px 16px;">
+          <div class="product-visual ${catClass} notranslate" translate="no" style="width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; margin: 0 auto; box-shadow: var(--shadow-sm);">
+            <i class="fa-solid ${fashionIcon}" style="font-size: 16px; color: rgba(255,255,255,0.95);"></i>
           </div>
+        </td>
+        <td style="vertical-align: middle; padding: 12px 16px;">
+          <div style="font-weight: 600; color: var(--text-light);">${p.product_name}</div>
+          <div style="font-size: 11px; color: var(--text-muted);">ID: ${p.product_id}</div>
+        </td>
+        <td style="vertical-align: middle; padding: 12px 16px;">
+          <span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted); padding: 4px 8px; border-radius: 4px; font-size: 11px;">${categoryVal}</span>
+        </td>
+        <td style="vertical-align: middle; font-size: 13px; padding: 12px 16px;">${p.sub_category}</td>
+        <td style="vertical-align: middle; font-size: 13px; color: var(--text-muted); padding: 12px 16px;">${p.color_type}</td>
+        <td style="vertical-align: middle; text-align: right; font-weight: 700; font-size: 14px; color: ${stockQty > 0 ? '#10b981' : '#ef4444'}; padding: 12px 16px;">
+          ${stockQty > 0 ? stockQty : outOfStockText}
+        </td>
+        <td style="vertical-align: middle; text-align: center; padding: 12px 16px;">
           ${hasAdminRights ? `
-            <div style="display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-              <button class="btn-action-edit" style="flex: 1;" onclick="openEditProduct(${p.product_id}, '${escName}', '${escCategory}', '${escSubCategory}', '${escColor}', '${escDesc}', '${escImg}')"><i class="fa-solid fa-pen-to-square"></i> ${editText}</button>
-              <button class="btn-action-delete" style="flex: 1;" onclick="deleteProduct(${p.product_id})"><i class="fa-solid fa-trash"></i> ${deleteText}</button>
+            <div style="display: flex; gap: 6px; justify-content: center;">
+              <button class="btn-action-edit" style="padding: 6px 12px; font-size: 12px;" onclick="openEditProduct(${p.product_id}, '${escName}', '${escCategory}', '${escSubCategory}', '${escColor}', '${escDesc}', '${escImg}')"><i class="fa-solid fa-pen-to-square"></i> ${editText}</button>
+              <button class="btn-action-delete" style="padding: 6px 12px; font-size: 12px;" onclick="deleteProduct(${p.product_id}, this)"><i class="fa-solid fa-trash"></i> ${deleteText}</button>
             </div>
-          ` : ''}
-        </div>
+          ` : '-'}
+        </td>
       `;
-      container.appendChild(card);
+      container.appendChild(tr);
     });
-
-
-
   } catch (err) {
     console.error('Error loading products:', err);
   }
@@ -2409,8 +2481,9 @@ window.deleteEmployee = async function(id) {
 // Products CRUD (Create & Edit)
 btnAddProduct.addEventListener('click', () => {
   activeEditProduct = null;
-  productModalTitle.textContent = 'Thêm Sản Phẩm Mới';
-  document.getElementById('btn-save-product-submit').textContent = 'Thêm mới';
+  productModalTitle.setAttribute('data-i18n', 'modal_add_product_title');
+  document.getElementById('btn-save-product-submit').setAttribute('data-i18n', 'modal_btn_create');
+  translatePage();
   document.getElementById('product-id-input').value = '';
   productForm.reset();
   productModal.classList.add('active');
@@ -2422,8 +2495,9 @@ btnCancelProduct.addEventListener('click', () => {
 
 window.openEditProduct = function(id, name, category, subCategory, color, description, imageUrl) {
   activeEditProduct = id;
-  productModalTitle.textContent = 'Cập Nhật Sản Phẩm';
-  document.getElementById('btn-save-product-submit').textContent = 'Lưu thay đổi';
+  productModalTitle.setAttribute('data-i18n', 'modal_edit_product_title');
+  document.getElementById('btn-save-product-submit').setAttribute('data-i18n', 'modal_prod_btn_save');
+  translatePage();
   document.getElementById('product-id-input').value = id;
   
   document.getElementById('product-name-input').value = name;
@@ -2436,14 +2510,64 @@ window.openEditProduct = function(id, name, category, subCategory, color, descri
   productModal.classList.add('active');
 };
 
-window.deleteProduct = async function(id) {
+window.deleteProduct = async function(id, btn) {
   if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) return;
+
+  // Dynamically inject style once
+  if (!document.getElementById('shimmer-style-injection')) {
+    const style = document.createElement('style');
+    style.id = 'shimmer-style-injection';
+    style.innerHTML = `
+      @keyframes shimmerPulse {
+        0% { background-color: rgba(255, 255, 255, 0.01); }
+        50% { background-color: rgba(255, 255, 255, 0.08); }
+        100% { background-color: rgba(255, 255, 255, 0.01); }
+      }
+      .shimmer-row td {
+        animation: shimmerPulse 1.2s infinite ease-in-out !important;
+        color: var(--text-muted) !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const row = btn ? btn.closest('tr') : null;
+  if (row) {
+    // Disable row buttons to prevent double submission
+    row.querySelectorAll('button').forEach(b => b.disabled = true);
+    row.classList.add('shimmer-row');
+    row.style.opacity = '0.7';
+
+    // Show loading spinner on delete button
+    if (btn) {
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${currentLang === 'en' ? 'Deleting...' : (currentLang === 'zh' ? '删除中...' : 'Đang xóa...')}`;
+    }
+  }
+
   try {
     const data = await fetchAPI(`/api/products/${id}`, { method: 'DELETE' });
-    alert(data.message || 'Xóa sản phẩm thành công!');
+    
+    if (row) {
+      // Slide-out and fade-out animation for premium feel
+      row.style.transition = 'all 0.4s ease';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(20px)';
+      await new Promise(resolve => setTimeout(resolve, 400));
+    }
+    
     loadProductsTab();
   } catch (err) {
     console.error('Error deleting product:', err);
+    alert(currentLang === 'en' ? 'Failed to delete product!' : (currentLang === 'zh' ? '删除商品失败！' : 'Xóa sản phẩm thất bại!'));
+    
+    if (row) {
+      row.classList.remove('shimmer-row');
+      row.style.opacity = '1';
+      row.querySelectorAll('button').forEach(b => b.disabled = false);
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-trash"></i> ${currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa')}`;
+      }
+    }
   }
 };
 
@@ -3568,8 +3692,16 @@ const translations = {
     // Products Tab
     prod_search_placeholder: "Tìm tên sản phẩm hoặc mô tả...",
     prod_filter_cat: "Danh mục:",
+    prod_filter_store: "Cửa hàng:",
     prod_filter_all: "Tất cả",
     prod_btn_add: "Thêm Sản Phẩm",
+    prod_col_visual: "Xem",
+    prod_col_name: "Tên Sản Phẩm",
+    prod_col_category: "Danh mục",
+    prod_col_subcategory: "Phân loại phụ",
+    prod_col_color: "Kiểu màu",
+    prod_col_stock: "Tồn kho",
+    prod_col_actions: "Hành động",
 
     // Stores Tab
     store_col_id: "Mã Store",
@@ -3861,8 +3993,16 @@ const translations = {
     // Products Tab
     prod_search_placeholder: "Search by product name or description...",
     prod_filter_cat: "Category:",
+    prod_filter_store: "Store:",
     prod_filter_all: "All Categories",
     prod_btn_add: "Add Product",
+    prod_col_visual: "Preview",
+    prod_col_name: "Product Name",
+    prod_col_category: "Category",
+    prod_col_subcategory: "Sub-category",
+    prod_col_color: "Color Type",
+    prod_col_stock: "Stock Remaining",
+    prod_col_actions: "Actions",
 
     // Stores Tab
     store_col_id: "Store ID",
@@ -4154,8 +4294,16 @@ const translations = {
     // Products Tab
     prod_search_placeholder: "搜索商品名称或描述...",
     prod_filter_cat: "商品类别:",
+    prod_filter_store: "门店:",
     prod_filter_all: "所有类别",
     prod_btn_add: "新增商品",
+    prod_col_visual: "预览",
+    prod_col_name: "商品名称",
+    prod_col_category: "商品类别",
+    prod_col_subcategory: "子分类",
+    prod_col_color: "颜色款式",
+    prod_col_stock: "库存量",
+    prod_col_actions: "操作",
 
     // Stores Tab
     store_col_id: "门店编号",
@@ -4447,7 +4595,8 @@ const elementSelectors = {
 
   // Products
   '#tab-products #products-search': 'prod_search_placeholder',
-  '#tab-products label': 'prod_filter_cat',
+  '#products-category-filter-label': 'prod_filter_cat',
+  '#products-store-filter-label': 'prod_filter_store',
   '#tab-products #products-category-filter option[value=""]': 'prod_filter_all',
   '#tab-products #products-category-filter option[value="Children"]': 'modal_prod_cat_children',
   '#tab-products #products-category-filter option[value="Masculine"]': 'modal_prod_cat_masculine',
