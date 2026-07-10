@@ -153,13 +153,13 @@
         <div class="form-group">
           <label for="admin-user-role-input" data-i18n="modal_admin_user_role">Vai trò:</label>
           <select id="admin-user-role-input" required class="select-control">
-            <option value="IT Admin">IT Admin (Quản trị viên)</option>
-            <option value="Director">Director (Giám đốc)</option>
-            <option value="Finance/Auditor">Finance/Auditor (Kế toán)</option>
-            <option value="Inventory Manager">Inventory Manager (Quản lý Kho)</option>
-            <option value="Marketing Manager">Marketing Manager (Quản lý Marketing)</option>
-            <option value="Store Manager">Store Manager (Quản lý Cửa hàng)</option>
-            <option value="Sales Staff">Sales Staff (Nhân viên bán hàng)</option>
+            <option value="IT Admin" data-i18n="role_it_admin">IT Admin (Quản trị viên)</option>
+            <option value="Director" data-i18n="role_director">Director (Giám đốc)</option>
+            <option value="Finance/Auditor" data-i18n="role_finance">Finance/Auditor (Kế toán)</option>
+            <option value="Inventory Manager" data-i18n="role_inventory">Inventory Manager (Quản lý Kho)</option>
+            <option value="Marketing Manager" data-i18n="role_marketing">Marketing Manager (Quản lý Marketing)</option>
+            <option value="Store Manager" data-i18n="role_store_manager">Store Manager (Quản lý Cửa hàng)</option>
+            <option value="Sales Staff" data-i18n="role_sales_staff">Sales Staff (Nhân viên bán hàng)</option>
           </select>
         </div>
         <div class="form-group" id="admin-user-store-container">
@@ -307,17 +307,17 @@
 
         <!-- Compact Item Addition Box -->
         <div class="item-add-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-          <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 14px; color: var(--primary-light); font-weight: 600;">Thêm sản phẩm vào đơn</h4>
+          <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 14px; color: var(--primary-light); font-weight: 600;" data-i18n="modal_tx_cart_add_title">Thêm sản phẩm vào đơn</h4>
           
           <div class="form-group" style="margin-bottom: 10px;">
             <label for="tx-sku-search" data-i18n="modal_tx_sku_search">Tìm nhanh sản phẩm (nhập ít nhất 2 ký tự của SKU/tên):</label>
-            <input type="text" id="tx-sku-search" class="select-control" placeholder="Ví dụ: FEAC, CHAC, Đầm...">
+            <input type="text" id="tx-sku-search" class="select-control" placeholder="Ví dụ: FEAC, CHAC, Đầm..." data-i18n="modal_tx_sku_search_placeholder">
           </div>
           
           <div class="form-group" style="margin-bottom: 10px;">
             <label for="tx-sku-input" data-i18n="modal_tx_sku">Chọn SKU sản phẩm:</label>
             <select id="tx-sku-input" class="select-control">
-              <option value="">-- Nhập từ khóa để tìm sản phẩm --</option>
+              <option value="" data-i18n="modal_tx_sku_select_placeholder">-- Nhập từ khóa để tìm sản phẩm --</option>
             </select>
           </div>
 
@@ -331,28 +331,28 @@
               <input type="number" id="tx-price-input" step="0.01" min="0.01" class="select-control" placeholder="0.00">
             </div>
             <button type="button" id="btn-add-item-to-cart" class="btn-primary" style="height: 38px; padding: 0 15px; background: linear-gradient(135deg, #10b981, #059669); border: none; font-size: 13px; font-weight: 600; cursor: pointer;">
-              <i class="fa-solid fa-plus" style="margin-right: 5px;"></i> Thêm
+              <i class="fa-solid fa-plus" style="margin-right: 5px;"></i> <span data-i18n="modal_tx_btn_add">Thêm</span>
             </button>
           </div>
         </div>
 
         <!-- Cart Table -->
         <div class="form-group">
-          <label style="font-weight: 600;">Danh sách sản phẩm trong đơn hàng:</label>
+          <label style="font-weight: 600;" data-i18n="modal_tx_cart_list">Danh sách sản phẩm trong đơn hàng:</label>
           <div style="max-height: 180px; overflow-y: auto; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; background: rgba(0,0,0,0.15);">
             <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
               <thead>
                 <tr style="background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.08); text-align: left;">
-                  <th style="padding: 8px 10px;">Sản phẩm / SKU</th>
-                  <th style="padding: 8px 10px; text-align: center; width: 80px;">Số lượng</th>
-                  <th style="padding: 8px 10px; text-align: right; width: 100px;">Đơn giá</th>
-                  <th style="padding: 8px 10px; text-align: right; width: 110px;">Thành tiền</th>
-                  <th style="padding: 8px 10px; text-align: center; width: 50px;">Xóa</th>
+                  <th style="padding: 8px 10px;" data-i18n="modal_tx_col_product">Sản phẩm / SKU</th>
+                  <th style="padding: 8px 10px; text-align: center; width: 80px;" data-i18n="modal_tx_col_qty">Số lượng</th>
+                  <th style="padding: 8px 10px; text-align: right; width: 100px;" data-i18n="modal_tx_col_price">Đơn giá</th>
+                  <th style="padding: 8px 10px; text-align: right; width: 110px;" data-i18n="modal_tx_col_total">Thành tiền</th>
+                  <th style="padding: 8px 10px; text-align: center; width: 50px;" data-i18n="modal_tx_col_action">Xóa</th>
                 </tr>
               </thead>
               <tbody id="tx-cart-tbody">
                 <tr>
-                  <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">Chưa có sản phẩm nào được chọn.</td>
+                  <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);" data-i18n="modal_tx_cart_empty">Chưa có sản phẩm nào được chọn.</td>
                 </tr>
               </tbody>
             </table>
@@ -362,15 +362,15 @@
         <!-- Total and Payment -->
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 12px 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.03);">
           <div style="font-size: 14px; font-weight: 500;">
-            Tổng cộng: <span id="tx-cart-total" style="font-size: 18px; font-weight: 700; color: var(--primary-light);">$0.00</span>
+            <span data-i18n="modal_tx_cart_grand_total">Tổng cộng:</span> <span id="tx-cart-total" style="font-size: 18px; font-weight: 700; color: var(--primary-light);">$0.00</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 10px; max-width: 280px; width: 100%;">
-            <label for="tx-payment-input" style="font-weight: 600; white-space: nowrap; margin: 0;">Thanh toán:</label>
-            <select id="tx-payment-input" required class="select-control" style="margin: 0; height: 34px;">
-              <option value="Credit Card">Credit Card</option>
-              <option value="PayPal">PayPal</option>
-              <option value="Cash">Cash</option>
-              <option value="Apple Pay">Apple Pay</option>
+          <div style="display: flex; align-items: center; gap: 10px; max-width: 340px; width: 100%;">
+            <label for="tx-payment-input" style="font-weight: 600; white-space: nowrap; margin: 0;" data-i18n="modal_tx_payment">Thanh toán:</label>
+            <select id="tx-payment-input" required class="select-control" style="margin: 0;">
+              <option value="Credit Card" data-i18n="modal_tx_payment_cc">Credit Card</option>
+              <option value="PayPal" data-i18n="modal_tx_payment_paypal">PayPal</option>
+              <option value="Cash" data-i18n="modal_tx_payment_cash">Cash</option>
+              <option value="Apple Pay" data-i18n="modal_tx_payment_apple">Apple Pay</option>
             </select>
           </div>
         </div>

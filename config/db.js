@@ -5,6 +5,13 @@ const generateMockData = require('./mock_db_generator');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 
+// Helper to get stable AI-generated product images from Pollinations AI (Stable Diffusion)
+function getProductImageUrl(productName, category, productId) {
+  const pId = productId || Math.floor(Math.random() * 1000);
+  // Picsum.photos - 100% reliable, instant loading, seed ensures consistent image per product
+  return `https://picsum.photos/seed/${pId}/300/300`;
+}
+
 // Setup DB Modes
 const API_BASE_URL = process.env.API_BASE_URL ? process.env.API_BASE_URL.replace(/\/$/, '') : null;
 const isApiMode = !!API_BASE_URL;
@@ -638,7 +645,7 @@ const db = {
             sub_category: p.sub_category || 'Other',
             color_type: p.color_type || 'Cor Unica',
             description_en: p.description_en || `Sản phẩm #${p.product_id}`,
-            image_url: p.image_url || `https://picsum.photos/300/300?random=${p.product_id}`
+            image_url: (p.image_url && !p.image_url.includes('picsum.photos')) ? p.image_url : getProductImageUrl(p.description_en || p.name_en, p.category, p.product_id)
           }))
           // Only show allowed categories
           .filter(p => ['Children', 'Masculine', 'Feminine'].includes(p.category));
@@ -727,7 +734,7 @@ const db = {
         color: 'NEUTRAL',
         size: 'M',
         price: 50.0,
-        image_url: productData.image_url || `https://picsum.photos/300/300?random=${nextId}`
+        image_url: productData.image_url || getProductImageUrl(productData.product_name || productData.description_en, productData.category, nextId)
       };
 
       const res = await apiCall('/products', {
@@ -736,16 +743,30 @@ const db = {
       });
 
       const created = res.data || res;
-      return {
+      const newProduct = {
         product_id: parseInt(created.product_id),
         sku: created.sku || `SKU-${created.product_id}`,
-        product_name: created.description_en,
+        product_name: productData.product_name || created.description_en,
         category: created.category,
         sub_category: created.sub_category,
         color_type: 'Cor Unica',
-        description_en: created.description_en,
-        image_url: created.image_url
+        description_en: productData.product_name || created.description_en,
+        image_url: (created.image_url && !created.image_url.includes('picsum.photos')) ? created.image_url : getProductImageUrl(productData.product_name || created.description_en, created.category, created.product_id)
       };
+
+      try {
+        const filePath = path.join(__dirname, '../data/created_products.json');
+        let list = [];
+        if (fs.existsSync(filePath)) {
+          list = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        }
+        list.push(newProduct);
+        fs.writeFileSync(filePath, JSON.stringify(list, null, 2));
+      } catch (err) {
+        console.error('Failed to save newly created product locally:', err);
+      }
+
+      return newProduct;
     } else if (isMockMode) {
       const products = readMockFile('products.json');
       const newId = products.length > 0 ? Math.max(...products.map(p => p.product_id)) + 1 : 1000;
@@ -756,7 +777,7 @@ const db = {
         sub_category: productData.sub_category,
         color_type: productData.color_type,
         description_en: productData.description_en,
-        image_url: productData.image_url || `https://picsum.photos/300/300?random=${newId}`
+        image_url: productData.image_url || getProductImageUrl(productData.product_name, productData.category, newId)
       };
       products.push(newProduct);
       writeMockFile('products.json', products);
@@ -836,6 +857,21 @@ const db = {
 
   // --- Transactions ---
   getTransactions: async ({ storeId = null, paymentMethod = '', page = 1, limit = 15 }) => {
+    // Helper to map employee role/store back to local account username
+    const resolveUsernameFromEmployee = (emp) => {
+      if (!emp) return 'System';
+      const role = emp.role || emp.position || '';
+      const storeId = emp.store_id;
+
+      if (role === 'IT Admin') return 'admin';
+      if (role === 'Director') return 'director';
+      if (role === 'Store Manager') return storeId ? `manager${storeId}` : 'manager';
+      if (role === 'Sales Staff') return storeId ? `sales${storeId}` : 'sales';
+      
+      const cleanRole = role.toLowerCase().replace(/\s+/g, '');
+      return storeId ? `${cleanRole}${storeId}` : cleanRole;
+    };
+
     if (isApiMode) {
       let url = '/transactions?limit=1000';
       if (paymentMethod) {
@@ -864,7 +900,7 @@ const db = {
           product_name: `Sản phẩm #${t.product_id}`,
           date: t.transaction_date ? t.transaction_date.split('T')[0] : new Date().toISOString().split('T')[0],
           timestamp: t.transaction_date || new Date().toISOString(),
-          salesperson: emp ? emp.name : (t.employee_id || 'System'),
+          salesperson: emp ? resolveUsernameFromEmployee(emp) : (t.employee_id || 'System'),
           payment_method: t.payment_method || 'Cash',
           currency: t.currency || 'USD',
           local_price: t.unit_price || 0,
@@ -1300,6 +1336,36 @@ const db = {
         productsList = await db.getProducts({});
       } catch (e) {}
 
+      // Merge local created_products.json into productsList to resolve newly created items
+      try {
+        const filePath = path.join(__dirname, '../data/created_products.json');
+        if (fs.existsSync(filePath)) {
+          const localCreated = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          if (Array.isArray(localCreated)) {
+            productsList = productsList.concat(localCreated);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to load local created products in getInventory:', err.message);
+      }
+
+      // Synchronous helper to resolve product name from cache or SKU matching
+      const resolveProductName = (productId, sku) => {
+        if (productId) {
+          const prod = productsList.find(p => p.product_id === parseInt(productId));
+          if (prod) return prod.product_name;
+        }
+
+        const skuDigits = sku ? sku.match(/\d+/) : null;
+        const pId = skuDigits ? parseInt(skuDigits[0]) : null;
+        if (pId) {
+          const prod = productsList.find(p => p.product_id === pId);
+          if (prod) return prod.product_name;
+        }
+
+        return `Sản phẩm ${sku}`;
+      };
+
       if (!storeId || storeId === 'null') {
         let url = '/stock?limit=1000';
         if (search && (search.toUpperCase().startsWith('CH') || search.toUpperCase().startsWith('MA') || search.toUpperCase().startsWith('FE') || search.toUpperCase().startsWith('SKU'))) {
@@ -1323,15 +1389,7 @@ const db = {
             qty = localStock.stock_quantity;
           }
 
-          let productName = `Sản phẩm ${stockItem.sku}`;
-          const skuDigits = stockItem.sku.match(/\d+/);
-          if (skuDigits) {
-            const pId = parseInt(skuDigits[0]);
-            const prod = productsList.find(p => p.product_id === pId);
-            if (prod) {
-              productName = prod.product_name;
-            }
-          }
+          const productName = resolveProductName(null, stockItem.sku);
 
           return {
             store_id: parseInt(stockItem.store_id),
@@ -1352,15 +1410,7 @@ const db = {
             else if (skuUpper.startsWith('FE')) category = 'Feminine';
             else if (skuUpper.startsWith('MA')) category = 'Masculine';
 
-            let productName = `Sản phẩm ${localStock.sku}`;
-            const skuDigits = localStock.sku.match(/\d+/);
-            if (skuDigits) {
-              const pId = parseInt(skuDigits[0]);
-              const prod = productsList.find(p => p.product_id === pId);
-              if (prod) {
-                productName = prod.product_name;
-              }
-            }
+            const productName = resolveProductName(null, localStock.sku);
 
             data.push({
               store_id: localStock.store_id,
@@ -1428,20 +1478,7 @@ const db = {
         else if (skuUpperMap.startsWith('FE')) catFromSku = 'Feminine';
         else if (skuUpperMap.startsWith('MA')) catFromSku = 'Masculine';
 
-        let productName = `Sản phẩm ${item.sku}`;
-        const prod = productsList.find(p => p.product_id === item.product_id);
-        if (prod) {
-          productName = prod.product_name;
-        } else {
-          const skuDigits = item.sku.match(/\d+/);
-          if (skuDigits) {
-            const pId = parseInt(skuDigits[0]);
-            const prodBySku = productsList.find(p => p.product_id === pId);
-            if (prodBySku) {
-              productName = prodBySku.product_name;
-            }
-          }
-        }
+        const productName = resolveProductName(item.product_id, item.sku);
 
         return {
           store_id: parseInt(storeId),
@@ -1463,15 +1500,7 @@ const db = {
             else if (skuUpper.startsWith('FE')) category = 'Feminine';
             else if (skuUpper.startsWith('MA')) category = 'Masculine';
 
-            let productName = `Sản phẩm ${stockItem.sku}`;
-            const skuDigits = stockItem.sku.match(/\d+/);
-            if (skuDigits) {
-              const pId = parseInt(skuDigits[0]);
-              const prod = productsList.find(p => p.product_id === pId);
-              if (prod) {
-                productName = prod.product_name;
-              }
-            }
+            const productName = resolveProductName(null, stockItem.sku);
 
             data.push({
               store_id: parseInt(storeId),

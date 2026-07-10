@@ -1,3 +1,22 @@
+// Product Image Loading Handler
+// Picsum.photos loads instantly (~200ms) so we just need simple error handling
+(function() {
+  window.handleProductImageLoad = function(img) {
+    // Image loaded successfully - fade in and remove skeleton
+    img.style.opacity = '1';
+    const wrapper = img.closest('.product-img-wrapper');
+    if (wrapper) wrapper.classList.remove('skeleton-loading');
+  };
+
+  window.handleProductImageError = function(img) {
+    // Fallback to placeholder with product name
+    img.src = 'https://placehold.co/300x300/1a1e27/555555?text=' + encodeURIComponent(img.alt || 'Product');
+    img.style.opacity = '1';
+    const wrapper = img.closest('.product-img-wrapper');
+    if (wrapper) wrapper.classList.remove('skeleton-loading');
+  };
+})();
+
 // Theme Initialization
 const savedTheme = localStorage.getItem('theme') || 'dark';
 if (savedTheme === 'light') {
@@ -978,13 +997,68 @@ async function loadDiscountsTab() {
       const discountPct = (d.total_discount_avg * 100).toFixed(2);
       const isEditable = currentUser.role === 'Director' || currentUser.store_id === d.store_id;
       
-      const seasonMap = {
-        'Mùa đông 2024': { vi: 'Mùa đông 2024', en: 'Winter 2024', zh: '2024年冬季' },
-        'Mùa xuân 2024': { vi: 'Mùa xuân 2024', en: 'Spring 2024', zh: '2024年春季' },
-        'Mùa hè 2024': { vi: 'Mùa hè 2024', en: 'Summer 2024', zh: '2024年夏季' },
-        'Mùa thu 2024': { vi: 'Mùa thu 2024', en: 'Autumn 2024', zh: '2024年秋季' }
+      const translateSeasonName = (name) => {
+        if (!name) return '';
+        const cleanName = name.trim();
+        const years = ['2023', '2024', '2025', '2026', '2027'];
+        const seasons = [
+          { vi: 'Mùa đông', en: 'Winter', zh: '冬季' },
+          { vi: 'Mùa xuân', en: 'Spring', zh: '春季' },
+          { vi: 'Mùa hè', en: 'Summer', zh: '夏季' },
+          { vi: 'Mùa thu', en: 'Autumn', zh: '秋季' }
+        ];
+
+        for (const year of years) {
+          for (const s of seasons) {
+            const matchVi = `${s.vi} ${year}`;
+            const matchEn = `${s.en} ${year}`;
+            const matchZh = `${year}年${s.zh}`;
+
+            if (cleanName === matchVi || cleanName === matchEn || cleanName === matchZh) {
+              return currentLang === 'en' ? matchEn : (currentLang === 'zh' ? matchZh : matchVi);
+            }
+          }
+        }
+
+        const campaigns = [
+          { vi: 'Khuyến mãi mùa đông', en: 'Winter Sale', zh: '冬季大促销' },
+          { vi: 'Khuyến mãi mùa xuân', en: 'Spring Sale', zh: '春季大促销' },
+          { vi: 'Khuyến mãi mùa hè', en: 'Summer Sale', zh: '夏季大促销' },
+          { vi: 'Khuyến mãi mùa thu', en: 'Autumn Sale', zh: '秋季大促销' },
+          { vi: 'Giảm giá mùa đông', en: 'Winter Sale', zh: '冬季大降价' },
+          { vi: 'Giảm giá mùa xuân', en: 'Spring Sale', zh: '春季大降价' },
+          { vi: 'Giảm giá mùa hè', en: 'Summer Sale', zh: '夏季大降价' },
+          { vi: 'Giảm giá mùa thu', en: 'Autumn Sale', zh: '秋季大降价' },
+          { vi: 'Giảm giá đặc biệt', en: 'Special Sale', zh: '特大降价' },
+          { vi: 'Ngày hội mua sắm', en: 'Black Friday', zh: '黑色星期五' }
+        ];
+
+        for (const c of campaigns) {
+          if (cleanName.toLowerCase() === c.vi.toLowerCase() || 
+              cleanName.toLowerCase() === c.en.toLowerCase() || 
+              cleanName.toLowerCase() === c.zh.toLowerCase()) {
+            return currentLang === 'en' ? c.en : (currentLang === 'zh' ? c.zh : c.vi);
+          }
+        }
+
+        const genericSeasons = [
+          { vi: 'Mùa đông', en: 'Winter', zh: '冬季' },
+          { vi: 'Mùa xuân', en: 'Spring', zh: '春季' },
+          { vi: 'Mùa hè', en: 'Summer', zh: '夏季' },
+          { vi: 'Mùa thu', en: 'Autumn', zh: '秋季' }
+        ];
+        
+        for (const s of genericSeasons) {
+          if (cleanName.toLowerCase() === s.vi.toLowerCase() || 
+              cleanName.toLowerCase() === s.en.toLowerCase() || 
+              cleanName.toLowerCase() === s.zh.toLowerCase()) {
+            return currentLang === 'en' ? s.en : (currentLang === 'zh' ? s.zh : s.vi);
+          }
+        }
+
+        return name;
       };
-      const seasonNameVal = seasonMap[d.season_name] ? seasonMap[d.season_name][currentLang] : d.season_name;
+      const seasonNameVal = translateSeasonName(d.season_name);
       const editText = currentLang === 'en' ? 'Edit' : (currentLang === 'zh' ? '编辑' : 'Sửa');
       const deleteText = currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa');
       const lockedText = currentLang === 'en' ? 'Locked' : (currentLang === 'zh' ? '锁定' : 'Khóa');
@@ -1355,9 +1429,9 @@ async function loadProductsTab() {
       const escImg = p.image_url ? p.image_url.replace(/'/g, "\\'") : '';
 
       card.innerHTML = `
-        <div class="product-img-wrapper">
+        <div class="product-img-wrapper skeleton-loading">
           <span class="product-category-badge">${categoryVal}</span>
-          <img src="${p.image_url}" class="product-img" alt="${p.product_name}" onerror="this.src='https://placehold.co/300x300?text=Product+Image'">
+          <img src="${p.image_url}" class="product-img" alt="${p.product_name}" style="opacity:0" onload="handleProductImageLoad(this)" onerror="handleProductImageError(this)">
         </div>
         <div class="product-info-wrapper" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
@@ -1378,6 +1452,8 @@ async function loadProductsTab() {
       `;
       container.appendChild(card);
     });
+
+
 
   } catch (err) {
     console.error('Error loading products:', err);
@@ -1508,6 +1584,11 @@ async function loadTransactionsTab() {
       };
       const payVal = payMap[t.payment_method] ? payMap[t.payment_method][currentLang] : t.payment_method;
       const fallbackName = (currentLang === 'en' ? 'Product ' : (currentLang === 'zh' ? '商品 ' : 'Sản phẩm ')) + t.product_id;
+      let displayName = t.product_name || fallbackName;
+      if (displayName.startsWith('Sản phẩm #')) {
+        const prodId = displayName.replace('Sản phẩm #', '');
+        displayName = (currentLang === 'en' ? 'Product #' : (currentLang === 'zh' ? '商品 #' : 'Sản phẩm #')) + prodId;
+      }
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><code>#TX-${t.transaction_id}</code></td>
@@ -1515,7 +1596,7 @@ async function loadTransactionsTab() {
         <td><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-light); font-weight: normal;">${t.salesperson || 'System'}</span></td>
         <td><span style="font-size: 12px; color: var(--text-muted);">${formattedDate}</span></td>
         <td><code>${t.sku}</code></td>
-        <td>${t.product_name || fallbackName}</td>
+        <td>${displayName}</td>
         <td><span class="badge">${payVal}</span></td>
         <td>${t.local_price} ${t.currency}</td>
         <td><strong>x${t.quantity}</strong></td>
@@ -1692,11 +1773,20 @@ function renderInventoryStock() {
       'Feminine': { vi: 'Nữ giới (Feminine)', en: 'Feminine', zh: '女装 (Feminine)' }
     };
     const catVal = categoryMap[item.category] ? categoryMap[item.category][currentLang] : item.category;
+    let displayName = item.product_name || '';
+    if (displayName.startsWith('Sản phẩm #')) {
+      const prodId = displayName.replace('Sản phẩm #', '');
+      displayName = (currentLang === 'en' ? 'Product #' : (currentLang === 'zh' ? '商品 #' : 'Sản phẩm #')) + prodId;
+    } else if (displayName.startsWith('Sản phẩm ')) {
+      const suffix = displayName.replace('Sản phẩm ', '');
+      displayName = (currentLang === 'en' ? 'Product ' : (currentLang === 'zh' ? '商品 ' : 'Sản phẩm ')) + suffix;
+    }
+
     const tr = document.createElement('tr');
     tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.03)';
     tr.innerHTML = `
       <td style="padding: 10px;"><code>${item.sku}</code></td>
-      <td style="padding: 10px; color: var(--text-light); font-weight: 500;">${item.product_name}</td>
+      <td style="padding: 10px; color: var(--text-light); font-weight: 500;">${displayName}</td>
       <td style="padding: 10px;"><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">${catVal}</span></td>
       <td style="padding: 10px; text-align: right; font-weight: bold; color: ${item.stock_quantity <= 15 ? '#ef4444' : '#10b981'}">
         ${item.stock_quantity}
@@ -1738,13 +1828,22 @@ async function loadInventoryImports() {
         year: 'numeric', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit'
       });
+      let displayName = item.product_name || '';
+      if (displayName.startsWith('Sản phẩm #')) {
+        const prodId = displayName.replace('Sản phẩm #', '');
+        displayName = (currentLang === 'en' ? 'Product #' : (currentLang === 'zh' ? '商品 #' : 'Sản phẩm #')) + prodId;
+      } else if (displayName.startsWith('Sản phẩm ')) {
+        const suffix = displayName.replace('Sản phẩm ', '');
+        displayName = (currentLang === 'en' ? 'Product ' : (currentLang === 'zh' ? '商品 ' : 'Sản phẩm ')) + suffix;
+      }
+
       const tr = document.createElement('tr');
       tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.03)';
       tr.innerHTML = `
         <td style="padding: 10px; font-size: 11px; color: var(--text-muted);">${dateStr}</td>
         <td style="padding: 10px;">
           <div style="font-weight: 500;"><code>${item.sku}</code></div>
-          <div style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">${item.product_name}</div>
+          <div style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">${displayName}</div>
         </td>
         <td style="padding: 10px; text-align: right; font-weight: bold; color: var(--primary-light);">+${item.quantity}</td>
         <td style="padding: 10px; font-size: 12px; color: var(--text-light);">${item.supplier}</td>
@@ -1816,7 +1915,7 @@ function setupInventoryEvents(stores) {
   function renderImportSkuOptions(products) {
     skuInput.innerHTML = '';
     if (products.length === 0) {
-      skuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'No products found' : 'Không tìm thấy sản phẩm nào'}</option>`;
+      skuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'No products found' : (currentLang === 'zh' ? '未找到任何商品' : 'Không tìm thấy sản phẩm nào')}</option>`;
       return;
     }
     
@@ -1834,7 +1933,8 @@ function setupInventoryEvents(stores) {
     if (products.length > limit) {
       const opt = document.createElement('option');
       opt.disabled = true;
-      opt.textContent = `... ${products.length - limit} ${currentLang === 'en' ? 'more products, search to filter' : 'sản phẩm khác, hãy gõ tìm kiếm để lọc'} ...`;
+      const moreText = currentLang === 'en' ? 'more products, search to filter' : (currentLang === 'zh' ? '更多商品，输入搜索以过滤' : 'sản phẩm khác, hãy gõ tìm kiếm để lọc');
+      opt.textContent = `... ${products.length - limit} ${moreText} ...`;
       skuInput.appendChild(opt);
     }
   }
@@ -1855,24 +1955,24 @@ function setupInventoryEvents(stores) {
   async function loadImportSkuList() {
     const storeId = storeInput.value || currentUser.store_id || '';
     if (!storeId) {
-      skuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Select a store first' : 'Vui lòng chọn cửa hàng trước'}</option>`;
+      skuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Select a store first' : (currentLang === 'zh' ? '请先选择门店' : 'Vui lòng chọn cửa hàng trước')}</option>`;
       return;
     }
     if (skuSearchInput) {
       skuSearchInput.disabled = true;
-      skuSearchInput.placeholder = currentLang === 'en' ? 'Loading products...' : 'Đang tải danh sách...';
+      skuSearchInput.placeholder = currentLang === 'en' ? 'Loading products...' : (currentLang === 'zh' ? '正在加载商品...' : 'Đang tải danh sách...');
     }
-    skuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading products...' : 'Đang tải danh sách sản phẩm...'}</option>`;
+    skuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading products...' : (currentLang === 'zh' ? '正在加载商品...' : 'Đang tải danh sách sản phẩm...')}</option>`;
     try {
       cachedImportProducts = await fetchAPI(`/api/inventory?store_id=${storeId}`);
       renderImportSkuOptions(cachedImportProducts);
     } catch (e) {
       console.warn('Failed to load store inventory for import:', e);
-      skuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Error loading products' : 'Lỗi tải danh sách sản phẩm'}</option>`;
+      skuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Error loading products' : (currentLang === 'zh' ? '加载商品失败' : 'Lỗi tải danh sách sản phẩm')}</option>`;
     } finally {
       if (skuSearchInput) {
         skuSearchInput.disabled = false;
-        skuSearchInput.placeholder = currentLang === 'en' ? 'Type SKU or name to search...' : 'Tìm kiếm SKU / Tên sản phẩm...';
+        skuSearchInput.placeholder = currentLang === 'en' ? 'Type SKU or name to search...' : (currentLang === 'zh' ? '搜索 SKU / 商品名称...' : 'Tìm kiếm SKU / Tên sản phẩm...');
       }
     }
   }
@@ -2013,13 +2113,48 @@ function renderPagination(tab, total, page, limit) {
   container.appendChild(nextBtn);
 }
 
-// Mobile Sidebar Toggle event listeners
+// Helper to dynamically set tooltips when sidebar is collapsed
+function updateSidebarTooltips() {
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+  const isCollapsed = sidebar.classList.contains('collapsed');
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const span = item.querySelector('span');
+    if (span) {
+      if (isCollapsed) {
+        item.setAttribute('title', span.textContent.trim());
+      } else {
+        item.removeAttribute('title');
+      }
+    }
+  });
+}
+
+// Restore sidebar state from localStorage on page load
+(function restoreSidebarState() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar && window.innerWidth > 1024) {
+    const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+    if (isCollapsed) {
+      sidebar.classList.add('collapsed');
+      updateSidebarTooltips();
+    }
+  }
+})();
+
+// Mobile/Desktop Sidebar Toggle event listeners
 document.getElementById('sidebar-toggle').addEventListener('click', () => {
   const sidebar = document.querySelector('.sidebar');
   const overlay = document.getElementById('sidebar-overlay');
   if (sidebar && overlay) {
-    sidebar.classList.toggle('sidebar-open');
-    overlay.style.display = sidebar.classList.contains('sidebar-open') ? 'block' : 'none';
+    if (window.innerWidth > 1024) {
+      sidebar.classList.toggle('collapsed');
+      localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed') ? 'true' : 'false');
+      updateSidebarTooltips();
+    } else {
+      sidebar.classList.toggle('sidebar-open');
+      overlay.style.display = sidebar.classList.contains('sidebar-open') ? 'block' : 'none';
+    }
   }
 });
 
@@ -3001,13 +3136,14 @@ function renderTxCustomerOptions(items) {
 function renderTxSkuOptions(items) {
   txSkuInput.innerHTML = '';
   if (items.length === 0) {
-    txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'No products found' : 'Không tìm thấy sản phẩm nào'}</option>`;
+    txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'No products found' : (currentLang === 'zh' ? '未找到任何商品' : 'Không tìm thấy sản phẩm nào')}</option>`;
     return;
   }
   items.forEach(item => {
     const opt = document.createElement('option');
     opt.value = item.sku;
-    opt.textContent = `${item.sku} - ${item.product_name} (Tồn kho: ${item.stock_quantity})`;
+    const stockLabel = currentLang === 'en' ? 'Stock' : (currentLang === 'zh' ? '库存' : 'Tồn kho');
+    opt.textContent = `${item.sku} - ${item.product_name} (${stockLabel}: ${item.stock_quantity})`;
     txSkuInput.appendChild(opt);
   });
 }
@@ -3016,7 +3152,8 @@ function renderTxSkuOptions(items) {
 if (txStoreInput) {
   txStoreInput.addEventListener('change', () => {
     txSkuSearch.value = '';
-    txSkuInput.innerHTML = '<option value="">-- Nhập từ khóa để tìm sản phẩm --</option>';
+    const placeholderText = currentLang === 'en' ? '-- Enter keyword to search products --' : (currentLang === 'zh' ? '-- 输入关键字以搜索商品 --' : '-- Nhập từ khóa để tìm sản phẩm --');
+    txSkuInput.innerHTML = `<option value="">${placeholderText}</option>`;
     activeTxInventory = [];
   });
 }
@@ -3041,10 +3178,12 @@ if (txSkuSearch) {
     const query = e.target.value.trim();
     clearTimeout(txSkuSearchTimeout);
     if (query.length < 2) {
-      txSkuInput.innerHTML = '<option value="">-- Nhập từ khóa để tìm sản phẩm --</option>';
+      const placeholderText = currentLang === 'en' ? '-- Enter keyword to search products --' : (currentLang === 'zh' ? '-- 输入关键字以搜索商品 --' : '-- Nhập từ khóa để tìm sản phẩm --');
+      txSkuInput.innerHTML = `<option value="">${placeholderText}</option>`;
       return;
     }
-    txSkuInput.innerHTML = '<option value="">Đang tìm kiếm...</option>';
+    const searchingText = currentLang === 'en' ? 'Searching...' : (currentLang === 'zh' ? '正在搜索...' : 'Đang tìm kiếm...');
+    txSkuInput.innerHTML = `<option value="">${searchingText}</option>`;
     txSkuSearchTimeout = setTimeout(async () => {
       try {
         const storeId = txStoreInput.value;
@@ -3053,7 +3192,8 @@ if (txSkuSearch) {
         renderTxSkuOptions(activeTxInventory);
       } catch (err) {
         console.error('Error searching SKUs:', err);
-        txSkuInput.innerHTML = '<option value="">Lỗi tìm kiếm sản phẩm</option>';
+        const errorText = currentLang === 'en' ? 'Error searching products' : (currentLang === 'zh' ? '搜索商品出错' : 'Lỗi tìm kiếm sản phẩm');
+        txSkuInput.innerHTML = `<option value="">${errorText}</option>`;
       }
     }, 300);
   });
@@ -3065,7 +3205,8 @@ function renderTxCartTable() {
   const totalSpan = document.getElementById('tx-cart-total');
   
   if (txCart.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">Chưa có sản phẩm nào được chọn.</td></tr>`;
+    const emptyMsg = currentLang === 'en' ? 'No products added to cart yet.' : (currentLang === 'zh' ? '尚未选择任何商品。' : 'Chưa có sản phẩm nào được chọn.');
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">${emptyMsg}</td></tr>`;
     totalSpan.textContent = '$0.00';
     return;
   }
@@ -3117,15 +3258,15 @@ if (btnAddItemToCart) {
     const price = parseFloat(txPriceInput.value);
 
     if (!selectedSku) {
-      alert('Vui lòng chọn sản phẩm.');
+      alert(currentLang === 'en' ? 'Please select a product.' : (currentLang === 'zh' ? '请选择商品。' : 'Vui lòng chọn sản phẩm.'));
       return;
     }
     if (isNaN(qty) || qty <= 0) {
-      alert('Số lượng không hợp lệ.');
+      alert(currentLang === 'en' ? 'Invalid quantity.' : (currentLang === 'zh' ? '无效数量。' : 'Số lượng không hợp lệ.'));
       return;
     }
     if (isNaN(price) || price <= 0) {
-      alert('Đơn giá không hợp lệ.');
+      alert(currentLang === 'en' ? 'Invalid price.' : (currentLang === 'zh' ? '无效单价。' : 'Đơn giá không hợp lệ.'));
       return;
     }
 
@@ -3134,14 +3275,14 @@ if (btnAddItemToCart) {
     const stockLimit = invItem ? invItem.stock_quantity : 0;
 
     if (qty > stockLimit) {
-      alert(`Không đủ hàng tồn kho. Số lượng tồn hiện tại: ${stockLimit}`);
+      alert(currentLang === 'en' ? `Insufficient stock. Current stock: ${stockLimit}` : (currentLang === 'zh' ? `库存不足。当前库存: ${stockLimit}` : `Không đủ hàng tồn kho. Số lượng tồn hiện tại: ${stockLimit}`));
       return;
     }
 
     const existing = txCart.find(item => item.sku === selectedSku);
     if (existing) {
       if (existing.quantity + qty > stockLimit) {
-        alert(`Tổng số lượng vượt quá tồn kho. Tồn kho tối đa: ${stockLimit}`);
+        alert(currentLang === 'en' ? `Total quantity exceeds stock. Max stock: ${stockLimit}` : (currentLang === 'zh' ? `总数量超出库存。最大库存: ${stockLimit}` : `Tổng số lượng vượt quá tồn kho. Tồn kho tối đa: ${stockLimit}`));
         return;
       }
       existing.quantity += qty;
@@ -3156,7 +3297,8 @@ if (btnAddItemToCart) {
     }
 
     txSkuSearch.value = '';
-    txSkuInput.innerHTML = '<option value="">-- Nhập từ khóa để tìm sản phẩm --</option>';
+    const placeholderText = currentLang === 'en' ? '-- Enter keyword to search products --' : (currentLang === 'zh' ? '-- 输入关键字以搜索商品 --' : '-- Nhập từ khóa để tìm sản phẩm --');
+    txSkuInput.innerHTML = `<option value="">${placeholderText}</option>`;
     txQtyInput.value = 1;
     txPriceInput.value = '';
 
@@ -3176,9 +3318,11 @@ if (btnAddTx) {
     if (txSkuSearch) txSkuSearch.value = '';
 
     txModal.classList.add('active');
-    txStoreInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading stores...' : 'Đang tải cửa hàng...'}</option>`;
-    txCustomerInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading customers...' : 'Đang tải khách hàng...'}</option>`;
-    txSkuInput.innerHTML = '<option value="">-- Nhập từ khóa để tìm sản phẩm --</option>';
+    txStoreInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading stores...' : (currentLang === 'zh' ? '正在加载门店...' : 'Đang tải cửa hàng...')}</option>`;
+    txCustomerInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading customers...' : (currentLang === 'zh' ? '正在加载客户...' : 'Đang tải khách hàng...')}</option>`;
+    
+    const placeholderText = currentLang === 'en' ? '-- Enter keyword to search products --' : (currentLang === 'zh' ? '-- 输入关键字以搜索商品 --' : '-- Nhập từ khóa để tìm sản phẩm --');
+    txSkuInput.innerHTML = `<option value="">${placeholderText}</option>`;
     isTxModalLoading = true;
 
     try {
@@ -3209,7 +3353,7 @@ if (btnAddTx) {
       isTxModalLoading = false;
     } catch (err) {
       console.error('Error opening transaction modal:', err);
-      alert('Không thể mở màn hình tạo giao dịch. Vui lòng kiểm tra quyền truy cập.');
+      alert(currentLang === 'en' ? 'Cannot open transaction creation modal. Please check your access permissions.' : (currentLang === 'zh' ? '无法打开交易创建弹窗。请检查您的访问权限。' : 'Không thể mở màn hình tạo giao dịch. Vui lòng kiểm tra quyền truy cập.'));
       txModal.classList.remove('active');
       isTxModalLoading = false;
     }
@@ -3233,12 +3377,12 @@ if (txForm) {
     e.preventDefault();
 
     if (txCart.length === 0) {
-      alert('Vui lòng thêm ít nhất một sản phẩm vào đơn hàng.');
+      alert(currentLang === 'en' ? 'Please add at least one product to the cart.' : (currentLang === 'zh' ? '请在订单中至少添加一个商品。' : 'Vui lòng thêm ít nhất một sản phẩm vào đơn hàng.'));
       return;
     }
 
     if (!txCustomerInput.value) {
-      alert('Vui lòng chọn khách hàng.');
+      alert(currentLang === 'en' ? 'Please select a customer.' : (currentLang === 'zh' ? '请选择客户。' : 'Vui lòng chọn khách hàng.'));
       return;
     }
 
@@ -3262,7 +3406,7 @@ if (txForm) {
       });
 
       txModal.classList.remove('active');
-      alert(res.message || 'Tạo giao dịch thành công!');
+      alert(res.message || (currentLang === 'en' ? 'Transaction created successfully!' : (currentLang === 'zh' ? '交易创建成功！' : 'Tạo giao dịch thành công!')));
       
       txCart = [];
       renderTxCartTable();
@@ -3291,7 +3435,7 @@ if (txForm) {
       }
     } catch (err) {
       console.error('Error creating transaction:', err);
-      alert(err.message || 'Lỗi khi tạo giao dịch. Vui lòng kiểm tra lại tồn kho.');
+      alert(err.message || (currentLang === 'en' ? 'Error creating transaction. Please verify stock availability.' : (currentLang === 'zh' ? '创建交易时出错。请重新检查库存。' : 'Lỗi khi tạo giao dịch. Vui lòng kiểm tra lại tồn kho.')));
     }
   });
 }
@@ -3624,6 +3768,27 @@ const translations = {
     modal_tx_payment_cash: "Tiền mặt (Cash)",
     modal_tx_payment_apple: "Apple Pay",
     modal_tx_btn_create: "Tạo giao dịch",
+    modal_tx_cart_add_title: "Thêm sản phẩm vào đơn",
+    modal_tx_sku_search_placeholder: "Ví dụ: FEAC, CHAC, Đầm...",
+    modal_tx_cart_list: "Danh sách sản phẩm trong đơn hàng:",
+    modal_tx_col_product: "Sản phẩm / SKU",
+    modal_tx_col_qty: "Số lượng",
+    modal_tx_col_price: "Đơn giá",
+    modal_tx_col_total: "Thành tiền",
+    modal_tx_col_action: "Xóa",
+    modal_tx_cart_empty: "Chưa có sản phẩm nào được chọn.",
+    modal_tx_cart_grand_total: "Tổng cộng:",
+    modal_tx_sku_select_placeholder: "-- Nhập từ khóa để tìm sản phẩm --",
+    modal_tx_btn_add: "Thêm",
+    user_profile_title: "Cài đặt Bảo mật / MFA",
+    btn_logout: "Đăng xuất",
+    role_it_admin: "IT Admin (Quản trị viên)",
+    role_director: "Director (Giám đốc)",
+    role_finance: "Finance/Auditor (Kế toán)",
+    role_inventory: "Inventory Manager (Quản lý Kho)",
+    role_marketing: "Marketing Manager (Quản lý Marketing)",
+    role_store_manager: "Store Manager (Quản lý Cửa hàng)",
+    role_sales_staff: "Sales Staff (Nhân viên bán hàng)",
     modal_tx_alert_stock: "Cảnh báo thiếu hàng tồn kho!",
     modal_tx_alert_stock_desc: "Số lượng dự báo tuần tới vươt quá số lượng hàng còn lại trong kho.",
     db_view_forecast: "Xem Dự Báo",
@@ -3896,6 +4061,27 @@ const translations = {
     modal_tx_payment_cash: "Cash",
     modal_tx_payment_apple: "Apple Pay",
     modal_tx_btn_create: "Create Transaction",
+    modal_tx_cart_add_title: "Add Product to Cart",
+    modal_tx_sku_search_placeholder: "e.g. FEAC, CHAC, Dress...",
+    modal_tx_cart_list: "Products in sales transaction:",
+    modal_tx_col_product: "Product / SKU",
+    modal_tx_col_qty: "Quantity",
+    modal_tx_col_price: "Unit Price",
+    modal_tx_col_total: "Subtotal",
+    modal_tx_col_action: "Delete",
+    modal_tx_cart_empty: "No products added to cart yet.",
+    modal_tx_cart_grand_total: "Grand Total:",
+    modal_tx_sku_select_placeholder: "-- Enter keyword to search products --",
+    modal_tx_btn_add: "Add",
+    user_profile_title: "Security Settings / MFA",
+    btn_logout: "Log Out",
+    role_it_admin: "IT Admin",
+    role_director: "Director",
+    role_finance: "Finance / Auditor",
+    role_inventory: "Inventory Manager",
+    role_marketing: "Marketing Manager",
+    role_store_manager: "Store Manager",
+    role_sales_staff: "Sales Staff",
     modal_tx_alert_stock: "Out of Stock Warning!",
     modal_tx_alert_stock_desc: "Weekly forecasted demand exceeds the remaining in-stock quantity.",
     db_view_forecast: "View Forecast",
@@ -4168,6 +4354,27 @@ const translations = {
     modal_tx_payment_cash: "现金 (Cash)",
     modal_tx_payment_apple: "Apple Pay",
     modal_tx_btn_create: "创建销售单",
+    modal_tx_cart_add_title: "添加商品到购物车",
+    modal_tx_sku_search_placeholder: "例如：FEAC, CHAC, 连衣裙...",
+    modal_tx_cart_list: "订单中的商品列表:",
+    modal_tx_col_product: "商品 / SKU",
+    modal_tx_col_qty: "数量",
+    modal_tx_col_price: "单价",
+    modal_tx_col_total: "小计",
+    modal_tx_col_action: "删除",
+    modal_tx_cart_empty: "尚未选择任何商品。",
+    modal_tx_cart_grand_total: "总计:",
+    modal_tx_sku_select_placeholder: "-- 输入关键字以搜索商品 --",
+    modal_tx_btn_add: "添加",
+    user_profile_title: "安全设置 / MFA",
+    btn_logout: "登出",
+    role_it_admin: "IT管理员",
+    role_director: "董事 / 总经理",
+    role_finance: "财务 / 审计员",
+    role_inventory: "仓库经理",
+    role_marketing: "营销经理",
+    role_store_manager: "门店经理",
+    role_sales_staff: "销售店员",
     modal_tx_alert_stock: "库存不足警告！",
     modal_tx_alert_stock_desc: "下周需求预测数量超出了目前该商品的剩余库存量。",
     db_view_forecast: "查看预测",
@@ -4315,6 +4522,8 @@ function translatePage() {
       const text = translations[currentLang][key];
       if ((el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') && el.hasAttribute('placeholder')) {
         el.placeholder = text;
+      } else if (el.hasAttribute('title')) {
+        el.title = text;
       } else {
         setElementTranslatedText(el, text);
       }
@@ -4348,6 +4557,11 @@ function translatePage() {
     } else {
       dbModeText.textContent = currentLang === 'vi' ? 'Cơ sở dữ liệu đám mây (RDS)' : (currentLang === 'en' ? 'Cloud Database (RDS)' : '云数据库 (RDS)');
     }
+  }
+
+  // Synchronize sidebar tooltips if collapsed
+  if (typeof updateSidebarTooltips === 'function') {
+    updateSidebarTooltips();
   }
 }
 

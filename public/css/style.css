@@ -435,6 +435,41 @@ select:focus,
   flex-direction: column;
   padding: 24px;
   flex-shrink: 0;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.collapsed {
+  width: 78px;
+  padding: 24px 10px;
+}
+
+.sidebar.collapsed .sidebar-logo span,
+.sidebar.collapsed .nav-item span,
+.sidebar.collapsed .user-info {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-logo {
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 30px;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 12px 0;
+  gap: 0;
+}
+
+.sidebar.collapsed .user-profile-card {
+  justify-content: center;
+  padding: 8px 0;
+  background: none;
+  border-color: transparent;
+}
+
+.sidebar.collapsed .btn-logout {
+  display: none;
 }
 
 .sidebar-logo {
@@ -1064,6 +1099,63 @@ select:focus,
   overflow: hidden;
 }
 
+/* Skeleton shimmer animation for AI image loading */
+.product-img-wrapper.skeleton-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s infinite ease-in-out;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.product-img-wrapper.skeleton-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-top-color: var(--primary-light);
+  border-radius: 50%;
+  animation: skeleton-spin 1s linear infinite;
+  z-index: 3;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes skeleton-spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Hide image while loading skeleton */
+.product-img-wrapper.skeleton-loading .product-img {
+  opacity: 0;
+}
+
+/* Fade in image when loaded */
+.product-img-wrapper .product-img {
+  transition: opacity 0.4s ease, transform 0.5s ease;
+}
+
 .product-img {
   position: absolute;
   top: 0;
@@ -1151,6 +1243,8 @@ select:focus,
   border-radius: 20px;
   padding: 32px;
   width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;

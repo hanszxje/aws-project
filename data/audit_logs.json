@@ -817,5 +817,95 @@
     "action": "TRANSACTION_CREATE",
     "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, Số lượng mặt hàng: 1",
     "ip": "::1"
+  },
+  {
+    "id": 1783681124059,
+    "timestamp": "2026-07-10T10:58:43.244Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1000029, Số lượng mặt hàng: 2",
+    "ip": "::1"
+  },
+  {
+    "id": 1783681539114,
+    "timestamp": "2026-07-10T11:05:39.055Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "DISCOUNT_CREATE",
+    "details": "Tạo khuyến mãi mới: Mùa hè (Store: 1, Chiết khấu: 90%)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783681850033,
+    "timestamp": "2026-07-10T11:10:49.856Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783681862320,
+    "timestamp": "2026-07-10T11:11:01.331Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao len tre em (#ID: 1783681861597)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783681862508,
+    "timestamp": "2026-07-10T11:11:01.528Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU CHAC1783681861597--, Số lượng: 123, Nhà CC: sss",
+    "ip": "::1"
+  },
+  {
+    "id": 1783681897402,
+    "timestamp": "2026-07-10T11:11:37.010Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783681951914,
+    "timestamp": "2026-07-10T11:12:31.631Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao len tre emaaaa (#ID: 1783681952388)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783681952512,
+    "timestamp": "2026-07-10T11:12:31.778Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #2: SKU CHAC1783681952388--, Số lượng: 12, Nhà CC: gg",
+    "ip": "::1"
+  },
+  {
+    "id": 1783682556464,
+    "timestamp": "2026-07-10T11:22:36.266Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao len tre em (#ID: 1783682556410)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783682557068,
+    "timestamp": "2026-07-10T11:22:36.432Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #2: SKU CHAC1783682556410--, Số lượng: 55, Nhà CC: g",
+    "ip": "::1"
   }
 ]

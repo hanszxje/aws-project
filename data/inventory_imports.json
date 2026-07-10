@@ -390,5 +390,165 @@
     "quantity": 5,
     "import_date": "2026-07-10T09:20:54.683Z",
     "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 34,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T10:38:50.771Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 35,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T10:44:56.463Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 36,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T10:50:22.523Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 37,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T10:55:50.506Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 38,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:04:19.888Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 39,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:09:23.088Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 40,
+    "store_id": 1,
+    "sku": "CHAC1783681861597--",
+    "quantity": 123,
+    "import_date": "2026-07-10T11:11:01.524Z",
+    "supplier": "sss"
+  },
+  {
+    "import_id": 41,
+    "store_id": 2,
+    "sku": "CHAC1783681952388--",
+    "quantity": 12,
+    "import_date": "2026-07-10T11:12:31.777Z",
+    "supplier": "gg"
+  },
+  {
+    "import_id": 42,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:20:04.877Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 43,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:21:35.174Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 44,
+    "store_id": 2,
+    "sku": "CHAC1783682556410--",
+    "quantity": 55,
+    "import_date": "2026-07-10T11:22:36.431Z",
+    "supplier": "g"
+  },
+  {
+    "import_id": 45,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:24:43.065Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 46,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:27:16.420Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 47,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:32:43.066Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 48,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:35:20.245Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 49,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:36:10.690Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 50,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:38:40.619Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 51,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:42:46.928Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 52,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:46:04.020Z",
+    "supplier": "Test Supplier"
+  },
+  {
+    "import_id": 53,
+    "store_id": 1,
+    "sku": "CHAC12298--",
+    "quantity": 5,
+    "import_date": "2026-07-10T11:48:46.496Z",
+    "supplier": "Test Supplier"
   }
 ]
