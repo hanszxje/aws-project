@@ -2986,6 +2986,7 @@ const txSkuSearch = document.getElementById('tx-sku-search');
 
 let activeTxCustomers = [];
 let activeTxInventory = [];
+let txCart = [];
 
 function renderTxCustomerOptions(items) {
   txCustomerInput.innerHTML = `<option value="">${currentLang === 'en' ? '-- Select customer --' : (currentLang === 'zh' ? '-- 选择客户 --' : '-- Chọn khách hàng --')}</option>`;
@@ -3000,38 +3001,27 @@ function renderTxCustomerOptions(items) {
 function renderTxSkuOptions(items) {
   txSkuInput.innerHTML = '';
   if (items.length === 0) {
-    txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'No products found in stock' : (currentLang === 'zh' ? '库存中未找到商品' : 'Không tìm thấy sản phẩm nào trong kho')}</option>`;
+    txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'No products found' : 'Không tìm thấy sản phẩm nào'}</option>`;
     return;
   }
   items.forEach(item => {
     const opt = document.createElement('option');
     opt.value = item.sku;
-    opt.textContent = `${item.sku} - ${item.product_name} (${currentLang === 'en' ? 'In stock' : (currentLang === 'zh' ? '库存' : 'Tồn kho')}: ${item.stock_quantity})`;
+    opt.textContent = `${item.sku} - ${item.product_name} (Tồn kho: ${item.stock_quantity})`;
     txSkuInput.appendChild(opt);
   });
 }
 
-async function loadStoreInventoryForTx(storeId) {
-  txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading inventory...' : (currentLang === 'zh' ? '正在加载库存...' : 'Đang tải hàng tồn kho...')}</option>`;
-  try {
-    const inventory = await fetchAPI(`/api/inventory?store_id=${storeId}`);
-    activeTxInventory = inventory || [];
-    renderTxSkuOptions(activeTxInventory);
-  } catch (err) {
-    console.error('Failed to load store inventory for tx modal:', err);
-    txSkuInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Failed to load inventory' : (currentLang === 'zh' ? '加载库存失败' : 'Lỗi tải hàng tồn kho')}</option>`;
-  }
-}
-
 // Store input change listener
 if (txStoreInput) {
-  txStoreInput.addEventListener('change', (e) => {
+  txStoreInput.addEventListener('change', () => {
     txSkuSearch.value = '';
-    loadStoreInventoryForTx(e.target.value);
+    txSkuInput.innerHTML = '<option value="">-- Nhập từ khóa để tìm sản phẩm --</option>';
+    activeTxInventory = [];
   });
 }
 
-// Search inputs event listeners
+// Customer search input listener
 if (txCustomerSearch) {
   txCustomerSearch.addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase();
@@ -3044,29 +3034,159 @@ if (txCustomerSearch) {
   });
 }
 
+// SKU dynamic search input listener with debounce
+let txSkuSearchTimeout = null;
 if (txSkuSearch) {
   txSkuSearch.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase();
-    const filtered = activeTxInventory.filter(item => 
-      item.sku.toLowerCase().includes(query) || 
-      item.product_name.toLowerCase().includes(query)
-    );
-    renderTxSkuOptions(filtered);
+    const query = e.target.value.trim();
+    clearTimeout(txSkuSearchTimeout);
+    if (query.length < 2) {
+      txSkuInput.innerHTML = '<option value="">-- Nhập từ khóa để tìm sản phẩm --</option>';
+      return;
+    }
+    txSkuInput.innerHTML = '<option value="">Đang tìm kiếm...</option>';
+    txSkuSearchTimeout = setTimeout(async () => {
+      try {
+        const storeId = txStoreInput.value;
+        const results = await fetchAPI(`/api/inventory?store_id=${storeId}&search=${encodeURIComponent(query)}`);
+        activeTxInventory = results || [];
+        renderTxSkuOptions(activeTxInventory);
+      } catch (err) {
+        console.error('Error searching SKUs:', err);
+        txSkuInput.innerHTML = '<option value="">Lỗi tìm kiếm sản phẩm</option>';
+      }
+    }, 300);
+  });
+}
+
+// Cart table renderer
+function renderTxCartTable() {
+  const tbody = document.getElementById('tx-cart-tbody');
+  const totalSpan = document.getElementById('tx-cart-total');
+  
+  if (txCart.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">Chưa có sản phẩm nào được chọn.</td></tr>`;
+    totalSpan.textContent = '$0.00';
+    return;
+  }
+  
+  tbody.innerHTML = '';
+  let grandTotal = 0;
+  
+  txCart.forEach((item, idx) => {
+    const lineTotal = item.quantity * item.price;
+    grandTotal += lineTotal;
+    
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid rgba(255, 255, 255, 0.05)';
+    tr.innerHTML = `
+      <td style="padding: 8px 10px;">
+        <div style="font-weight: 600;"><code>${item.sku}</code></div>
+        <div style="font-size: 11px; color: var(--text-muted);">${item.product_name}</div>
+      </td>
+      <td style="padding: 8px 10px; text-align: center;">${item.quantity}</td>
+      <td style="padding: 8px 10px; text-align: right;">$${item.price.toFixed(2)}</td>
+      <td style="padding: 8px 10px; text-align: right; font-weight: 600; color: var(--primary-light);">$${lineTotal.toFixed(2)}</td>
+      <td style="padding: 8px 10px; text-align: center;">
+        <button type="button" class="btn-delete-cart-item" data-index="${idx}" style="background: none; border: none; color: var(--danger-color); cursor: pointer; padding: 5px;">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+  
+  totalSpan.textContent = `$${grandTotal.toFixed(2)}`;
+  
+  // Attach delete listeners
+  tbody.querySelectorAll('.btn-delete-cart-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-index'));
+      txCart.splice(idx, 1);
+      renderTxCartTable();
+    });
+  });
+}
+
+// "Add to Cart" button event listener
+const btnAddItemToCart = document.getElementById('btn-add-item-to-cart');
+if (btnAddItemToCart) {
+  btnAddItemToCart.addEventListener('click', () => {
+    const selectedSku = txSkuInput.value;
+    const qty = parseInt(txQtyInput.value);
+    const price = parseFloat(txPriceInput.value);
+
+    if (!selectedSku) {
+      alert('Vui lòng chọn sản phẩm.');
+      return;
+    }
+    if (isNaN(qty) || qty <= 0) {
+      alert('Số lượng không hợp lệ.');
+      return;
+    }
+    if (isNaN(price) || price <= 0) {
+      alert('Đơn giá không hợp lệ.');
+      return;
+    }
+
+    const invItem = activeTxInventory.find(i => i.sku === selectedSku);
+    const productName = invItem ? invItem.product_name : `Sản phẩm ${selectedSku}`;
+    const stockLimit = invItem ? invItem.stock_quantity : 0;
+
+    if (qty > stockLimit) {
+      alert(`Không đủ hàng tồn kho. Số lượng tồn hiện tại: ${stockLimit}`);
+      return;
+    }
+
+    const existing = txCart.find(item => item.sku === selectedSku);
+    if (existing) {
+      if (existing.quantity + qty > stockLimit) {
+        alert(`Tổng số lượng vượt quá tồn kho. Tồn kho tối đa: ${stockLimit}`);
+        return;
+      }
+      existing.quantity += qty;
+      existing.price = price;
+    } else {
+      txCart.push({
+        sku: selectedSku,
+        product_name: productName,
+        quantity: qty,
+        price: price
+      });
+    }
+
+    txSkuSearch.value = '';
+    txSkuInput.innerHTML = '<option value="">-- Nhập từ khóa để tìm sản phẩm --</option>';
+    txQtyInput.value = 1;
+    txPriceInput.value = '';
+
+    renderTxCartTable();
   });
 }
 
 // Initialize transaction modal triggers
+let isTxModalLoading = false;
+
 if (btnAddTx) {
   btnAddTx.addEventListener('click', async () => {
     txForm.reset();
-    txQtyInput.value = 1;
-    txPriceInput.value = '';
+    txCart = [];
+    renderTxCartTable();
     if (txCustomerSearch) txCustomerSearch.value = '';
     if (txSkuSearch) txSkuSearch.value = '';
 
+    txModal.classList.add('active');
+    txStoreInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading stores...' : 'Đang tải cửa hàng...'}</option>`;
+    txCustomerInput.innerHTML = `<option value="">${currentLang === 'en' ? 'Loading customers...' : 'Đang tải khách hàng...'}</option>`;
+    txSkuInput.innerHTML = '<option value="">-- Nhập từ khóa để tìm sản phẩm --</option>';
+    isTxModalLoading = true;
+
     try {
-      // 1. Fetch stores
-      const stores = await fetchAPI('/api/stores');
+      const [stores, customersRes] = await Promise.all([
+        fetchAPI('/api/stores'),
+        fetchAPI('/api/customers?page=1&limit=300')
+      ]);
+
       txStoreInput.innerHTML = '';
       stores.forEach(s => {
         const opt = document.createElement('option');
@@ -3083,18 +3203,15 @@ if (btnAddTx) {
         document.querySelector('.tx-store-container').style.display = 'block';
       }
 
-      // 2. Fetch customers (up to 300)
-      const customersRes = await fetchAPI('/api/customers?page=1&limit=300');
       activeTxCustomers = customersRes.data || [];
       renderTxCustomerOptions(activeTxCustomers);
 
-      // 3. Load SKUs for the initially selected store
-      await loadStoreInventoryForTx(txStoreInput.value);
-
-      txModal.classList.add('active');
+      isTxModalLoading = false;
     } catch (err) {
       console.error('Error opening transaction modal:', err);
       alert('Không thể mở màn hình tạo giao dịch. Vui lòng kiểm tra quyền truy cập.');
+      txModal.classList.remove('active');
+      isTxModalLoading = false;
     }
   });
 }
@@ -3115,23 +3232,28 @@ if (txForm) {
   txForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    if (txCart.length === 0) {
+      alert('Vui lòng thêm ít nhất một sản phẩm vào đơn hàng.');
+      return;
+    }
+
     if (!txCustomerInput.value) {
       alert('Vui lòng chọn khách hàng.');
       return;
     }
-    if (!txSkuInput.value || txSkuInput.value === 'Không tìm thấy sản phẩm nào trong kho') {
-      alert('Vui lòng chọn SKU sản phẩm hợp lệ.');
-      return;
-    }
 
-    const payload = {
-      store_id: parseInt(txStoreInput.value),
-      customer_id: parseInt(txCustomerInput.value),
-      sku: txSkuInput.value,
-      quantity: parseInt(txQtyInput.value),
-      price: parseFloat(txPriceInput.value),
-      payment_method: txPaymentInput.value
-    };
+    const storeId = parseInt(txStoreInput.value);
+    const customerId = parseInt(txCustomerInput.value);
+    const paymentMethod = txPaymentInput.value;
+
+    const payload = txCart.map(item => ({
+      store_id: storeId,
+      customer_id: customerId,
+      sku: item.sku,
+      quantity: item.quantity,
+      price: item.price,
+      payment_method: paymentMethod
+    }));
 
     try {
       const res = await fetchAPI('/api/transactions', {
@@ -3141,6 +3263,9 @@ if (txForm) {
 
       txModal.classList.remove('active');
       alert(res.message || 'Tạo giao dịch thành công!');
+      
+      txCart = [];
+      renderTxCartTable();
       
       // Reload Transactions tab if active
       if (activeTab === 'transactions') {
@@ -3153,7 +3278,7 @@ if (txForm) {
       }
       
       // Reload dashboard cache/warnings
-      if (activeForecastStoreId === payload.store_id) {
+      if (activeForecastStoreId === storeId) {
         try {
           activeStoreInventoryData = await fetchAPI(`/api/inventory?store_id=${activeForecastStoreId}`);
           const selector = document.getElementById('forecast-sku-selector');

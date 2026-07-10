@@ -12,10 +12,10 @@ const isApiMode = !!API_BASE_URL;
 let isMockMode = false;
 let pool = null;
 
-// Only initialize PostgreSQL pool if not in API mode and credentials are provided
+// Initialize PostgreSQL pool if credentials are provided (needed for direct users table CRUD)
 const hasCredentials = process.env.DB_HOST && process.env.DB_USER && process.env.DB_NAME;
 
-if (!isApiMode && hasCredentials) {
+if (hasCredentials) {
   try {
     pool = new Pool({
       host: process.env.DB_HOST,
@@ -27,13 +27,14 @@ if (!isApiMode && hasCredentials) {
     });
     console.log('PostgreSQL database pool created.');
   } catch (err) {
-    console.warn('Failed to initialize PostgreSQL pool. Falling back to Mock Mode.', err.message);
-    isMockMode = true;
+    console.warn('Failed to initialize PostgreSQL pool. Falling back to Mock Mode for local DB.', err.message);
   }
-} else if (!isApiMode) {
+}
+
+if (!isApiMode && !hasCredentials) {
   console.log('No DB credentials found in .env. Running in Mock Mode.');
   isMockMode = true;
-} else {
+} else if (isApiMode) {
   console.log(`Running in API Mode. Connecting to FastAPI at ${API_BASE_URL}`);
 }
 
@@ -169,6 +170,26 @@ const db = {
 
   // --- Auth & Users (Always Local) ---
   getUserByUsername: async (username) => {
+    if (pool) {
+      try {
+        const res = await pool.query('SELECT * FROM users WHERE LOWER(username) = LOWER($1)', [username]);
+        if (res.rows.length > 0) {
+          const u = res.rows[0];
+          return {
+            id: parseInt(u.id),
+            username: u.username,
+            password: u.password,
+            role: u.role || u.position || '',
+            store_id: u.store_id ? parseInt(u.store_id) : null,
+            mfa_enabled: !!u.mfa_enabled,
+            mfa_secret: u.mfa_secret || null
+          };
+        }
+        return null;
+      } catch (err) {
+        console.warn('PostgreSQL getUserByUsername failed, falling back to JSON:', err.message);
+      }
+    }
     const users = readMockFile('users.json');
     return users.find(u => u.username.toLowerCase() === username.toLowerCase()) || null;
   },
@@ -822,23 +843,36 @@ const db = {
       }
       
       const res = await apiCall(url);
-      let list = (res.data || []).map(t => ({
-        transaction_id: parseInt(t.transaction_id) || t.transaction_id,
-        store_id: parseInt(t.store_id),
-        customer_id: parseInt(t.customer_id),
-        product_id: parseInt(t.product_id),
-        sku: t.sku || `SKU-${t.product_id}`,
-        product_name: `Sản phẩm #${t.product_id}`,
-        date: t.transaction_date ? t.transaction_date.split('T')[0] : new Date().toISOString().split('T')[0],
-        timestamp: t.transaction_date || new Date().toISOString(),
-        salesperson: t.employee_id || 'System',
-        payment_method: t.payment_method || 'Cash',
-        currency: t.currency || 'USD',
-        local_price: t.unit_price || 0,
-        usd_price: t.unit_price || 0,
-        quantity: t.quantity || 1,
-        line_total: t.line_total || ((t.unit_price || 0) * (t.quantity || 1))
-      }));
+      
+      // Fetch employees to resolve name from employee_id
+      let employees = [];
+      try {
+        const empRes = await apiCall('/employees?limit=1000');
+        employees = empRes.data || [];
+      } catch (err) {
+        console.warn('Failed to fetch employees for transaction mapping:', err.message);
+      }
+
+      let list = (res.data || []).map(t => {
+        const emp = employees.find(e => e.employee_id.toString() === (t.employee_id || '').toString());
+        return {
+          transaction_id: parseInt(t.transaction_id) || t.transaction_id,
+          store_id: parseInt(t.store_id),
+          customer_id: parseInt(t.customer_id),
+          product_id: parseInt(t.product_id),
+          sku: t.sku || `SKU-${t.product_id}`,
+          product_name: `Sản phẩm #${t.product_id}`,
+          date: t.transaction_date ? t.transaction_date.split('T')[0] : new Date().toISOString().split('T')[0],
+          timestamp: t.transaction_date || new Date().toISOString(),
+          salesperson: emp ? emp.name : (t.employee_id || 'System'),
+          payment_method: t.payment_method || 'Cash',
+          currency: t.currency || 'USD',
+          local_price: t.unit_price || 0,
+          usd_price: t.unit_price || 0,
+          quantity: t.quantity || 1,
+          line_total: t.line_total || ((t.unit_price || 0) * (t.quantity || 1))
+        };
+      });
 
       if (storeId) {
         list = list.filter(t => t.store_id.toString() === storeId.toString());
@@ -897,9 +931,9 @@ const db = {
     }
   },
 
-  addTransaction: async ({ store_id, customer_id, product_id, sku, quantity, payment_method, price, salesperson }) => {
+  addTransaction: async ({ store_id, customer_id, product_id, sku, quantity, payment_method, price, salesperson, customTxId }) => {
     if (isApiMode) {
-      const txId = (Date.now() + Math.floor(Math.random() * 1000)).toString();
+      const txId = customTxId || (Date.now() + Math.floor(Math.random() * 1000)).toString();
 
       // Resolve a valid employee_id to satisfy the foreign key constraint on the database
       let resolvedEmployeeId = '1'; // Default fallback that is guaranteed to exist
@@ -1078,10 +1112,44 @@ const db = {
 
   // --- Local User Administration (IT Admin) ---
   getUsers: async () => {
+    if (pool) {
+      try {
+        const res = await pool.query('SELECT * FROM users ORDER BY id ASC');
+        return res.rows.map(u => ({
+          id: parseInt(u.id),
+          username: u.username,
+          role: u.role || u.position || '',
+          store_id: u.store_id ? parseInt(u.store_id) : null,
+          mfa_enabled: !!u.mfa_enabled,
+          mfa_secret: u.mfa_secret || null
+        }));
+      } catch (err) {
+        console.warn('PostgreSQL getUsers failed, falling back to JSON:', err.message);
+      }
+    }
     return readMockFile('users.json');
   },
 
   addUser: async (userData) => {
+    if (pool) {
+      try {
+        const res = await pool.query(
+          'INSERT INTO users (username, password, role, store_id, mfa_enabled, mfa_secret) VALUES ($1, $2, $3, $4, false, null) RETURNING *',
+          [userData.username, userData.password, userData.role, userData.store_id ? parseInt(userData.store_id) : null]
+        );
+        const u = res.rows[0];
+        return {
+          id: parseInt(u.id),
+          username: u.username,
+          role: u.role || u.position || '',
+          store_id: u.store_id ? parseInt(u.store_id) : null,
+          mfa_enabled: !!u.mfa_enabled,
+          mfa_secret: u.mfa_secret || null
+        };
+      } catch (err) {
+        console.warn('PostgreSQL addUser failed, falling back to JSON:', err.message);
+      }
+    }
     const users = readMockFile('users.json');
     const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
     const newUser = {
@@ -1099,6 +1167,40 @@ const db = {
   },
 
   updateUser: async (userId, userData) => {
+    if (pool) {
+      try {
+        let query = 'UPDATE users SET role = $1, store_id = $2';
+        const params = [userData.role, userData.store_id ? parseInt(userData.store_id) : null];
+        
+        if (userData.password) {
+          params.push(userData.password);
+          query += `, password = $${params.length}`;
+        }
+        if (userData.mfa_enabled !== undefined) {
+          params.push(!!userData.mfa_enabled);
+          query += `, mfa_enabled = $${params.length}`;
+        }
+        
+        params.push(parseInt(userId));
+        query += ` WHERE id = $${params.length} RETURNING *`;
+        
+        const res = await pool.query(query, params);
+        if (res.rows.length > 0) {
+          const u = res.rows[0];
+          return {
+            id: parseInt(u.id),
+            username: u.username,
+            role: u.role || u.position || '',
+            store_id: u.store_id ? parseInt(u.store_id) : null,
+            mfa_enabled: !!u.mfa_enabled,
+            mfa_secret: u.mfa_secret || null
+          };
+        }
+        return null;
+      } catch (err) {
+        console.warn('PostgreSQL updateUser failed, falling back to JSON:', err.message);
+      }
+    }
     const users = readMockFile('users.json');
     const uIndex = users.findIndex(u => u.id === parseInt(userId));
     if (uIndex === -1) return null;
@@ -1116,6 +1218,14 @@ const db = {
   },
 
   deleteUser: async (userId) => {
+    if (pool) {
+      try {
+        const res = await pool.query('DELETE FROM users WHERE id = $1', [parseInt(userId)]);
+        return res.rowCount > 0;
+      } catch (err) {
+        console.warn('PostgreSQL deleteUser failed, falling back to JSON:', err.message);
+      }
+    }
     const users = readMockFile('users.json');
     const filtered = users.filter(u => u.id !== parseInt(userId));
     if (users.length === filtered.length) return false;
@@ -1124,6 +1234,17 @@ const db = {
   },
 
   updateUserMfa: async (userId, mfaData) => {
+    if (pool) {
+      try {
+        const res = await pool.query(
+          'UPDATE users SET mfa_enabled = $1, mfa_secret = $2 WHERE id = $3',
+          [!!mfaData.mfa_enabled, mfaData.mfa_secret, parseInt(userId)]
+        );
+        return res.rowCount > 0;
+      } catch (err) {
+        console.warn('PostgreSQL updateUserMfa failed, falling back to JSON:', err.message);
+      }
+    }
     const users = readMockFile('users.json');
     const uIndex = users.findIndex(u => u.id === parseInt(userId));
     if (uIndex === -1) return false;

@@ -1159,6 +1159,11 @@ select:focus,
   transition: var(--transition);
 }
 
+.modal-content.modal-lg {
+  width: 650px;
+  max-width: 95%;
+}
+
 .modal.active .modal-content {
   transform: translateY(0);
 }

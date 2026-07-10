@@ -2,36 +2,16 @@
   {
     "store_id": 1,
     "sku": "CHAC12298--",
-    "stock_quantity": 132
+    "stock_quantity": 145
   },
   {
     "store_id": 1,
     "sku": "CHAC10010--",
-    "stock_quantity": 99
+    "stock_quantity": 35
   },
   {
     "store_id": 1,
-    "sku": "CHAC10348--",
-    "stock_quantity": 98
-  },
-  {
-    "store_id": 4,
-    "sku": "CHAC10010--",
-    "stock_quantity": 99
-  },
-  {
-    "store_id": 2,
-    "sku": "SKU-1783661827460",
-    "stock_quantity": 55
-  },
-  {
-    "store_id": 2,
-    "sku": "CHAC1783661863911--",
-    "stock_quantity": 123
-  },
-  {
-    "store_id": 2,
-    "sku": "CHAC10010--",
-    "stock_quantity": 50
+    "sku": "CHBA16661-P-SILVER",
+    "stock_quantity": 32
   }
 ]

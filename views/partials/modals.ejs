@@ -292,7 +292,7 @@
 
   <!-- Create Transaction Modal -->
   <div id="transaction-create-modal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content modal-lg">
       <h3 data-i18n="modal_tx_title">Tạo Giao Dịch Bán Hàng Mới</h3>
       <form id="transaction-create-form">
         <div class="form-group tx-store-container">
@@ -304,28 +304,77 @@
           <input type="text" id="tx-customer-search" class="select-control" placeholder="Tìm nhanh khách hàng (nhập tên, ID, quốc gia)..." style="margin-bottom: 8px; height: 34px; font-size: 13px; padding: 6px 10px;" data-i18n="modal_tx_customer_search">
           <select id="tx-customer-input" required class="select-control"></select>
         </div>
-        <div class="form-group">
-          <label for="tx-sku-input" data-i18n="modal_tx_sku">Chọn SKU sản phẩm bán:</label>
-          <input type="text" id="tx-sku-search" class="select-control" placeholder="Tìm nhanh sản phẩm (nhập SKU, tên)..." style="margin-bottom: 8px; height: 34px; font-size: 13px; padding: 6px 10px;" data-i18n="modal_tx_sku_search">
-          <select id="tx-sku-input" required class="select-control"></select>
+
+        <!-- Compact Item Addition Box -->
+        <div class="item-add-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+          <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 14px; color: var(--primary-light); font-weight: 600;">Thêm sản phẩm vào đơn</h4>
+          
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label for="tx-sku-search" data-i18n="modal_tx_sku_search">Tìm nhanh sản phẩm (nhập ít nhất 2 ký tự của SKU/tên):</label>
+            <input type="text" id="tx-sku-search" class="select-control" placeholder="Ví dụ: FEAC, CHAC, Đầm...">
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label for="tx-sku-input" data-i18n="modal_tx_sku">Chọn SKU sản phẩm:</label>
+            <select id="tx-sku-input" class="select-control">
+              <option value="">-- Nhập từ khóa để tìm sản phẩm --</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: flex-end;">
+            <div class="form-group" style="margin: 0;">
+              <label for="tx-qty-input" data-i18n="modal_tx_qty">Số lượng:</label>
+              <input type="number" id="tx-qty-input" min="1" class="select-control" value="1">
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label for="tx-price-input" data-i18n="modal_tx_price">Đơn giá bán (USD):</label>
+              <input type="number" id="tx-price-input" step="0.01" min="0.01" class="select-control" placeholder="0.00">
+            </div>
+            <button type="button" id="btn-add-item-to-cart" class="btn-primary" style="height: 38px; padding: 0 15px; background: linear-gradient(135deg, #10b981, #059669); border: none; font-size: 13px; font-weight: 600; cursor: pointer;">
+              <i class="fa-solid fa-plus" style="margin-right: 5px;"></i> Thêm
+            </button>
+          </div>
         </div>
+
+        <!-- Cart Table -->
         <div class="form-group">
-          <label for="tx-qty-input" data-i18n="modal_tx_qty">Số lượng mua:</label>
-          <input type="number" id="tx-qty-input" required min="1" class="select-control" value="1">
+          <label style="font-weight: 600;">Danh sách sản phẩm trong đơn hàng:</label>
+          <div style="max-height: 180px; overflow-y: auto; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; background: rgba(0,0,0,0.15);">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+              <thead>
+                <tr style="background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.08); text-align: left;">
+                  <th style="padding: 8px 10px;">Sản phẩm / SKU</th>
+                  <th style="padding: 8px 10px; text-align: center; width: 80px;">Số lượng</th>
+                  <th style="padding: 8px 10px; text-align: right; width: 100px;">Đơn giá</th>
+                  <th style="padding: 8px 10px; text-align: right; width: 110px;">Thành tiền</th>
+                  <th style="padding: 8px 10px; text-align: center; width: 50px;">Xóa</th>
+                </tr>
+              </thead>
+              <tbody id="tx-cart-tbody">
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">Chưa có sản phẩm nào được chọn.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="tx-price-input" data-i18n="modal_tx_price">Đơn giá bán (USD):</label>
-          <input type="number" id="tx-price-input" required step="0.01" min="0.01" class="select-control" placeholder="Nhập đơn giá..." data-i18n="modal_tx_price_placeholder">
+
+        <!-- Total and Payment -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 12px 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.03);">
+          <div style="font-size: 14px; font-weight: 500;">
+            Tổng cộng: <span id="tx-cart-total" style="font-size: 18px; font-weight: 700; color: var(--primary-light);">$0.00</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; max-width: 280px; width: 100%;">
+            <label for="tx-payment-input" style="font-weight: 600; white-space: nowrap; margin: 0;">Thanh toán:</label>
+            <select id="tx-payment-input" required class="select-control" style="margin: 0; height: 34px;">
+              <option value="Credit Card">Credit Card</option>
+              <option value="PayPal">PayPal</option>
+              <option value="Cash">Cash</option>
+              <option value="Apple Pay">Apple Pay</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="tx-payment-input" data-i18n="modal_tx_payment">Hình thức thanh toán:</label>
-          <select id="tx-payment-input" required class="select-control">
-            <option value="Credit Card" data-i18n="modal_tx_payment_cc">Thẻ tín dụng (Credit Card)</option>
-            <option value="PayPal" data-i18n="modal_tx_payment_paypal">PayPal</option>
-            <option value="Cash" data-i18n="modal_tx_payment_cash">Tiền mặt (Cash)</option>
-            <option value="Apple Pay" data-i18n="modal_tx_payment_apple">Apple Pay</option>
-          </select>
-        </div>
+
         <div class="modal-actions">
           <button type="submit" class="btn-primary" data-i18n="modal_tx_btn_create">Tạo giao dịch</button>
           <button type="button" id="btn-cancel-tx" class="btn-secondary" data-i18n="modal_btn_cancel">Hủy</button>

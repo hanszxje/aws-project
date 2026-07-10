@@ -556,5 +556,266 @@
     "action": "INVENTORY_IMPORT",
     "details": "Nhập hàng mới cho store #2: SKU CHAC10010--, Số lượng: 50, Nhà CC: a",
     "ip": "::1"
+  },
+  {
+    "id": 1783663811559,
+    "timestamp": "2026-07-10T06:10:10.963Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783663952631,
+    "timestamp": "2026-07-10T06:12:31.901Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783669337451,
+    "timestamp": "2026-07-10T07:42:17.140Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783669455198,
+    "timestamp": "2026-07-10T07:44:14.650Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU MAAC10004--, Số lượng: 59, Nhà CC: 1z",
+    "ip": "::1"
+  },
+  {
+    "id": 1783669511695,
+    "timestamp": "2026-07-10T07:45:10.966Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU MAAC10004--, Số lượng: 33, Nhà CC: s",
+    "ip": "::1"
+  },
+  {
+    "id": 1783669775052,
+    "timestamp": "2026-07-10T07:49:34.223Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783670775764,
+    "timestamp": "2026-07-10T08:06:15.031Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783670810045,
+    "timestamp": "2026-07-10T08:06:49.058Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783670826515,
+    "timestamp": "2026-07-10T08:07:06.264Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, SKU: CHAC10010--, S.Lượng: 1, Tổng: $15.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1783670880261,
+    "timestamp": "2026-07-10T08:07:59.837Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783670899387,
+    "timestamp": "2026-07-10T08:08:18.781Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, SKU: CHAC10010--, S.Lượng: 1, Tổng: $15.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1783670963317,
+    "timestamp": "2026-07-10T08:09:22.565Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783671349277,
+    "timestamp": "2026-07-10T08:15:48.535Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783671412882,
+    "timestamp": "2026-07-10T08:16:52.181Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783671524802,
+    "timestamp": "2026-07-10T08:18:44.080Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783671648137,
+    "timestamp": "2026-07-10T08:20:47.338Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783671761545,
+    "timestamp": "2026-07-10T08:22:41.237Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, SKU: CHAC10010--, S.Lượng: 50, Tổng: $555555550.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1783672461712,
+    "timestamp": "2026-07-10T08:34:20.779Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1000002, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783672996951,
+    "timestamp": "2026-07-10T08:43:16.734Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783673035163,
+    "timestamp": "2026-07-10T08:43:55.068Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783673459381,
+    "timestamp": "2026-07-10T08:50:59.091Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783673968500,
+    "timestamp": "2026-07-10T08:59:27.907Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783674007982,
+    "timestamp": "2026-07-10T09:00:07.120Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783674625964,
+    "timestamp": "2026-07-10T09:10:25.164Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783674760722,
+    "timestamp": "2026-07-10T09:12:40.394Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU CHBA16661-P-SILVER, Số lượng: 36, Nhà CC: b",
+    "ip": "::1"
+  },
+  {
+    "id": 1783674798321,
+    "timestamp": "2026-07-10T09:13:18.007Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1000000, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783675117618,
+    "timestamp": "2026-07-10T09:18:37.501Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1000, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783675291889,
+    "timestamp": "2026-07-10T09:21:31.118Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783675292448,
+    "timestamp": "2026-07-10T09:21:31.885Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, Số lượng mặt hàng: 1",
+    "ip": "::1"
   }
 ]

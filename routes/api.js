@@ -36,7 +36,7 @@ router.get('/stores', authenticateToken, async (req, res) => {
     const rolePermissions = await db.getRolePermissions();
     const userPermissions = rolePermissions[req.user.role] || [];
     
-    if (userPermissions.includes('view_all_stores')) {
+    if (userPermissions.includes('view_all_stores') || userPermissions.includes('manage_users')) {
       const stores = await db.getStores();
       return res.json(stores);
     } else if (userPermissions.includes('view_own_store')) {
@@ -506,51 +506,71 @@ router.get('/transactions', authenticateToken, authorizePermission('view_transac
 // POST /api/transactions
 // Access: create_transaction.
 router.post('/transactions', authenticateToken, authorizePermission('create_transaction'), async (req, res) => {
-  const { store_id, customer_id, sku, quantity, payment_method, price } = req.body;
-  if (!store_id || !customer_id || !sku || !quantity || !payment_method || !price) {
-    return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
+  const items = Array.isArray(req.body) ? req.body : [req.body];
+  
+  if (items.length === 0) {
+    return res.status(400).json({ message: 'Danh sách mặt hàng trống' });
+  }
+
+  // Validate all items first
+  for (const item of items) {
+    const { store_id, customer_id, sku, quantity, payment_method, price } = item;
+    if (!store_id || !customer_id || !sku || !quantity || !payment_method || !price) {
+      return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
+    }
   }
 
   try {
-    // Validate store access
-    if (!(await checkStoreAccess(req, res, store_id))) {
-      return;
+    const txId = (Date.now() + Math.floor(Math.random() * 1000)).toString();
+    const results = [];
+
+    for (const item of items) {
+      const { store_id, customer_id, sku, quantity, payment_method, price } = item;
+      
+      // Validate store access
+      if (!(await checkStoreAccess(req, res, store_id))) {
+        return;
+      }
+
+      // Extract product_id from SKU
+      const skuMatch = sku.match(/\d+/);
+      const productId = skuMatch ? parseInt(skuMatch[0]) : NaN;
+      if (isNaN(productId)) {
+        return res.status(400).json({ message: 'SKU không hợp lệ' });
+      }
+
+      // 1. Decrease stock
+      await db.decreaseStock(store_id, sku, quantity);
+
+      // 2. Add transaction record with custom shared txId
+      const newTx = await db.addTransaction({
+        store_id,
+        customer_id,
+        product_id: productId,
+        sku,
+        quantity,
+        payment_method,
+        price,
+        salesperson: req.user.username,
+        customTxId: txId
+      });
+
+      results.push(newTx);
     }
-
-    // Extract product_id from SKU (handles SKU-10000 and general formats like CHAC10010--)
-    const skuMatch = sku.match(/\d+/);
-    const productId = skuMatch ? parseInt(skuMatch[0]) : NaN;
-    if (isNaN(productId)) {
-      return res.status(400).json({ message: 'SKU không hợp lệ' });
-    }
-
-    // 1. Try to decrease stock (will throw error if stock is insufficient)
-    await db.decreaseStock(store_id, sku, quantity);
-
-    // 2. Add transaction record
-    const newTx = await db.addTransaction({
-      store_id,
-      customer_id,
-      product_id: productId,
-      sku,
-      quantity,
-      payment_method,
-      price,
-      salesperson: req.user.username
-    });
 
     // 3. Log
     await db.addAuditLog({
       username: req.user.username,
       role: req.user.role,
       action: 'TRANSACTION_CREATE',
-      details: `Tạo giao dịch bán hàng mới: Cửa hàng #${store_id}, Khách hàng #${customer_id}, SKU: ${sku}, S.Lượng: ${quantity}, Tổng: $${(price * quantity).toFixed(2)}`,
+      details: `Tạo giao dịch bán hàng mới: Cửa hàng #${items[0].store_id}, Khách hàng #${items[0].customer_id}, Số lượng mặt hàng: ${items.length}`,
       ip: req.ip || '127.0.0.1'
     });
 
     res.status(201).json({
       message: 'Giao dịch được tạo thành công, kho hàng đã tự động cập nhật!',
-      transaction: newTx
+      transaction: results[0],
+      transactions: results
     });
   } catch (err) {
     console.error('Error creating transaction:', err);
@@ -603,6 +623,25 @@ router.get('/predict', authenticateToken, authorizePermission('view_dashboard'),
 
 // ================= IT ADMIN ENDPOINTS =================
 
+const ROLE_HIERARCHY = [
+  'Director',
+  'IT Admin',
+  'Finance/Auditor',
+  'Inventory Manager',
+  'Marketing Manager',
+  'Store Manager',
+  'Sales Staff'
+];
+
+function checkRoleHierarchy(currentUserRole, targetRole) {
+  const curIdx = ROLE_HIERARCHY.indexOf(currentUserRole);
+  const tarIdx = ROLE_HIERARCHY.indexOf(targetRole);
+  if (curIdx === -1 || tarIdx === -1) return false;
+  // Deny if current user has a lower rank (higher index) than target role (lower index)
+  if (curIdx > tarIdx) return false;
+  return true;
+}
+
 // --- ADMIN USER CRUD ---
 router.get('/admin/users', authenticateToken, authorizePermission('manage_users'), async (req, res) => {
   try {
@@ -619,6 +658,12 @@ router.post('/admin/users', authenticateToken, authorizePermission('manage_users
   if (!username || !password || !role) {
     return res.status(400).json({ message: 'Username, password and role are required' });
   }
+
+  // Hierarchy check: Cannot create a user with a higher role
+  if (!checkRoleHierarchy(req.user.role, role)) {
+    return res.status(403).json({ message: 'Bạn không được phép tạo tài khoản có vai trò cao hơn bản thân.' });
+  }
+
   try {
     const existing = await db.getUserByUsername(username);
     if (existing) {
@@ -648,7 +693,23 @@ router.put('/admin/users/:id', authenticateToken, authorizePermission('manage_us
   const { role, store_id, password } = req.body;
   const userId = req.params.id;
   try {
-    const payload = { role, store_id };
+    const users = await db.getUsers();
+    const targetUser = users.find(u => u.id.toString() === userId.toString());
+    if (!targetUser) {
+      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+    }
+
+    // Hierarchy check 1: Cannot edit users with a higher role
+    if (!checkRoleHierarchy(req.user.role, targetUser.role)) {
+      return res.status(403).json({ message: 'Bạn không được phép chỉnh sửa tài khoản có vai trò cao hơn bản thân.' });
+    }
+
+    // Hierarchy check 2: Cannot set a role higher than yours
+    if (role && !checkRoleHierarchy(req.user.role, role)) {
+      return res.status(403).json({ message: 'Bạn không được phép thay đổi tài khoản thành vai trò cao hơn bản thân.' });
+    }
+
+    const payload = { role: role || targetUser.role, store_id };
     if (password && password.trim() !== '') {
       const bcrypt = require('bcryptjs');
       const salt = await bcrypt.genSalt(10);
@@ -677,6 +738,17 @@ router.put('/admin/users/:id', authenticateToken, authorizePermission('manage_us
 router.delete('/admin/users/:id', authenticateToken, authorizePermission('manage_users'), async (req, res) => {
   const userId = req.params.id;
   try {
+    const users = await db.getUsers();
+    const targetUser = users.find(u => u.id.toString() === userId.toString());
+    if (!targetUser) {
+      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+    }
+
+    // Hierarchy check: Cannot delete users with a higher role
+    if (!checkRoleHierarchy(req.user.role, targetUser.role)) {
+      return res.status(403).json({ message: 'Bạn không được phép xóa tài khoản có vai trò cao hơn bản thân.' });
+    }
+
     const success = await db.deleteUser(userId);
     if (!success) {
       return res.status(404).json({ message: 'Không tìm thấy người dùng' });
@@ -735,6 +807,22 @@ router.get('/admin/permissions', authenticateToken, authorizePermission('manage_
 router.put('/admin/permissions', authenticateToken, authorizePermission('manage_permissions'), async (req, res) => {
   try {
     const permsMap = req.body;
+    const oldPerms = await db.getRolePermissions();
+
+    // Check hierarchy for all roles whose permissions are being modified
+    for (const role of Object.keys(permsMap)) {
+      const oldVal = JSON.stringify(oldPerms[role] || []);
+      const newVal = JSON.stringify(permsMap[role] || []);
+      
+      if (oldVal !== newVal) {
+        if (!checkRoleHierarchy(req.user.role, role)) {
+          return res.status(403).json({
+            message: `Bạn không được phép chỉnh sửa phân quyền của vai trò cao hơn bản thân (${role}).`
+          });
+        }
+      }
+    }
+
     await db.updateRolePermissions(permsMap);
     
     await db.addAuditLog({
