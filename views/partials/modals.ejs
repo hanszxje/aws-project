@@ -107,9 +107,9 @@
         <div class="form-group">
           <label for="product-category-input" data-i18n="modal_prod_cat">Danh mục:</label>
           <select id="product-category-input" required class="select-control">
-            <option value="Clothing" data-i18n="modal_prod_cat_clothing">Quần áo (Clothing)</option>
-            <option value="Shoes" data-i18n="modal_prod_cat_shoes">Giày dép (Shoes)</option>
-            <option value="Accessories" data-i18n="modal_prod_cat_accessories">Phụ kiện (Accessories)</option>
+            <option value="Children" data-i18n="modal_prod_cat_children">Trẻ em (Children)</option>
+            <option value="Masculine" data-i18n="modal_prod_cat_masculine">Nam giới (Masculine)</option>
+            <option value="Feminine" data-i18n="modal_prod_cat_feminine">Nữ giới (Feminine)</option>
           </select>
         </div>
         <div class="form-group">
@@ -230,10 +230,50 @@
           <label for="import-store-input" data-i18n="modal_import_store">Cửa hàng nhận:</label>
           <select id="import-store-input" required class="select-control"></select>
         </div>
-        <div class="form-group">
-          <label for="import-sku-input" data-i18n="modal_import_sku">Chọn SKU sản phẩm:</label>
-          <select id="import-sku-input" required class="select-control"></select>
+
+        <!-- Item Type Option Selector -->
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label style="font-weight: 600; display: block; margin-bottom: 8px;" data-i18n="modal_import_item_type">Loại mặt hàng:</label>
+          <div style="display: flex; gap: 20px;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="radio" name="import-item-type" value="existing" checked id="import-type-existing">
+              <span data-i18n="modal_import_type_existing">Mặt hàng đã có sẵn</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="radio" name="import-item-type" value="new" id="import-type-new">
+              <span data-i18n="modal_import_type_new">Mặt hàng mới</span>
+            </label>
+          </div>
         </div>
+
+        <!-- Block 1: Existing Product Selector -->
+        <div id="import-existing-block">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="import-sku-search" data-i18n="modal_import_search_label">Tìm kiếm SKU / Tên sản phẩm:</label>
+            <input type="text" id="import-sku-search" class="select-control" placeholder="Gõ để tìm kiếm mặt hàng có sẵn..." data-i18n="modal_import_search_placeholder">
+          </div>
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label for="import-sku-input" data-i18n="modal_import_sku">Chọn SKU sản phẩm:</label>
+            <select id="import-sku-input" class="select-control"></select>
+          </div>
+        </div>
+
+        <!-- Block 2: New Product Form Fields -->
+        <div id="import-new-block" style="display: none; margin-bottom: 15px;">
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="import-new-name-input" data-i18n="modal_import_new_name">Tên sản phẩm mới:</label>
+            <input type="text" id="import-new-name-input" class="select-control" placeholder="Ví dụ: Áo len cổ lọ nam..." data-i18n="modal_import_new_name_placeholder">
+          </div>
+          <div class="form-group">
+            <label for="import-new-cat-input" data-i18n="modal_import_new_cat">Danh mục sản phẩm:</label>
+            <select id="import-new-cat-input" class="select-control">
+              <option value="Children" data-i18n="modal_prod_cat_children">Trẻ em (Children)</option>
+              <option value="Masculine" data-i18n="modal_prod_cat_masculine">Nam giới (Masculine)</option>
+              <option value="Feminine" data-i18n="modal_prod_cat_feminine">Nữ giới (Feminine)</option>
+            </select>
+          </div>
+        </div>
+
         <div class="form-group">
           <label for="import-qty-input" data-i18n="modal_import_qty">Số lượng nhập (sản phẩm):</label>
           <input type="number" id="import-qty-input" required min="1" class="select-control" placeholder="Ví dụ: 100" data-i18n="modal_import_qty_placeholder">

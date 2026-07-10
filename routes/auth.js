@@ -99,17 +99,66 @@ router.post('/login', async (req, res) => {
   }
 
   try {
-    const user = await db.getUserByUsername(username);
+    let apiUser = null;
+    let loginFailed = false;
 
-    if (!user) {
+    const isApiMode = !!process.env.API_BASE_URL;
+
+    if (!isApiMode) {
+      // In local Mock mode, still support local mock login
+      const user = await db.getUserByUsername(username);
+      if (!user) {
+        loginFailed = true;
+      } else {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          loginFailed = true;
+        } else {
+          apiUser = user;
+        }
+      }
+    } else {
+      // API / database mode: authenticate via FastAPI backend
+      try {
+        const queryParams = new URLSearchParams({ username, password }).toString();
+        const apiBaseUrl = process.env.API_BASE_URL.replace(/\/$/, '');
+        const loginRes = await fetch(`${apiBaseUrl}/login?${queryParams}`, {
+          method: 'POST'
+        });
+
+        if (loginRes.status === 200) {
+          const authData = await loginRes.json();
+          // Map FastAPI auth response to local user object structure
+          const userId = Array.from(username).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
+          // Dynamically map store_id from username (e.g. manager1 -> 1, sales1 -> 1)
+          let store_id = null;
+          const storeMatch = username.match(/\d+/);
+          if (storeMatch) {
+            store_id = parseInt(storeMatch[0]);
+          }
+
+          apiUser = {
+            id: userId,
+            username: authData.username,
+            role: authData.role, // e.g. "IT Admin", "Director", "Store Manager", "Sales Staff"
+            store_id: store_id,
+            mfa_enabled: false
+          };
+        } else {
+          loginFailed = true;
+        }
+      } catch (err) {
+        console.error('FastAPI login request failed:', err.message);
+        loginFailed = true;
+      }
+    }
+
+    if (loginFailed || !apiUser) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    // Compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid username or password' });
-    }
+    const user = apiUser;
 
     // Check if MFA is enabled
     if (user.mfa_enabled) {
@@ -294,7 +343,24 @@ router.post('/mfa/disable', authenticateToken, async (req, res) => {
 // GET /api/auth/me
 router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const user = await db.getUserByUsername(req.user.username);
+    let user = null;
+    const isApiMode = !!process.env.API_BASE_URL;
+
+    if (!isApiMode) {
+      user = await db.getUserByUsername(req.user.username);
+    } else {
+      // Reconstruct user object from JWT data
+      const storeMatch = req.user.username.match(/\d+/);
+      const store_id = storeMatch ? parseInt(storeMatch[0]) : null;
+      user = {
+        id: req.user.id,
+        username: req.user.username,
+        role: req.user.role,
+        store_id: store_id,
+        mfa_enabled: false
+      };
+    }
+
     const rolePermissions = await db.getRolePermissions();
     const userPermissions = rolePermissions[user.role] || [];
     res.json({ 

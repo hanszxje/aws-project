@@ -26,7 +26,7 @@
     "view_inventory"
   ],
   "Inventory Manager": [
-    "view_all_stores",
+    "view_own_store",
     "view_products",
     "edit_products",
     "view_inventory",

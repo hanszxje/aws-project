@@ -31,7 +31,7 @@
     "username": "inventory",
     "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
     "role": "Inventory Manager",
-    "store_id": null,
+    "store_id": 1,
     "mfa_enabled": false,
     "mfa_secret": null
   },

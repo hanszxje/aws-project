@@ -63,6 +63,7 @@ async function apiCall(endpoint, options = {}) {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer YWRtaW46cGFzc3dvcmQxMjM=',
         ...options.headers,
       },
     });
@@ -113,7 +114,7 @@ async function initDatabase() {
               "IT Admin": ["manage_users", "manage_permissions", "view_audit_logs", "view_inventory", "manage_inventory", "create_transaction"],
               "Director": ["view_dashboard", "view_all_stores", "view_customers", "view_discounts", "view_employees", "view_products", "view_transactions", "view_inventory", "manage_inventory", "create_transaction"],
               "Finance/Auditor": ["view_all_stores", "view_transactions", "view_discounts", "view_inventory"],
-              "Inventory Manager": ["view_all_stores", "view_products", "edit_products", "view_inventory", "manage_inventory"],
+              "Inventory Manager": ["view_own_store", "view_products", "edit_products", "view_inventory", "manage_inventory"],
               "Marketing Manager": ["view_all_stores", "view_discounts", "edit_discounts", "view_inventory"],
               "Store Manager": ["view_dashboard", "view_own_store", "view_customers", "create_customer", "view_discounts", "edit_discounts", "view_employees", "edit_employees", "view_products", "view_inventory", "manage_inventory", "create_transaction", "view_transactions"],
               "Sales Staff": ["view_own_store", "view_products", "view_transactions", "view_inventory", "view_customers", "create_customer", "create_transaction"]
@@ -592,15 +593,34 @@ const db = {
           url += `&category=${encodeURIComponent(category)}`;
         }
         const res = await apiCall(url);
-        let list = (res.data || []).map(p => ({
-          product_id: parseInt(p.product_id),
-          product_name: p.description_en || p.name_en || `Sản phẩm #${p.product_id}`,
-          category: p.category || 'Clothing',
-          sub_category: p.sub_category || 'Other',
-          color_type: p.color_type || 'Cor Unica',
-          description_en: p.description_en || `Sản phẩm #${p.product_id}`,
-          image_url: p.image_url || `https://picsum.photos/300/300?random=${p.product_id}`
-        }));
+        let list = (res.data || [])
+          .filter(p => {
+            const name = (p.description_en || p.name_en || '').toLowerCase();
+            const sub = (p.sub_category || '').toLowerCase();
+            const sku = (p.sku || '').toLowerCase();
+            const id = String(p.product_id).toLowerCase();
+            if (id === 'string' || name === 'string' || sub === 'string' || sku === 'string') {
+              return false;
+            }
+            if (name.includes('sports velvet sports')) {
+              return false;
+            }
+            if (isNaN(parseInt(p.product_id))) {
+              return false;
+            }
+            return true;
+          })
+          .map(p => ({
+            product_id: parseInt(p.product_id),
+            product_name: p.description_en || p.name_en || `Sản phẩm #${p.product_id}`,
+            category: p.category || 'Children',
+            sub_category: p.sub_category || 'Other',
+            color_type: p.color_type || 'Cor Unica',
+            description_en: p.description_en || `Sản phẩm #${p.product_id}`,
+            image_url: p.image_url || `https://picsum.photos/300/300?random=${p.product_id}`
+          }))
+          // Only show allowed categories
+          .filter(p => ['Children', 'Masculine', 'Feminine'].includes(p.category));
 
         if (search) {
           const q = search.toLowerCase();
@@ -612,7 +632,13 @@ const db = {
         try {
           const localProducts = readMockFile('products.json');
           if (localProducts && localProducts.length > 0) {
-            let list = localProducts;
+            let list = localProducts.filter(p => {
+              const name = (p.product_name || p.description_en || '').toLowerCase();
+              if (name.includes('string') || name.includes('sports velvet sports')) return false;
+              // Only allowed categories
+              if (!['Children', 'Masculine', 'Feminine'].includes(p.category)) return false;
+              return true;
+            });
             if (category) {
               list = list.filter(p => p.category.toLowerCase() === category.toLowerCase());
             }
@@ -629,6 +655,11 @@ const db = {
       }
     } else if (isMockMode) {
       let productsList = readMockFile('products.json');
+      productsList = productsList.filter(p => {
+        const name = (p.product_name || p.description_en || '').toLowerCase();
+        if (name.includes('string') || name.includes('sports velvet sports')) return false;
+        return true;
+      });
       if (category) {
         productsList = productsList.filter(p => p.category.toLowerCase() === category.toLowerCase());
       }
@@ -648,17 +679,27 @@ const db = {
         query += ` AND (product_name ILIKE $${params.length} OR description_en ILIKE $${params.length})`;
       }
       const res = await pool.query(query, params);
-      return res.rows;
+      return res.rows.filter(p => {
+        const name = (p.product_name || p.description_en || '').toLowerCase();
+        if (name.includes('string') || name.includes('sports velvet sports')) return false;
+        return true;
+      });
     }
   },
 
   addProduct: async (productData) => {
     if (isApiMode) {
       const nextId = Date.now() + Math.floor(Math.random() * 1000);
+      
+      let skuPrefix = 'SKU';
+      const cat = productData.category || '';
+      if (cat.toLowerCase() === 'children') skuPrefix = 'CHAC';
+      else if (cat.toLowerCase() === 'feminine') skuPrefix = 'FEAC';
+      else if (cat.toLowerCase() === 'masculine') skuPrefix = 'MAAC';
 
       const payload = {
         product_id: nextId.toString(),
-        sku: `SKU-${nextId}`,
+        sku: `${skuPrefix}${nextId}--`,
         description_en: productData.product_name || productData.description_en,
         category: productData.category,
         sub_category: productData.sub_category,
@@ -676,6 +717,7 @@ const db = {
       const created = res.data || res;
       return {
         product_id: parseInt(created.product_id),
+        sku: created.sku || `SKU-${created.product_id}`,
         product_name: created.description_en,
         category: created.category,
         sub_category: created.sub_category,
@@ -858,11 +900,28 @@ const db = {
   addTransaction: async ({ store_id, customer_id, product_id, sku, quantity, payment_method, price, salesperson }) => {
     if (isApiMode) {
       const txId = (Date.now() + Math.floor(Math.random() * 1000)).toString();
+
+      // Resolve a valid employee_id to satisfy the foreign key constraint on the database
+      let resolvedEmployeeId = '1'; // Default fallback that is guaranteed to exist
+      try {
+        const empRes = await apiCall('/employees?limit=1000');
+        const employees = empRes.data || [];
+        // Try to find an employee belonging to the store
+        const storeEmp = employees.find(e => e.store_id.toString() === store_id.toString());
+        if (storeEmp) {
+          resolvedEmployeeId = storeEmp.employee_id.toString();
+        } else if (employees.length > 0) {
+          resolvedEmployeeId = employees[0].employee_id.toString();
+        }
+      } catch (err) {
+        console.warn('Failed to resolve employee_id, falling back to 1:', err);
+      }
+
       const payload = {
         transaction_id: txId,
         store_id: store_id.toString(),
         customer_id: customer_id.toString(),
-        employee_id: salesperson || 'System',
+        employee_id: resolvedEmployeeId,
         product_id: product_id.toString(),
         sku: sku || `SKU-${product_id}`,
         quantity: parseInt(quantity),
@@ -1115,9 +1174,17 @@ const db = {
   // --- Inventory & Imports (API & Local Hybrid Mode) ---
   getInventory: async (storeId, search = '') => {
     if (isApiMode) {
+      let productsList = [];
+      try {
+        productsList = await db.getProducts({});
+      } catch (e) {}
+
       if (!storeId || storeId === 'null') {
-        // Fetch all stock levels from remote API (All Stores)
-        const stockRes = await apiCall('/stock?limit=1000');
+        let url = '/stock?limit=1000';
+        if (search && (search.toUpperCase().startsWith('CH') || search.toUpperCase().startsWith('MA') || search.toUpperCase().startsWith('FE') || search.toUpperCase().startsWith('SKU'))) {
+          url = `/stock?sku=${encodeURIComponent(search)}&limit=100`;
+        }
+        const stockRes = await apiCall(url);
         const stockList = stockRes.data || [];
         const localInventory = readMockFile('inventory.json');
 
@@ -1135,11 +1202,21 @@ const db = {
             qty = localStock.stock_quantity;
           }
 
+          let productName = `Sản phẩm ${stockItem.sku}`;
+          const skuDigits = stockItem.sku.match(/\d+/);
+          if (skuDigits) {
+            const pId = parseInt(skuDigits[0]);
+            const prod = productsList.find(p => p.product_id === pId);
+            if (prod) {
+              productName = prod.product_name;
+            }
+          }
+
           return {
             store_id: parseInt(stockItem.store_id),
             sku: stockItem.sku,
             stock_quantity: qty,
-            product_name: `Sản phẩm ${stockItem.sku}`,
+            product_name: productName,
             category: category
           };
         });
@@ -1154,14 +1231,35 @@ const db = {
             else if (skuUpper.startsWith('FE')) category = 'Feminine';
             else if (skuUpper.startsWith('MA')) category = 'Masculine';
 
+            let productName = `Sản phẩm ${localStock.sku}`;
+            const skuDigits = localStock.sku.match(/\d+/);
+            if (skuDigits) {
+              const pId = parseInt(skuDigits[0]);
+              const prod = productsList.find(p => p.product_id === pId);
+              if (prod) {
+                productName = prod.product_name;
+              }
+            }
+
             data.push({
               store_id: localStock.store_id,
               sku: localStock.sku,
               stock_quantity: localStock.stock_quantity,
-              product_name: `Sản phẩm ${localStock.sku}`,
+              product_name: productName,
               category: category
             });
           }
+        });
+
+        // Filter out test/garbage SKUs and only allow 3 categories
+        data = data.filter(d => {
+          const sku = d.sku || '';
+          if (!sku) return false;
+          if (sku.toLowerCase() === 'string') return false;
+          if (sku.toLowerCase().includes('string')) return false;
+          if (sku.startsWith('SKU-')) return false;
+          if (sku === 'undefined') return false;
+          return ['Children', 'Masculine', 'Feminine'].includes(d.category);
         });
 
         if (search) {
@@ -1179,8 +1277,12 @@ const db = {
       const skusRes = await apiCall(`/skus?store_id=${storeId}`);
       const skusList = skusRes.data || [];
 
-      // 2. Fetch remote stock levels
-      const stockRes = await apiCall('/stock?limit=1000');
+      // 2. Fetch remote stock levels specifically for this store
+      let stockUrl = `/stock?store_id=${storeId}&limit=1000`;
+      if (search && (search.toUpperCase().startsWith('CH') || search.toUpperCase().startsWith('MA') || search.toUpperCase().startsWith('FE') || search.toUpperCase().startsWith('SKU'))) {
+        stockUrl = `/stock?store_id=${storeId}&sku=${encodeURIComponent(search)}&limit=100`;
+      }
+      const stockRes = await apiCall(stockUrl);
       const stockList = stockRes.data || [];
 
       // 3. Read local inventory (fallback)
@@ -1196,17 +1298,84 @@ const db = {
           qty = localStock.stock_quantity;
         }
         if (!stockItem && !localStock) {
-          qty = 100; // default for remote SKUs so we can sell them
+          qty = 0; // default for remote SKUs when they don't have stock records yet
+        }
+
+        const skuUpperMap = item.sku.toUpperCase();
+        let catFromSku = 'Other';
+        if (skuUpperMap.startsWith('CH')) catFromSku = 'Children';
+        else if (skuUpperMap.startsWith('FE')) catFromSku = 'Feminine';
+        else if (skuUpperMap.startsWith('MA')) catFromSku = 'Masculine';
+
+        let productName = `Sản phẩm ${item.sku}`;
+        const prod = productsList.find(p => p.product_id === item.product_id);
+        if (prod) {
+          productName = prod.product_name;
+        } else {
+          const skuDigits = item.sku.match(/\d+/);
+          if (skuDigits) {
+            const pId = parseInt(skuDigits[0]);
+            const prodBySku = productsList.find(p => p.product_id === pId);
+            if (prodBySku) {
+              productName = prodBySku.product_name;
+            }
+          }
         }
 
         return {
           store_id: parseInt(storeId),
           sku: item.sku,
           stock_quantity: qty,
-          product_name: `Sản phẩm ${item.sku}`,
-          category: item.category || 'Clothing'
+          product_name: productName,
+          category: catFromSku
         };
       });
+
+      // Merge new stock items that are not in skusList to ensure immediate visibility
+      stockList.forEach(stockItem => {
+        if (stockItem.store_id.toString() === storeId.toString()) {
+          const exists = data.some(d => d.sku === stockItem.sku);
+          if (!exists) {
+            let category = 'Clothing';
+            const skuUpper = stockItem.sku.toUpperCase();
+            if (skuUpper.startsWith('CH')) category = 'Children';
+            else if (skuUpper.startsWith('FE')) category = 'Feminine';
+            else if (skuUpper.startsWith('MA')) category = 'Masculine';
+
+            let productName = `Sản phẩm ${stockItem.sku}`;
+            const skuDigits = stockItem.sku.match(/\d+/);
+            if (skuDigits) {
+              const pId = parseInt(skuDigits[0]);
+              const prod = productsList.find(p => p.product_id === pId);
+              if (prod) {
+                productName = prod.product_name;
+              }
+            }
+
+            data.push({
+              store_id: parseInt(storeId),
+              sku: stockItem.sku,
+              stock_quantity: parseInt(stockItem.quantity) || 0,
+              product_name: productName,
+              category: category
+            });
+          }
+        }
+      });
+
+      // Filter out test/garbage SKUs (string, SKU-undefined, SKU-{timestamp}, etc.)
+      data = data.filter(d => {
+        const sku = d.sku || '';
+        if (!sku) return false;
+        if (sku.toLowerCase() === 'string') return false;
+        if (sku.toLowerCase().includes('string')) return false;
+        if (sku.startsWith('SKU-')) return false; // test garbage SKUs
+        if (sku === 'undefined') return false;
+        return true;
+      });
+
+      // Only allow 3 categories: Children, Masculine, Feminine
+      data = data.filter(d => ['Children', 'Masculine', 'Feminine'].includes(d.category));
 
       if (search) {
         const query = search.toLowerCase();
@@ -1238,6 +1407,9 @@ const db = {
         };
       });
 
+      // Filter out 'string' test SKUs
+      data = data.filter(d => d.sku && d.sku.toLowerCase() !== 'string' && !d.sku.toLowerCase().includes('string'));
+
       if (search) {
         const query = search.toLowerCase();
         data = data.filter(d => 
@@ -1265,59 +1437,83 @@ const db = {
         query += ` AND (i.sku ILIKE $${params.length} OR p.product_name ILIKE $${params.length} OR p.category ILIKE $${params.length})`;
       }
       const res = await pool.query(query, params);
-      return res.rows;
+      return res.rows.filter(d => d.sku && d.sku.toLowerCase() !== 'string' && !d.sku.toLowerCase().includes('string'));
     }
   },
 
   getInventoryImports: async (storeId) => {
+    let list = [];
     if (isApiMode) {
       try {
         const res = await apiCall('/stock-imports?limit=1000');
-        let list = (res.data || []).map(item => ({
+        list = (res.data || []).map(item => ({
           import_id: parseInt(item.import_id || Date.now()),
           store_id: parseInt(item.store_id),
           sku: item.sku,
-          quantity: parseInt(item.quantity),
-          import_date: item.created_at || new Date().toISOString(),
+          quantity: parseInt(item.quantity_imported || item.quantity || 0),
+          import_date: item.import_date || item.created_at || new Date().toISOString(),
           supplier: item.supplier || 'N/A'
         }));
-
-        if (storeId) {
-          list = list.filter(i => i.store_id.toString() === storeId.toString());
-        }
-        
-        const stores = await db.getStores();
-        list.sort((a, b) => new Date(b.import_date) - new Date(a.import_date));
-
-        return list.slice(0, 150).map(item => {
-          const store = stores.find(s => s.store_id === item.store_id);
-          return {
-            ...item,
-            store_name: store ? store.store_name : `Store #${item.store_id}`,
-            product_name: `Sản phẩm ${item.sku}`
-          };
-        });
       } catch (err) {
         console.error('Error fetching API stock-imports:', err.message);
       }
     }
 
-    const imports = readMockFile('inventory_imports.json');
-    const stores = await db.getStores();
-
-    let list = imports;
-    if (storeId) {
-      list = imports.filter(i => i.store_id === parseInt(storeId));
+    // Merge/Fallback with local imports (always pull local logs as backup/failsafe)
+    try {
+      const localImports = readMockFile('inventory_imports.json') || [];
+      localImports.forEach(localItem => {
+        const exists = list.some(d => d.import_id.toString() === localItem.import_id.toString());
+        if (!exists) {
+          list.push({
+            import_id: parseInt(localItem.import_id),
+            store_id: parseInt(localItem.store_id),
+            sku: localItem.sku,
+            quantity: parseInt(localItem.quantity || 0),
+            import_date: localItem.import_date,
+            supplier: localItem.supplier || 'N/A'
+          });
+        }
+      });
+    } catch (err) {
+      console.warn('Failed to read local fallback imports:', err.message);
     }
 
-    list.sort((a, b) => new Date(b.import_date) - new Date(a.import_date));
+    if (storeId) {
+      list = list.filter(i => i.store_id.toString() === storeId.toString());
+    }
+
+    const stores = await db.getStores();
+    list.sort((a, b) => {
+      const diff = new Date(b.import_date) - new Date(a.import_date);
+      if (diff !== 0) return diff;
+      return parseInt(b.import_id || 0) - parseInt(a.import_id || 0);
+    });
+
+    // Fetch products to look up real product names
+    let productsList = [];
+    try {
+      productsList = await db.getProducts({});
+    } catch (e) {}
 
     return list.slice(0, 150).map(item => {
       const store = stores.find(s => s.store_id === item.store_id);
+
+      // Look up real product name
+      let productName = `Sản phẩm ${item.sku}`;
+      const skuDigits = item.sku.match(/\d+/);
+      if (skuDigits) {
+        const pId = parseInt(skuDigits[0]);
+        const prod = productsList.find(p => p.product_id === pId);
+        if (prod) {
+          productName = prod.product_name;
+        }
+      }
+
       return {
         ...item,
         store_name: store ? store.store_name : `Store #${item.store_id}`,
-        product_name: `Sản phẩm ${item.sku}`
+        product_name: productName
       };
     });
   },
@@ -1327,63 +1523,70 @@ const db = {
     const storeId = parseInt(store_id);
 
     if (isApiMode) {
-      // 1. Update remote stock
-      let currentQty = 0;
-      let exists = false;
+      // POST /stock-imports - API tự động cập nhật stock và ghi log trong 1 lần gọi
       try {
-        const stockRes = await apiCall('/stock?limit=1000');
-        const stockList = stockRes.data || [];
-        const stockItem = stockList.find(s => s.store_id.toString() === storeId.toString() && s.sku === sku);
-        if (stockItem) {
-          currentQty = parseInt(stockItem.quantity);
-          exists = true;
-        }
-      } catch (err) {
-        console.warn('Failed to query remote stock level:', err.message);
-      }
+        const importRes = await apiCall('/stock-imports', {
+          method: 'POST',
+          body: JSON.stringify({
+            store_id: storeId,
+            sku: sku,
+            quantity_imported: qty,
+            import_date: new Date().toISOString(),
+            supplier: supplier || null
+          })
+        });
 
-      try {
-        if (exists) {
-          await apiCall(`/stock/${storeId}/${sku}`, {
-            method: 'PUT',
-            body: JSON.stringify({ quantity: currentQty + qty })
-          });
+        const apiImport = importRes.data || {};
+        const newStock = importRes.new_stock_quantity || qty;
+
+        // Also sync local inventory cache
+        const inventory = readMockFile('inventory.json');
+        let localItem = inventory.find(i => i.store_id === storeId && i.sku === sku);
+        if (localItem) {
+          localItem.stock_quantity = newStock;
         } else {
-          await apiCall('/stock', {
-            method: 'POST',
-            body: JSON.stringify({
-              store_id: storeId,
-              sku: sku,
-              quantity: qty
-            })
-          });
+          inventory.push({ store_id: storeId, sku, stock_quantity: newStock });
         }
+        writeMockFile('inventory.json', inventory);
+
+        // Log locally as well for instant display
+        const imports = readMockFile('inventory_imports.json');
+        const newImport = {
+          import_id: parseInt(apiImport.import_id) || Date.now(),
+          store_id: storeId,
+          sku,
+          quantity: qty,
+          import_date: new Date().toISOString(),
+          supplier
+        };
+        imports.push(newImport);
+        writeMockFile('inventory_imports.json', imports);
+        return newImport;
       } catch (err) {
-        console.warn(`API stock update failed (${err.message}). Updating local fallback stock.`);
-      }
+        console.warn(`API /stock-imports failed (${err.message}). Falling back to local-only import.`);
+        // Fallback: log locally only
+        const inventory = readMockFile('inventory.json');
+        let localItem = inventory.find(i => i.store_id === storeId && i.sku === sku);
+        if (localItem) {
+          localItem.stock_quantity += qty;
+        } else {
+          inventory.push({ store_id: storeId, sku, stock_quantity: qty });
+        }
+        writeMockFile('inventory.json', inventory);
 
-      // 2. Always log locally and update local inventory as backup
-      const inventory = readMockFile('inventory.json');
-      let localItem = inventory.find(i => i.store_id === storeId && i.sku === sku);
-      if (localItem) {
-        localItem.stock_quantity = Math.max(localItem.stock_quantity + qty, currentQty + qty);
-      } else {
-        inventory.push({ store_id: storeId, sku, stock_quantity: currentQty + qty });
+        const imports = readMockFile('inventory_imports.json');
+        const newImport = {
+          import_id: Date.now() + Math.floor(Math.random() * 1000),
+          store_id: storeId,
+          sku,
+          quantity: qty,
+          import_date: new Date().toISOString(),
+          supplier
+        };
+        imports.push(newImport);
+        writeMockFile('inventory_imports.json', imports);
+        return newImport;
       }
-      writeMockFile('inventory.json', inventory);
-
-      const imports = readMockFile('inventory_imports.json');
-      const newImport = {
-        import_id: Date.now() + Math.floor(Math.random() * 1000),
-        store_id: storeId,
-        sku,
-        quantity: qty,
-        import_date: new Date().toISOString(),
-        supplier
-      };
-      imports.push(newImport);
-      writeMockFile('inventory_imports.json', imports);
-      return newImport;
     }
 
     // 1. Update Local Inventory

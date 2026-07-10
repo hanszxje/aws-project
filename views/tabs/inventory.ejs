@@ -16,6 +16,15 @@
             <label for="inventory-store-select" style="font-size: 13px; color: var(--text-muted);" data-i18n="inv_filter_store">Cửa hàng:</label>
             <select id="inventory-store-select" class="select-control" style="width: 200px; height: 36px; padding: 6px 12px;"></select>
           </div>
+          <div class="filter-group" id="inventory-category-filter-group" style="display: flex; align-items: center; gap: 8px;">
+            <label for="inventory-category-select" style="font-size: 13px; color: var(--text-muted);" data-i18n="inv_filter_cat">Danh mục:</label>
+            <select id="inventory-category-select" class="select-control" style="width: 150px; height: 36px; padding: 6px 12px;">
+              <option value="" data-i18n="cust_filter_gender">Tất cả</option>
+              <option value="Children" data-i18n="modal_prod_cat_children">Trẻ em (Children)</option>
+              <option value="Masculine" data-i18n="modal_prod_cat_masculine">Nam giới (Masculine)</option>
+              <option value="Feminine" data-i18n="modal_prod_cat_feminine">Nữ giới (Feminine)</option>
+            </select>
+          </div>
           <div class="filter-group" style="display: flex; align-items: center; gap: 8px; flex-grow: 1;">
             <label for="inventory-search" style="font-size: 13px; color: var(--text-muted);" data-i18n="inv_lbl_search">Tìm kiếm:</label>
             <input type="text" id="inventory-search" class="form-control" placeholder="Tìm kiếm SKU, tên sản phẩm hoặc danh mục..." style="height: 36px; padding: 6px 12px;" data-i18n="inv_search_placeholder">
@@ -47,6 +56,12 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+            <!-- Pagination Controls -->
+            <div class="inventory-pagination-container" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-top: 1px solid var(--border-color); font-size: 13px;">
+              <button id="inventory-prev-btn" class="btn btn-secondary btn-sm" disabled style="padding: 4px 10px; font-size: 12px;"><i class="fa-solid fa-chevron-left"></i> <span data-i18n="inv_prev_page">Trang trước</span></button>
+              <span id="inventory-page-info" style="color: var(--text-muted);">Trang 1 / 1 (Tổng: 0 dòng)</span>
+              <button id="inventory-next-btn" class="btn btn-secondary btn-sm" disabled style="padding: 4px 10px; font-size: 12px;"><span data-i18n="inv_next_page">Trang sau</span> <i class="fa-solid fa-chevron-right"></i></button>
             </div>
           </div>
 

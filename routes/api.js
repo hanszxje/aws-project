@@ -517,8 +517,9 @@ router.post('/transactions', authenticateToken, authorizePermission('create_tran
       return;
     }
 
-    // Extract product_id from SKU (e.g. SKU-10000 -> product_id = 10000)
-    const productId = parseInt(sku.replace('SKU-', ''));
+    // Extract product_id from SKU (handles SKU-10000 and general formats like CHAC10010--)
+    const skuMatch = sku.match(/\d+/);
+    const productId = skuMatch ? parseInt(skuMatch[0]) : NaN;
     if (isNaN(productId)) {
       return res.status(400).json({ message: 'SKU không hợp lệ' });
     }

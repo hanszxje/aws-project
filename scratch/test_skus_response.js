@@ -1,0 +1,31 @@
+const http = require('http');
+
+function apiCall(path) {
+  return new Promise((resolve, reject) => {
+    const opts = {
+      hostname: '13.229.124.81',
+      port: 8000,
+      path: path,
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer YWRtaW46cGFzc3dvcmQxMjM=',
+        'Content-Type': 'application/json'
+      }
+    };
+    let data = '';
+    http.request(opts, (res) => {
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        try { resolve(JSON.parse(data)); }
+        catch(e) { resolve(data); }
+      });
+    }).on('error', reject).end();
+  });
+}
+
+async function test() {
+  const skus = await apiCall('/skus?store_id=1&limit=5');
+  console.log('Sample skus response:', JSON.stringify(skus, null, 2));
+}
+
+test().catch(console.error);

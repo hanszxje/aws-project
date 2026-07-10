@@ -124,5 +124,437 @@
     "action": "LOGIN",
     "details": "Đăng nhập thành công",
     "ip": "::1"
+  },
+  {
+    "id": 1783583605265,
+    "timestamp": "2026-07-09T07:53:24.525Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783624194530,
+    "timestamp": "2026-07-09T19:09:53.540Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783624434145,
+    "timestamp": "2026-07-09T19:13:53.958Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783624535675,
+    "timestamp": "2026-07-09T19:15:34.709Z",
+    "username": "manager4",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783624555132,
+    "timestamp": "2026-07-09T19:15:54.170Z",
+    "username": "manager4",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 39 (Tên: Kevin Chapman, Chức vụ: Director)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783624562978,
+    "timestamp": "2026-07-09T19:16:02.331Z",
+    "username": "manager4",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 39 (Tên: Kevin Chapman, Chức vụ: IT Admin)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783624567052,
+    "timestamp": "2026-07-09T19:16:06.203Z",
+    "username": "manager4",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 39 (Tên: Kevin Chapman, Chức vụ: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783624595271,
+    "timestamp": "2026-07-09T19:16:35.033Z",
+    "username": "sales4",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783624634097,
+    "timestamp": "2026-07-09T19:17:13.331Z",
+    "username": "sales4",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #4, Khách hàng #100, SKU: CHAC10010--, S.Lượng: 1, Tổng: $123.00",
+    "ip": "::1"
+  },
+  {
+    "id": 1783625401390,
+    "timestamp": "2026-07-09T19:30:00.872Z",
+    "username": "sales3",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783626624878,
+    "timestamp": "2026-07-09T19:50:24.271Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783627848281,
+    "timestamp": "2026-07-09T20:10:48.219Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628063296,
+    "timestamp": "2026-07-09T20:14:22.576Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 11111111111 (#ID: 1783628062978)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628063643,
+    "timestamp": "2026-07-09T20:14:22.999Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU SKU-undefined, Số lượng: 12, Nhà CC: a",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628108554,
+    "timestamp": "2026-07-09T20:15:07.772Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 11111111111 (#ID: 1783628108589)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628109922,
+    "timestamp": "2026-07-09T20:15:09.155Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU SKU-undefined, Số lượng: 321, Nhà CC: a",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628334958,
+    "timestamp": "2026-07-09T20:18:53.988Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 11111111111 (#ID: 1783628334653)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628334566,
+    "timestamp": "2026-07-09T20:18:54.372Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU SKU-undefined, Số lượng: 21, Nhà CC: a",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628444025,
+    "timestamp": "2026-07-09T20:20:43.444Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 2345a (#ID: 1783628443437)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628444445,
+    "timestamp": "2026-07-09T20:20:43.896Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #14: SKU SKU-undefined, Số lượng: 99, Nhà CC: b",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628679803,
+    "timestamp": "2026-07-09T20:24:38.939Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 2345a (#ID: 1783628679601)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783628680820,
+    "timestamp": "2026-07-09T20:24:40.426Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #16: SKU SKU-1783628679601, Số lượng: 2, Nhà CC: v",
+    "ip": "::1"
+  },
+  {
+    "id": 1783629012362,
+    "timestamp": "2026-07-09T20:30:12.292Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 2345a (#ID: 1783629012211)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783629013160,
+    "timestamp": "2026-07-09T20:30:12.501Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU SKU-1783629012211, Số lượng: 123, Nhà CC: a",
+    "ip": "::1"
+  },
+  {
+    "id": 1783629351569,
+    "timestamp": "2026-07-09T20:35:50.950Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 2345a (#ID: 1783629351769)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783629351253,
+    "timestamp": "2026-07-09T20:35:51.233Z",
+    "username": "inventory3",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #11: SKU SKU-1783629351769, Số lượng: 12, Nhà CC: x",
+    "ip": "::1"
+  },
+  {
+    "id": 1783629733778,
+    "timestamp": "2026-07-09T20:42:12.936Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783658973840,
+    "timestamp": "2026-07-10T04:49:33.032Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783659062633,
+    "timestamp": "2026-07-10T04:51:02.419Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 2345a (#ID: 1783659062720)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783659064593,
+    "timestamp": "2026-07-10T04:51:03.850Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU SKU-1783659062720, Số lượng: 12, Nhà CC: s",
+    "ip": "::ffff:127.0.0.1"
+  },
+  {
+    "id": 1783659169366,
+    "timestamp": "2026-07-10T04:52:49.017Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783659696751,
+    "timestamp": "2026-07-10T05:01:35.882Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783659759218,
+    "timestamp": "2026-07-10T05:02:38.260Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 2345a (#ID: 1783659758939)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783659759395,
+    "timestamp": "2026-07-10T05:02:38.468Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU SKU-1783659758939, Số lượng: 32, Nhà CC: ss",
+    "ip": "::1"
+  },
+  {
+    "id": 1783660647526,
+    "timestamp": "2026-07-10T05:17:27.425Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao len tre em (#ID: 1783660647681)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783660647932,
+    "timestamp": "2026-07-10T05:17:27.669Z",
+    "username": "inventory1",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU SKU-1783660647681, Số lượng: 99, Nhà CC: a",
+    "ip": "::1"
+  },
+  {
+    "id": 1783660936020,
+    "timestamp": "2026-07-10T05:22:15.250Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661080580,
+    "timestamp": "2026-07-10T05:24:39.861Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao len tre em (#ID: 1783661079326)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661082460,
+    "timestamp": "2026-07-10T05:24:42.324Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #2: SKU SKU-1783661079326, Số lượng: 32, Nhà CC: ss",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661361711,
+    "timestamp": "2026-07-10T05:29:21.022Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao len tre em (#ID: 1783661361720)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661361434,
+    "timestamp": "2026-07-10T05:29:21.230Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #2: SKU SKU-1783661361720, Số lượng: 33, Nhà CC: ss",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661441979,
+    "timestamp": "2026-07-10T05:30:41.728Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 2345a (#ID: 1783661441720)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661442669,
+    "timestamp": "2026-07-10T05:30:41.893Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #2: SKU SKU-1783661441720, Số lượng: 34, Nhà CC: ss",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661827786,
+    "timestamp": "2026-07-10T05:37:07.590Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Ao len tre em (#ID: 1783661827460)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661828679,
+    "timestamp": "2026-07-10T05:37:07.917Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #2: SKU SKU-1783661827460, Số lượng: 55, Nhà CC: a",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661864456,
+    "timestamp": "2026-07-10T05:37:44.158Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: 321 (#ID: 1783661863911)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783661866923,
+    "timestamp": "2026-07-10T05:37:45.937Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #2: SKU CHAC1783661863911--, Số lượng: 123, Nhà CC: z",
+    "ip": "::1"
+  },
+  {
+    "id": 1783662161210,
+    "timestamp": "2026-07-10T05:42:40.612Z",
+    "username": "inventory2",
+    "role": "Inventory Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #2: SKU CHAC10010--, Số lượng: 50, Nhà CC: a",
+    "ip": "::1"
   }
 ]
