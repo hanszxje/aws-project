@@ -171,6 +171,9 @@ function showApp() {
   // Initialize UI components based on permissions
   configurePermissionBasedVisibility();
   
+  // Pre-render skeleton loading for all tabs (so they look alive while data loads)
+  preRenderAllTabSkeletons();
+  
   // Trigger initial tab loading
   switchTab(activeTab);
   loadDBModeStatus();
@@ -304,6 +307,36 @@ async function loadDBModeStatus() {
   } catch (err) {
     console.error('Error fetching config:', err);
   }
+}
+
+// ================= PRE-RENDER SKELETON LOADING =================
+function preRenderAllTabSkeletons() {
+  // Pre-fill all tab tables and charts with skeleton placeholders
+  // so users see loading animations instead of blank content when switching tabs
+  
+  // Customers tab
+  showTableSkeleton('#customers-table tbody', 6);
+  showChartSkeleton('customers-gender-chart');
+  showChartSkeleton('customers-age-chart');
+  
+  // Discounts tab
+  showTableSkeleton('#discounts-table tbody', 7);
+  
+  // Employees tab
+  showTableSkeleton('#employees-table tbody', 6);
+  
+  // Products tab
+  showTableSkeleton('#products-tbody', 6);
+  
+  // Stores tab
+  showTableSkeleton('#stores-table tbody', 5);
+  
+  // Transactions tab
+  showTableSkeleton('#transactions-table tbody', 7);
+  
+  // Admin tabs
+  showTableSkeleton('#admin-users-table tbody', 6);
+  showTableSkeleton('#admin-logs-table tbody', 6);
 }
 
 // ================= TAB MANAGEMENT =================
@@ -958,7 +991,11 @@ async function loadCustomersTab() {
   showChartSkeleton('customers-age-chart');
 
   try {
-    const res = await fetchAPI(`/api/customers?page=${page}&limit=${limit}&search=${search}&gender=${gender}&store_id=${storeId}`);
+    // Fetch paginated table data AND all customers for charts in parallel
+    const [res, allCustomersRes] = await Promise.all([
+      fetchAPI(`/api/customers?page=${page}&limit=${limit}&search=${search}&gender=${gender}&store_id=${storeId}`),
+      fetchAPI(`/api/customers?page=1&limit=9999&search=&gender=&store_id=${storeId}`)
+    ]);
     
     // Render Table
     const tbody = document.querySelector('#customers-table tbody');
@@ -989,20 +1026,30 @@ async function loadCustomersTab() {
     pagState.customers.total = res.total;
     renderPagination('customers', res.total, page, limit);
     
-    // Load Charts for Customers (Only do this once or on filter change)
-    renderCustomerCharts(res.data); // In production we would query a stats endpoint, but we summarize page data or mock total for display
+    // Render charts using ALL customer data for accurate demographics
+    renderCustomerCharts(allCustomersRes.data);
 
   } catch (err) {
     console.error('Error loading customers:', err);
   }
 }
 
-function renderCustomerCharts(pageData) {
-  // To make charts beautiful and representative of the global dataset (since pageData is only 10 items)
-  // We mock a nice overview for the BI display
+function renderCustomerCharts(allCustomers) {
+  // Calculate REAL gender distribution from actual customer data
+  let maleCount = 0, femaleCount = 0, otherCount = 0;
+  allCustomers.forEach(c => {
+    if (c.gender === 'Male' || c.gender === 'M') maleCount++;
+    else if (c.gender === 'Female' || c.gender === 'F') femaleCount++;
+    else otherCount++;
+  });
+
   const genderLabels = currentLang === 'en' ? ['Male', 'Female', 'Other'] : (currentLang === 'zh' ? ['男', '女', '其他'] : ['Nam', 'Nữ', 'Khác']);
   const genderData = [
-    { values: [42, 53, 5], labels: genderLabels, type: 'pie', hole: .4, marker: { colors: ['#6366f1', '#ec4899', '#f59e0b'] } }
+    { values: [maleCount, femaleCount, otherCount], labels: genderLabels, type: 'pie', hole: .4, 
+      marker: { colors: ['#6366f1', '#ec4899', '#f59e0b'] },
+      textinfo: 'label+percent',
+      hovertemplate: '%{label}: %{value} (%{percent})<extra></extra>'
+    }
   ];
 
   const genderLayout = {
@@ -1017,15 +1064,27 @@ function renderCustomerCharts(pageData) {
 
   Plotly.newPlot('customers-gender-chart', genderData, genderLayout, { displayModeBar: false });
 
-  // Age Chart
+  // Calculate REAL age distribution from actual customer data
+  let age18_25 = 0, age26_35 = 0, age36_45 = 0, age46_55 = 0, age56plus = 0;
+  allCustomers.forEach(c => {
+    const age = parseInt(c.age) || 0;
+    if (age >= 18 && age <= 25) age18_25++;
+    else if (age >= 26 && age <= 35) age26_35++;
+    else if (age >= 36 && age <= 45) age36_45++;
+    else if (age >= 46 && age <= 55) age46_55++;
+    else if (age > 55) age56plus++;
+    else age18_25++; // Default bucket for outliers
+  });
+
   const ageTrace = {
     x: ['18-25', '26-35', '36-45', '46-55', '56+'],
-    y: [28, 45, 34, 18, 12],
+    y: [age18_25, age26_35, age36_45, age46_55, age56plus],
     type: 'bar',
     marker: {
-      color: '#6366f1',
-      opacity: 0.8
-    }
+      color: ['#8b5cf6', '#6366f1', '#3b82f6', '#06b6d4', '#14b8a6'],
+      opacity: 0.85
+    },
+    hovertemplate: '%{x}: %{y} customers<extra></extra>'
   };
 
   const ageLayout = {
@@ -2478,11 +2537,14 @@ customerForm.addEventListener('submit', async (e) => {
   const age = parseInt(document.getElementById('customer-age-input').value);
   const gender = document.getElementById('customer-gender-input').value;
   const country = document.getElementById('customer-country-input').value.trim();
+  
+  const storeSelect = document.getElementById('customers-store-filter');
+  const store_id = storeSelect && storeSelect.value ? storeSelect.value : (currentUser.store_id || 1);
 
   try {
     const data = await fetchAPI('/api/customers', {
       method: 'POST',
-      body: JSON.stringify({ customer_name, age, gender, country })
+      body: JSON.stringify({ customer_name, age, gender, country, store_id })
     });
     alert(data.message || 'Thêm khách hàng thành công!');
     customerModal.classList.remove('active');
@@ -3911,7 +3973,7 @@ const translations = {
     sidebar_customers: "Khách hàng",
     sidebar_discounts: "Khuyến mãi",
     sidebar_employees: "Nhân viên",
-    sidebar_products: "Sản phẩm Grid",
+    sidebar_products: "Sản phẩm",
     sidebar_stores: "Cửa hàng",
     sidebar_transactions: "Giao dịch",
     sidebar_inventory: "Quản lý Kho",
@@ -4212,8 +4274,8 @@ const translations = {
     sidebar_customers: "Customers",
     sidebar_discounts: "Discounts",
     sidebar_employees: "Employees",
-    sidebar_products: "Product Grid",
-    sidebar_stores: "Stores Grid",
+    sidebar_products: "Product",
+    sidebar_stores: "Stores",
     sidebar_transactions: "Transactions",
     sidebar_inventory: "Stock Management",
     sidebar_admin_users: "System Users",

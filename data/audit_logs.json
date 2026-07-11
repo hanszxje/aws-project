@@ -1564,5 +1564,149 @@
     "action": "LOGIN",
     "details": "Đăng nhập thành công",
     "ip": "::1"
+  },
+  {
+    "id": 1783768354111,
+    "timestamp": "2026-07-11T11:12:33.524Z",
+    "username": "manager12",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783768396759,
+    "timestamp": "2026-07-11T11:13:16.311Z",
+    "username": "manager12",
+    "role": "Store Manager",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: manh (#ID: 1783768396309)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783769945733,
+    "timestamp": "2026-07-11T11:39:04.989Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783769971526,
+    "timestamp": "2026-07-11T11:39:30.838Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: MANH (#ID: 1783769970605)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783769990166,
+    "timestamp": "2026-07-11T11:39:49.302Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783769999185,
+    "timestamp": "2026-07-11T11:39:58.593Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: MANH (#ID: 1783769998570)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783770408708,
+    "timestamp": "2026-07-11T11:46:48.380Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: MANH (#ID: 1783770408595)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783770570498,
+    "timestamp": "2026-07-11T11:49:30.064Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783770592432,
+    "timestamp": "2026-07-11T11:49:51.821Z",
+    "username": "finance",
+    "role": "Finance/Auditor",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783770623606,
+    "timestamp": "2026-07-11T11:50:23.259Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783770648957,
+    "timestamp": "2026-07-11T11:50:48.479Z",
+    "username": "marketing",
+    "role": "Marketing Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783770794616,
+    "timestamp": "2026-07-11T11:53:14.326Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783770821277,
+    "timestamp": "2026-07-11T11:53:40.937Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783770928272,
+    "timestamp": "2026-07-11T11:55:27.797Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783771234406,
+    "timestamp": "2026-07-11T12:00:34.322Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783771285111,
+    "timestamp": "2026-07-11T12:01:24.945Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: HUY MANH (Store: 1, Vai trò: Store Manager)",
+    "ip": "::1"
   }
 ]

@@ -15,7 +15,9 @@
     "view_transactions",
     "view_inventory",
     "manage_inventory",
-    "create_transaction"
+    "create_transaction",
+    "create_customer",
+    "delete_customer"
   ],
   "Finance/Auditor": [
     "view_all_stores",
@@ -51,6 +53,7 @@
     "view_customers",
     "create_customer",
     "view_products",
-    "view_transactions"
+    "view_transactions",
+    "view_inventory"
   ]
 }

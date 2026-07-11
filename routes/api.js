@@ -80,14 +80,24 @@ router.get('/customers', authenticateToken, authorizePermission('view_customers'
 
 // POST /api/customers
 router.post('/customers', authenticateToken, authorizePermission('create_customer'), async (req, res) => {
-  const { customer_name, age, gender, country } = req.body;
+  const { customer_name, age, gender, country, store_id } = req.body;
 
   if (!customer_name || !age || !gender || !country) {
     return res.status(400).json({ message: 'Tất cả các trường thông tin đều là bắt buộc' });
   }
 
   try {
-    const newCustomer = await db.addCustomer({ customer_name, age, gender, country });
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+    
+    let targetStoreId = null;
+    if (userPermissions.includes('view_all_stores')) {
+      targetStoreId = store_id ? parseInt(store_id) : null;
+    } else {
+      targetStoreId = req.user.store_id;
+    }
+
+    const newCustomer = await db.addCustomer({ customer_name, age, gender, country, store_id: targetStoreId });
     
     // Log
     await db.addAuditLog({

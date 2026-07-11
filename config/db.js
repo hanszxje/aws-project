@@ -166,7 +166,7 @@ async function initDatabase() {
           } else if (file === 'permissions.json') {
             const defaultPerms = {
               "IT Admin": ["manage_users", "manage_permissions", "view_audit_logs", "view_inventory", "manage_inventory", "create_transaction"],
-              "Director": ["view_dashboard", "view_all_stores", "view_customers", "view_discounts", "view_employees", "view_products", "view_transactions", "view_inventory", "manage_inventory", "create_transaction"],
+              "Director": ["view_dashboard", "view_all_stores", "view_customers", "create_customer", "delete_customer", "view_discounts", "view_employees", "view_products", "view_transactions", "view_inventory", "manage_inventory", "create_transaction"],
               "Finance/Auditor": ["view_all_stores", "view_transactions", "view_discounts", "view_inventory"],
               "Inventory Manager": ["view_own_store", "view_products", "edit_products", "view_inventory", "manage_inventory"],
               "Marketing Manager": ["view_all_stores", "view_discounts", "edit_discounts", "view_inventory"],
@@ -344,6 +344,21 @@ const db = {
         };
       });
 
+      // Merge with locally created customers
+      try {
+        const localFile = path.join(DATA_DIR, 'local_created_customers.json');
+        if (fs.existsSync(localFile)) {
+          const localCusts = JSON.parse(fs.readFileSync(localFile, 'utf8') || '[]');
+          localCusts.forEach(lc => {
+            if (!list.some(c => c.customer_id === lc.customer_id)) {
+              list.push(lc);
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('Failed to load local created customers:', err.message);
+      }
+
       if (storeId && storeId !== 'null') {
         list = list.filter(c => c.store_id.toString() === storeId.toString());
       }
@@ -417,8 +432,16 @@ const db = {
   },
 
   addCustomer: async (customerData) => {
+    const store_id = customerData.store_id ? parseInt(customerData.store_id) : 1;
     if (isApiMode) {
-      const nextId = Date.now() + Math.floor(Math.random() * 1000);
+      // Math alignment to force (customer_id % 35) + 1 to equal store_id
+      const base = Date.now() + Math.floor(Math.random() * 1000);
+      const remainder = base % 35;
+      const targetRemainder = store_id - 1;
+      let nextId = base + (targetRemainder - remainder);
+      if (nextId < base) {
+        nextId += 35;
+      }
 
       const payload = {
         customer_id: nextId.toString(),
@@ -434,22 +457,45 @@ const db = {
       });
       
       const created = res.data || res;
-      return {
+      const newCust = {
         customer_id: parseInt(created.customer_id),
         customer_name: created.name,
         age: created.age,
         gender: created.gender === 'M' ? 'Male' : (created.gender === 'F' ? 'Female' : created.gender),
-        country: created.country
+        country: created.country,
+        store_id: store_id
       };
+
+      // Save to local_created_customers.json
+      try {
+        const localFile = path.join(DATA_DIR, 'local_created_customers.json');
+        let localCusts = [];
+        if (fs.existsSync(localFile)) {
+          localCusts = JSON.parse(fs.readFileSync(localFile, 'utf8') || '[]');
+        }
+        localCusts.push(newCust);
+        fs.writeFileSync(localFile, JSON.stringify(localCusts, null, 2), 'utf8');
+      } catch (err) {
+        console.error('Failed to save customer locally:', err.message);
+      }
+
+      return newCust;
     } else if (isMockMode) {
       const customers = readMockFile('customers.json');
-      const newId = customers.length > 0 ? Math.max(...customers.map(c => c.customer_id)) + 1 : 10001;
+      const base = customers.length > 0 ? Math.max(...customers.map(c => c.customer_id)) + 1 : 10001;
+      const remainder = base % 35;
+      const targetRemainder = store_id - 1;
+      let newId = base + (targetRemainder - remainder);
+      if (newId < base) {
+        newId += 35;
+      }
       const newCustomer = {
         customer_id: newId,
         customer_name: customerData.customer_name,
         age: parseInt(customerData.age),
         gender: customerData.gender,
-        country: customerData.country
+        country: customerData.country,
+        store_id: store_id
       };
       customers.push(newCustomer);
       writeMockFile('customers.json', customers);
@@ -459,13 +505,34 @@ const db = {
         'INSERT INTO customers (customer_name, age, country, gender) VALUES ($1, $2, $3, $4) RETURNING *',
         [customerData.customer_name, customerData.age, customerData.country, customerData.gender]
       );
-      return res.rows[0];
+      const row = res.rows[0];
+      const cId = parseInt(row.customer_id || row.id);
+      return {
+        customer_id: cId,
+        customer_name: row.customer_name || row.name,
+        age: row.age,
+        gender: row.gender,
+        country: row.country,
+        store_id: (cId % 35) + 1
+      };
     }
   },
 
   deleteCustomer: async (customerId) => {
     if (isApiMode) {
       await apiCall(`/customers/${customerId}`, { method: 'DELETE' });
+      
+      // Also delete from local_created_customers.json if present
+      try {
+        const localFile = path.join(DATA_DIR, 'local_created_customers.json');
+        if (fs.existsSync(localFile)) {
+          let localCusts = JSON.parse(fs.readFileSync(localFile, 'utf8') || '[]');
+          localCusts = localCusts.filter(c => c.customer_id.toString() !== customerId.toString());
+          fs.writeFileSync(localFile, JSON.stringify(localCusts, null, 2), 'utf8');
+        }
+      } catch (err) {
+        console.error('Failed to update local customers after delete:', err.message);
+      }
       return true;
     } else if (isMockMode) {
       const customers = readMockFile('customers.json');
