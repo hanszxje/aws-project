@@ -2,12 +2,30 @@
       <section id="tab-dashboard" class="tab-content active">
         <div class="dashboard-layout">
           <!-- Map Container -->
-          <div class="map-card">
+          <div class="map-card" style="position: relative;">
             <div id="map"></div>
             <!-- Map Legend / Tutorial -->
             <div class="map-overlay-info">
               <h3><i class="fa-solid fa-circle-info"></i> <span data-i18n="db_instruction_title">Chỉ dẫn</span></h3>
               <p data-i18n="db_instruction_desc">Nhấp vào một cửa hàng (icon cửa hàng) để xem dữ liệu dự báo nhu cầu thời trang theo tuần sinh ra từ mô hình học máy LightGBM.</p>
+            </div>
+            <!-- Beautiful Map Loading Skeleton -->
+            <div id="map-skeleton" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #0b0f19; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 12px; transition: opacity 0.5s ease;">
+              <style>
+                @keyframes pulse-bg {
+                  0% { background-color: rgba(255, 255, 255, 0.02); }
+                  50% { background-color: rgba(255, 255, 255, 0.07); }
+                  100% { background-color: rgba(255, 255, 255, 0.02); }
+                }
+                .skeleton-pulse {
+                  animation: pulse-bg 1.8s infinite ease-in-out;
+                }
+              </style>
+              <div class="skeleton-pulse" style="width: 120px; height: 120px; border-radius: 50%; border: 3px dashed rgba(139, 92, 246, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-earth-asia fa-spin" style="font-size: 56px; color: var(--primary-color); opacity: 0.8; --fa-animation-duration: 10s;"></i>
+              </div>
+              <div class="skeleton-pulse" style="width: 220px; height: 14px; border-radius: 8px; margin-bottom: 10px;"></div>
+              <div class="skeleton-pulse" style="width: 160px; height: 10px; border-radius: 6px;"></div>
             </div>
           </div>
           

@@ -60,7 +60,17 @@ router.get('/customers', authenticateToken, authorizePermission('view_customers'
     const search = req.query.search || '';
     const gender = req.query.gender || '';
 
-    const result = await db.getCustomers({ page, limit, search, gender });
+    const rolePermissions = await db.getRolePermissions();
+    const userPermissions = rolePermissions[req.user.role] || [];
+    
+    let storeId = null;
+    if (userPermissions.includes('view_all_stores')) {
+      storeId = req.query.store_id ? parseInt(req.query.store_id) : null;
+    } else {
+      storeId = req.user.store_id;
+    }
+
+    const result = await db.getCustomers({ storeId, page, limit, search, gender });
     res.json(result);
   } catch (err) {
     console.error('Error fetching customers:', err);

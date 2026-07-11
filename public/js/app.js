@@ -491,6 +491,15 @@ async function initDashboardMap() {
         .addTo(map);
     });
 
+    // Hide skeleton loading
+    const skeleton = document.getElementById('map-skeleton');
+    if (skeleton) {
+      skeleton.style.opacity = '0';
+      setTimeout(() => {
+        skeleton.style.display = 'none';
+      }, 500);
+    }
+
     // Add Vietnamese sovereignty markers for Hoàng Sa & Trường Sa islands
     const vnSovereigntyIslands = [
       { name: 'Quần đảo Hoàng Sa (Đà Nẵng, Việt Nam)', lat: 16.5, lng: 112.0 },
@@ -565,7 +574,20 @@ window.openForecastPanel = async function(storeId, storeName) {
     activeForecastsData.forEach((f, idx) => {
       const option = document.createElement('option');
       option.value = f.sku;
-      option.textContent = `${f.sku} - ${f.product_name}`;
+      
+      let displayName = f.product_name;
+      if (displayName.startsWith('Sản phẩm')) {
+        const suffix = displayName.replace('Sản phẩm', '').trim();
+        if (currentLang === 'en') {
+          displayName = `Product ${suffix}`;
+        } else if (currentLang === 'zh') {
+          displayName = `商品 ${suffix}`;
+        } else {
+          displayName = `Sản phẩm ${suffix}`;
+        }
+      }
+      
+      option.textContent = `${f.sku} - ${displayName}`;
       if (idx === 0) option.selected = true;
       selector.appendChild(option);
     });
@@ -622,7 +644,14 @@ function renderForecastChart(sku) {
     timeline.forEach(t => {
       // Map week (1-53) to month (1-12)
       const month = Math.min(12, Math.max(1, Math.floor((t.week - 1) / 4.34) + 1));
-      const key = `Tháng ${month}/${t.year}`;
+      let key = '';
+      if (currentLang === 'en') {
+        key = `Month ${month}/${t.year}`;
+      } else if (currentLang === 'zh') {
+        key = `第${month}月/${t.year}年`;
+      } else {
+        key = `Tháng ${month}/${t.year}`;
+      }
       if (!monthlyMap[key]) {
         monthlyMap[key] = {
           label: key,
@@ -647,7 +676,14 @@ function renderForecastChart(sku) {
     // Group timeline by week/year to prevent duplicate labels causing overlapping columns
     const weeklyMap = {};
     timeline.forEach(t => {
-      const key = `Tuần ${t.week}/${t.year}`;
+      let key = '';
+      if (currentLang === 'en') {
+        key = `Week ${t.week}/${t.year}`;
+      } else if (currentLang === 'zh') {
+        key = `第${t.week}周/${t.year}年`;
+      } else {
+        key = `Tuần ${t.week}/${t.year}`;
+      }
       if (!weeklyMap[key]) {
         weeklyMap[key] = {
           label: key,
@@ -787,6 +823,47 @@ document.getElementById('btn-close-forecast').addEventListener('click', () => {
   document.getElementById('forecast-panel').classList.add('hidden');
 });
 
+function updateForecastPanelLanguage() {
+  const forecastPanel = document.getElementById('forecast-panel');
+  if (forecastPanel && !forecastPanel.classList.contains('hidden')) {
+    const selector = document.getElementById('forecast-sku-selector');
+    const selectedSku = selector ? selector.value : null;
+    
+    if (activeForecastsData && activeForecastsData.length > 0) {
+      selector.innerHTML = '';
+      activeForecastsData.forEach((f, idx) => {
+        const option = document.createElement('option');
+        option.value = f.sku;
+        
+        let displayName = f.product_name;
+        if (displayName.startsWith('Sản phẩm')) {
+          const suffix = displayName.replace('Sản phẩm', '').trim();
+          if (currentLang === 'en') {
+            displayName = `Product ${suffix}`;
+          } else if (currentLang === 'zh') {
+            displayName = `商品 ${suffix}`;
+          } else {
+            displayName = `Sản phẩm ${suffix}`;
+          }
+        }
+        
+        option.textContent = `${f.sku} - ${displayName}`;
+        if (selectedSku && f.sku === selectedSku) {
+          option.selected = true;
+        } else if (!selectedSku && idx === 0) {
+          option.selected = true;
+        }
+        selector.appendChild(option);
+      });
+      
+      const currentSku = selector.value;
+      if (currentSku) {
+        renderForecastChart(currentSku);
+      }
+    }
+  }
+}
+
 // ================= SKELETON LOADING HELPERS =================
 function showTableSkeleton(tbodyId, colCount, rowCount = 5) {
   const tbody = document.querySelector(tbodyId);
@@ -840,14 +917,48 @@ function showForecastPanelSkeleton() {
 
 // ================= CUSTOMERS TAB LOGIC =================
 async function loadCustomersTab() {
+  const storeSelect = document.getElementById('customers-store-filter');
+  const storeFilterGroup = document.getElementById('customers-store-filter-group');
+
+  if (storeSelect && storeSelect.children.length === 0) {
+    try {
+      const stores = await fetchAPI('/api/stores');
+      const hasAllStores = currentUser.permissions && currentUser.permissions.includes('view_all_stores');
+      
+      storeSelect.innerHTML = hasAllStores ? `<option value="">${currentLang === 'en' ? 'All Stores' : (currentLang === 'zh' ? '所有门店' : 'Tất cả Cửa hàng')}</option>` : '';
+      
+      stores.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.store_id;
+        opt.textContent = s.store_name;
+        storeSelect.appendChild(opt);
+      });
+
+      if (hasAllStores) {
+        storeFilterGroup.style.display = 'block';
+      } else {
+        storeSelect.value = currentUser.store_id || '';
+        storeFilterGroup.style.display = 'none';
+      }
+
+      storeSelect.addEventListener('change', () => {
+        pagState.customers.page = 1;
+        loadCustomersTab();
+      });
+    } catch (e) {
+      console.error('Error populating store filter in customers tab:', e);
+    }
+  }
+
   const { page, limit, search, gender } = pagState.customers;
+  const storeId = storeSelect ? storeSelect.value : '';
   
   showTableSkeleton('#customers-table tbody', 6);
   showChartSkeleton('customers-gender-chart');
   showChartSkeleton('customers-age-chart');
 
   try {
-    const res = await fetchAPI(`/api/customers?page=${page}&limit=${limit}&search=${search}&gender=${gender}`);
+    const res = await fetchAPI(`/api/customers?page=${page}&limit=${limit}&search=${search}&gender=${gender}&store_id=${storeId}`);
     
     // Render Table
     const tbody = document.querySelector('#customers-table tbody');
@@ -978,7 +1089,7 @@ async function loadDiscountsTab() {
 
     discounts.forEach(d => {
       const discountPct = (d.total_discount_avg * 100).toFixed(2);
-      const isEditable = currentUser.role === 'Director' || currentUser.store_id === d.store_id;
+      const isEditable = currentUser.role === 'Director' || !d.store_id || currentUser.store_id === d.store_id;
       
       const translateSeasonName = (name) => {
         if (!name) return '';
@@ -1064,7 +1175,7 @@ async function loadDiscountsTab() {
           ${isEditable ? `
             <div style="display: flex; gap: 8px;">
               <button class="btn-action-edit" onclick="openEditDiscount(${d.discount_id}, ${d.total_discount_avg})"><i class="fa-solid fa-pen-to-square"></i> ${editText}</button>
-              <button class="btn-action-delete" onclick="deleteDiscount(${d.discount_id})"><i class="fa-solid fa-trash"></i> ${deleteText}</button>
+              <button class="btn-action-delete" onclick="deleteDiscount(${d.discount_id}, this)"><i class="fa-solid fa-trash"></i> ${deleteText}</button>
             </div>
           ` : `<span class="text-muted"><i class="fa-solid fa-lock"></i> ${lockedText}</span>`}
         </td>
@@ -2426,14 +2537,64 @@ discountCreateForm.addEventListener('submit', async (e) => {
   }
 });
 
-window.deleteDiscount = async function(id) {
-  if (!confirm('Bạn có chắc chắn muốn xóa khuyến mãi này không?')) return;
+window.deleteDiscount = async function(id, btn) {
+  if (!confirm(currentLang === 'en' ? 'Are you sure you want to delete this discount?' : (currentLang === 'zh' ? '你确定要删除这个优惠吗？' : 'Bạn có chắc chắn muốn xóa khuyến mãi này không?'))) return;
+
+  // Dynamically inject style once
+  if (!document.getElementById('shimmer-style-injection')) {
+    const style = document.createElement('style');
+    style.id = 'shimmer-style-injection';
+    style.innerHTML = `
+      @keyframes shimmerPulse {
+        0% { background-color: rgba(255, 255, 255, 0.01); }
+        50% { background-color: rgba(255, 255, 255, 0.08); }
+        100% { background-color: rgba(255, 255, 255, 0.01); }
+      }
+      .shimmer-row td {
+        animation: shimmerPulse 1.2s infinite ease-in-out !important;
+        color: var(--text-muted) !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const row = btn ? btn.closest('tr') : null;
+  if (row) {
+    // Disable row buttons to prevent double submission
+    row.querySelectorAll('button').forEach(b => b.disabled = true);
+    row.classList.add('shimmer-row');
+    row.style.opacity = '0.7';
+
+    // Show loading spinner on delete button
+    if (btn) {
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${currentLang === 'en' ? 'Deleting...' : (currentLang === 'zh' ? '删除中...' : 'Đang xóa...')}`;
+    }
+  }
+
   try {
     const data = await fetchAPI(`/api/discounts/${id}`, { method: 'DELETE' });
-    alert(data.message || 'Xóa khuyến mãi thành công!');
+    
+    if (row) {
+      // Slide-out and fade-out animation for premium feel
+      row.style.transition = 'all 0.4s ease';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(20px)';
+      await new Promise(resolve => setTimeout(resolve, 400));
+    }
+    
     loadDiscountsTab();
   } catch (err) {
     console.error('Error deleting discount:', err);
+    alert(currentLang === 'en' ? 'Failed to delete discount!' : (currentLang === 'zh' ? '删除优惠失败！' : 'Xóa khuyến mãi thất bại!'));
+    
+    if (row) {
+      row.classList.remove('shimmer-row');
+      row.style.opacity = '1';
+      row.querySelectorAll('button').forEach(b => b.disabled = false);
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-trash"></i> ${currentLang === 'en' ? 'Delete' : (currentLang === 'zh' ? '删除' : 'Xóa')}`;
+      }
+    }
   }
 };
 
@@ -2725,7 +2886,10 @@ const permissionTranslations = {
     'Xem Nhật ký Hoạt động (Audit Logs)': 'Xem Nhật ký Hoạt động (Audit Logs)',
     'Quyền Hạn / Vai trò': 'Quyền Hạn / Vai trò',
     'Lưu cấu hình thành công!': 'Lưu cấu hình thành công!',
-    'Lỗi lưu phân quyền: ': 'Lỗi lưu phân quyền: '
+    'Lỗi lưu phân quyền: ': 'Lỗi lưu phân quyền: ',
+    'Quản lý Kho': 'Quản lý Kho',
+    'Xem danh sách Tồn kho / Nhập kho': 'Xem danh sách Tồn kho / Nhập kho',
+    'Thao tác Nhập kho (CRUD)': 'Thao tác Nhập kho (CRUD)'
   },
   en: {
     'Dashboard & Cửa hàng': 'Dashboard & Stores',
@@ -2753,7 +2917,10 @@ const permissionTranslations = {
     'Xem Nhật ký Hoạt động (Audit Logs)': 'View Audit Logs',
     'Quyền Hạn / Vai trò': 'Permission / Role',
     'Lưu cấu hình thành công!': 'Configuration saved successfully!',
-    'Lỗi lưu phân quyền: ': 'Error saving permissions: '
+    'Lỗi lưu phân quyền: ': 'Error saving permissions: ',
+    'Quản lý Kho': 'Inventory Management',
+    'Xem danh sách Tồn kho / Nhập kho': 'View Inventory & Stock Imports',
+    'Thao tác Nhập kho (CRUD)': 'Manage Stock Imports (CRUD)'
   },
   zh: {
     'Dashboard & Cửa hàng': '地图与门店',
@@ -2781,16 +2948,67 @@ const permissionTranslations = {
     'Xem Nhật ký Hoạt động (Audit Logs)': '查看操作日志 (审计日志)',
     'Quyền Hạn / Vai trò': '权限 / 角色',
     'Lưu cấu hình thành công!': '配置保存成功！',
-    'Lỗi lưu phân quyền: ': '保存权限出错: '
+    'Lỗi lưu phân quyền: ': '保存权限出错: ',
+    'Quản lý Kho': '库存管理',
+    'Xem danh sách Tồn kho / Nhập kho': '查看库存与入库单列表',
+    'Thao tác Nhập kho (CRUD)': '操作入库单 (CRUD)'
   }
 };
 
 let currentPermissionsMap = {};
 
+let selectedRoleForPermissions = '';
+
+function saveCurrentRolePermissionsFromUI() {
+  if (!selectedRoleForPermissions) return;
+  const checkboxes = document.querySelectorAll('.permission-checkbox');
+  const activePerms = [];
+  checkboxes.forEach(cb => {
+    const role = cb.getAttribute('data-role');
+    const perm = cb.getAttribute('data-perm');
+    if (role === selectedRoleForPermissions && cb.checked) {
+      activePerms.push(perm);
+    }
+  });
+  currentPermissionsMap[selectedRoleForPermissions] = activePerms;
+}
+
 async function loadAdminPermissionsTab() {
   try {
     currentPermissionsMap = await fetchAPI('/api/admin/permissions');
     
+    // Get visible roles (excluding Director)
+    const visibleRoles = Object.keys(currentPermissionsMap).filter(role => role !== 'Director');
+    
+    // Set default selected role if not set or invalid
+    if (!selectedRoleForPermissions || !visibleRoles.includes(selectedRoleForPermissions)) {
+      selectedRoleForPermissions = visibleRoles[0] || '';
+    }
+
+    // 1. Render Left Role List
+    const roleList = document.getElementById('role-selector-list');
+    roleList.innerHTML = '';
+    visibleRoles.forEach(role => {
+      const btn = document.createElement('div');
+      btn.className = `role-select-card ${role === selectedRoleForPermissions ? 'active' : ''}`;
+      btn.innerHTML = `
+        <span>${role}</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 11px; opacity: 0.5;"></i>
+      `;
+      btn.addEventListener('click', () => {
+        // Save current changes of the previous role in memory
+        saveCurrentRolePermissionsFromUI();
+        
+        selectedRoleForPermissions = role;
+        loadAdminPermissionsTab();
+      });
+      roleList.appendChild(btn);
+    });
+
+    // 2. Update Badge Name
+    document.getElementById('editing-role-badge').textContent = selectedRoleForPermissions;
+
+    // 3. Render Right Permission Cards Grouped by Category
     const permissionGroups = [
       {
         category: 'Dashboard & Cửa hàng',
@@ -2800,6 +3018,15 @@ async function loadAdminPermissionsTab() {
           { key: 'view_dashboard', name: 'Xem Dashboard & Bản đồ' },
           { key: 'view_all_stores', name: 'Xem Toàn bộ Cửa hàng (Global)' },
           { key: 'view_own_store', name: 'Xem Cửa hàng được gán (Local)' }
+        ]
+      },
+      {
+        category: 'Quản lý Kho',
+        color: '#10b981',
+        icon: 'fa-warehouse',
+        perms: [
+          { key: 'view_inventory', name: 'Xem danh sách Tồn kho / Nhập kho' },
+          { key: 'manage_inventory', name: 'Thao tác Nhập kho (CRUD)' }
         ]
       },
       {
@@ -2859,75 +3086,113 @@ async function loadAdminPermissionsTab() {
       }
     ];
 
-    const roles = Object.keys(currentPermissionsMap);
-
-    const headerRow = document.getElementById('permissions-table-header');
-    const headerTitle = (permissionTranslations[currentLang] && permissionTranslations[currentLang]['Quyền Hạn / Vai trò']) || 'Quyền Hạn / Vai trò';
-    headerRow.innerHTML = `<th style="text-align: left; padding: 15px;">${headerTitle}</th>`;
-    roles.forEach(role => {
-      const th = document.createElement('th');
-      th.style.padding = '15px';
-      th.style.textAlign = 'center';
-      th.innerHTML = `<span class="badge">${role}</span>`;
-      headerRow.appendChild(th);
-    });
-
-    const tbody = document.getElementById('permissions-table-body');
-    tbody.innerHTML = '';
+    const container = document.getElementById('permissions-groups-container');
+    container.innerHTML = '';
 
     permissionGroups.forEach(group => {
-      // Category row
-      const catTr = document.createElement('tr');
-      const catName = (permissionTranslations[currentLang] && permissionTranslations[currentLang][group.category]) || group.category;
-      catTr.innerHTML = `
-        <td colspan="${roles.length + 1}" style="background: rgba(255,255,255,0.02); font-weight: 700; padding: 12px 18px; border-left: 4px solid ${group.color}; color: ${group.color}; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
-          <i class="fa-solid ${group.icon}" style="margin-right: 8px;"></i> ${catName}
-        </td>
+      const card = document.createElement('div');
+      card.style.cssText = `
+        background: rgba(255,255,255,0.01);
+        border: 1px solid rgba(255,255,255,0.04);
+        border-radius: 10px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        border-top: 3px solid ${group.color};
       `;
-      tbody.appendChild(catTr);
 
-      // Permission rows
+      const catName = (permissionTranslations[currentLang] && permissionTranslations[currentLang][group.category]) || group.category;
+      
+      let headerHtml = `
+        <div style="display: flex; align-items: center; gap: 8px; color: ${group.color}; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fa-solid ${group.icon}"></i> <span>${catName}</span>
+        </div>
+      `;
+      card.innerHTML = headerHtml;
+
+      const itemsList = document.createElement('div');
+      itemsList.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      `;
+
       group.perms.forEach(perm => {
-        const tr = document.createElement('tr');
+        const item = document.createElement('div');
+        item.style.cssText = `
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          padding: 8px 0;
+          border-bottom: 1px dashed rgba(255,255,255,0.03);
+        `;
+        if (group.perms[group.perms.length - 1] === perm) {
+          item.style.borderBottom = 'none';
+        }
+
         const permName = (permissionTranslations[currentLang] && permissionTranslations[currentLang][perm.name]) || perm.name;
-        
-        let html = `<td style="padding: 12px 18px; border-left: 4px solid ${group.color}44;">
-          <div style="font-weight: 600; color: var(--text-main); font-size: 13px;">${permName}</div>
-          <small style="color: var(--text-muted); font-family: monospace; font-size: 10px;">${perm.key}</small>
-        </td>`;
-        
-        roles.forEach(role => {
-          const checked = currentPermissionsMap[role].includes(perm.key) ? 'checked' : '';
-          html += `<td style="text-align: center; padding: 12px;">
-            <input type="checkbox" class="permission-checkbox" data-role="${role}" data-perm="${perm.key}" ${checked}>
-          </td>`;
-        });
-        
-        tr.innerHTML = html;
-        tbody.appendChild(tr);
+        const checked = currentPermissionsMap[selectedRoleForPermissions].includes(perm.key) ? 'checked' : '';
+
+        item.innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 13px; font-weight: 500; color: var(--text-main);">${permName}</span>
+            <code style="font-size: 9px; color: var(--text-muted);">${perm.key}</code>
+          </div>
+          <label class="switch">
+            <input type="checkbox" class="permission-checkbox" data-role="${selectedRoleForPermissions}" data-perm="${perm.key}" ${checked}>
+            <span class="slider"></span>
+          </label>
+        `;
+        itemsList.appendChild(item);
       });
+
+      card.appendChild(itemsList);
+      container.appendChild(card);
     });
+
+    // Update Toggle All Button Text
+    const toggleAllBtn = document.getElementById('btn-toggle-all-perms');
+    if (toggleAllBtn) {
+      let allChecked = true;
+      const checkboxes = document.querySelectorAll('.permission-checkbox');
+      checkboxes.forEach(cb => {
+        if (!cb.checked) allChecked = false;
+      });
+      
+      toggleAllBtn.innerHTML = allChecked ? 
+        `<i class="fa-solid fa-square-minus"></i> ${currentLang === 'en' ? 'Deselect All' : (currentLang === 'zh' ? '取消全选' : 'Bỏ chọn tất cả')}` : 
+        `<i class="fa-solid fa-square-check"></i> ${currentLang === 'en' ? 'Select All' : (currentLang === 'zh' ? '全选' : 'Chọn tất cả')}`;
+    }
 
   } catch (err) {
     console.error('Error loading permissions tab:', err);
   }
 }
 
-document.getElementById('btn-save-permissions').addEventListener('click', async () => {
+document.getElementById('btn-toggle-all-perms').addEventListener('click', () => {
   const checkboxes = document.querySelectorAll('.permission-checkbox');
-  const updatedPermissions = {};
-  
-  Object.keys(currentPermissionsMap).forEach(role => {
-    updatedPermissions[role] = [];
-  });
-
+  let allChecked = true;
   checkboxes.forEach(cb => {
-    const role = cb.getAttribute('data-role');
-    const perm = cb.getAttribute('data-perm');
-    if (cb.checked) {
-      updatedPermissions[role].push(perm);
-    }
+    if (!cb.checked) allChecked = false;
   });
+  
+  checkboxes.forEach(cb => {
+    cb.checked = !allChecked;
+  });
+  
+  const toggleAllBtn = document.getElementById('btn-toggle-all-perms');
+  toggleAllBtn.innerHTML = !allChecked ? 
+    `<i class="fa-solid fa-square-minus"></i> ${currentLang === 'en' ? 'Deselect All' : (currentLang === 'zh' ? '取消全选' : 'Bỏ chọn tất cả')}` : 
+    `<i class="fa-solid fa-square-check"></i> ${currentLang === 'en' ? 'Select All' : (currentLang === 'zh' ? '全选' : 'Chọn tất cả')}`;
+});
+
+document.getElementById('btn-save-permissions').addEventListener('click', async () => {
+  saveCurrentRolePermissionsFromUI();
+  
+  // Clone currentPermissionsMap to keep roles like Director completely unmodified
+  const updatedPermissions = JSON.parse(JSON.stringify(currentPermissionsMap));
 
   try {
     const data = await fetchAPI('/api/admin/permissions', {
@@ -3097,6 +3362,21 @@ document.getElementById('btn-user-profile').addEventListener('click', async () =
       const data = await fetchAPI('/api/auth/mfa/setup', { method: 'POST' });
       mfaSetupSecret = data.secret;
       document.getElementById('mfa-secret-key').value = data.secret;
+      
+      const qrCanvas = document.getElementById('mfa-qr-canvas');
+      if (qrCanvas && typeof QRious !== 'undefined') {
+        const username = currentUser.username || 'User';
+        const label = `GlobalFashion:${username}`;
+        const issuer = 'GlobalFashion';
+        const otpauthUrl = `otpauth://totp/${label}?secret=${data.secret}&issuer=${issuer}`;
+        
+        new QRious({
+          element: qrCanvas,
+          value: otpauthUrl,
+          size: 148,
+          level: 'M'
+        });
+      }
     } catch (err) {
       alert('Không thể tạo secret cho MFA: ' + err.message);
     }
@@ -4711,6 +4991,11 @@ function translatePage() {
   // Synchronize sidebar tooltips if collapsed
   if (typeof updateSidebarTooltips === 'function') {
     updateSidebarTooltips();
+  }
+
+  // Update open forecast panel elements and chart translations
+  if (typeof updateForecastPanelLanguage === 'function') {
+    updateForecastPanelLanguage();
   }
 }
 

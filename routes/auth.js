@@ -138,19 +138,59 @@ router.post('/login', async (req, res) => {
             store_id = parseInt(storeMatch[0]);
           }
 
+          // Check local database/JSON to retrieve correct MFA settings
+          const localUser = await db.getUserByUsername(username);
+
           apiUser = {
             id: userId,
             username: authData.username,
             role: authData.role, // e.g. "IT Admin", "Director", "Store Manager", "Sales Staff"
             store_id: store_id,
-            mfa_enabled: false
+            mfa_enabled: localUser ? !!localUser.mfa_enabled : false,
+            mfa_secret: localUser ? localUser.mfa_secret : null
           };
+        } else {
+          // Fallback: check local database for user (e.g. newly created admin1)
+          const localUser = await db.getUserByUsername(username);
+          if (localUser) {
+            const isMatch = await bcrypt.compare(password, localUser.password);
+            if (isMatch) {
+              apiUser = {
+                id: localUser.id,
+                username: localUser.username,
+                role: localUser.role,
+                store_id: localUser.store_id,
+                mfa_enabled: !!localUser.mfa_enabled,
+                mfa_secret: localUser.mfa_secret
+              };
+            } else {
+              loginFailed = true;
+            }
+          } else {
+            loginFailed = true;
+          }
+        }
+      } catch (err) {
+        console.error('FastAPI login request failed, trying local fallback:', err.message);
+        // Fallback: check local database for user
+        const localUser = await db.getUserByUsername(username);
+        if (localUser) {
+          const isMatch = await bcrypt.compare(password, localUser.password);
+          if (isMatch) {
+            apiUser = {
+              id: localUser.id,
+              username: localUser.username,
+              role: localUser.role,
+              store_id: localUser.store_id,
+              mfa_enabled: !!localUser.mfa_enabled,
+              mfa_secret: localUser.mfa_secret
+            };
+          } else {
+            loginFailed = true;
+          }
         } else {
           loginFailed = true;
         }
-      } catch (err) {
-        console.error('FastAPI login request failed:', err.message);
-        loginFailed = true;
       }
     }
 
@@ -285,7 +325,7 @@ router.post('/mfa/enable', authenticateToken, async (req, res) => {
     }
 
     // Save secret and enable MFA in database
-    await db.updateUserMfa(req.user.id, { mfa_enabled: true, mfa_secret: secret });
+    await db.updateUserMfa(req.user.username, { mfa_enabled: true, mfa_secret: secret });
 
     // Add audit log
     await db.addAuditLog({
@@ -322,7 +362,7 @@ router.post('/mfa/disable', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'Mã OTP không chính xác. Hủy kích hoạt thất bại.' });
     }
 
-    await db.updateUserMfa(req.user.id, { mfa_enabled: false, mfa_secret: null });
+    await db.updateUserMfa(req.user.username, { mfa_enabled: false, mfa_secret: null });
 
     // Add audit log
     await db.addAuditLog({
@@ -349,15 +389,18 @@ router.get('/me', authenticateToken, async (req, res) => {
     if (!isApiMode) {
       user = await db.getUserByUsername(req.user.username);
     } else {
-      // Reconstruct user object from JWT data
+      // Reconstruct user object from JWT data and local database MFA configuration
       const storeMatch = req.user.username.match(/\d+/);
       const store_id = storeMatch ? parseInt(storeMatch[0]) : null;
+      
+      const localUser = await db.getUserByUsername(req.user.username);
+
       user = {
         id: req.user.id,
         username: req.user.username,
         role: req.user.role,
         store_id: store_id,
-        mfa_enabled: false
+        mfa_enabled: localUser ? !!localUser.mfa_enabled : false
       };
     }
 

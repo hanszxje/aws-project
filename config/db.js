@@ -19,6 +19,13 @@ const isApiMode = !!API_BASE_URL;
 let isMockMode = false;
 let pool = null;
 
+let productsCache = {};
+const PRODUCTS_CACHE_TTL = 300000; // 5 minutes cache
+
+let storesCache = null;
+let storesCacheTimestamp = 0;
+const STORES_CACHE_TTL = 300000; // 5 minutes cache
+
 // Initialize PostgreSQL pool if credentials are provided (needed for direct users table CRUD)
 const hasCredentials = process.env.DB_HOST && process.env.DB_USER && process.env.DB_NAME;
 
@@ -243,16 +250,57 @@ const db = {
   // --- Stores ---
   getStores: async () => {
     if (isApiMode) {
+      // Return cached data if available and fresh
+      if (storesCache && (Date.now() - storesCacheTimestamp < STORES_CACHE_TTL)) {
+        return storesCache;
+      }
+
       const res = await apiCall('/stores?limit=1000');
-      return (res.data || []).map(s => ({
-        store_id: parseInt(s.store_id),
-        store_name: s.name || `Store #${s.store_id}`,
-        latitude: s.latitude || 0,
-        longitude: s.longitude || 0,
-        country: s.country || 'Global',
-        num_distinct_skus: s.num_employees || 10, // reuse num_employees or similar
-        num_distinct_products: s.num_employees || 10
-      }));
+      const stores = res.data || [];
+
+      // Fetch all inventory to calculate real SKU & product counts per store
+      let allInventory = [];
+      try {
+        allInventory = await db.getInventory(null);
+      } catch (err) {
+        console.warn('Failed to fetch inventory for getStores counts:', err.message);
+      }
+
+      // Group inventory by store_id
+      const inventoryByStore = {};
+      allInventory.forEach(item => {
+        const sId = item.store_id;
+        if (!inventoryByStore[sId]) {
+          inventoryByStore[sId] = {
+            skus: new Set(),
+            products: new Set()
+          };
+        }
+        inventoryByStore[sId].skus.add(item.sku);
+        if (item.product_name) {
+          inventoryByStore[sId].products.add(item.product_name);
+        }
+      });
+
+      const result = stores.map(s => {
+        const sId = parseInt(s.store_id);
+        const storeStats = inventoryByStore[sId] || { skus: new Set(), products: new Set() };
+        return {
+          store_id: sId,
+          store_name: s.name || `Store #${s.store_id}`,
+          latitude: s.latitude || 0,
+          longitude: s.longitude || 0,
+          country: s.country || 'Global',
+          num_distinct_skus: storeStats.skus.size,
+          num_distinct_products: storeStats.products.size
+        };
+      });
+
+      // Cache the result
+      storesCache = result;
+      storesCacheTimestamp = Date.now();
+
+      return result;
     } else if (isMockMode) {
       return readMockFile('stores.json');
     } else {
@@ -280,18 +328,25 @@ const db = {
   },
 
   // --- Customers ---
-  getCustomers: async ({ page = 1, limit = 10, search = '', gender = '' }) => {
+  getCustomers: async ({ storeId = null, page = 1, limit = 10, search = '', gender = '' }) => {
+    let list = [];
     if (isApiMode) {
       const res = await apiCall('/customers?limit=1000');
-      let list = (res.data || []).map(c => ({
-        customer_id: parseInt(c.customer_id),
-        customer_name: c.name || `Khách hàng #${c.customer_id}`,
-        age: c.age || 30,
-        gender: c.gender === 'M' ? 'Male' : (c.gender === 'F' ? 'Female' : c.gender || 'Unknown'),
-        country: c.country || 'United States'
-      }));
+      list = (res.data || []).map(c => {
+        const cId = parseInt(c.customer_id);
+        return {
+          customer_id: cId,
+          customer_name: c.name || `Khách hàng #${c.customer_id}`,
+          age: c.age || 30,
+          gender: c.gender === 'M' ? 'Male' : (c.gender === 'F' ? 'Female' : c.gender || 'Unknown'),
+          country: c.country || 'United States',
+          store_id: (cId % 35) + 1
+        };
+      });
 
-      // Filter in-memory
+      if (storeId && storeId !== 'null') {
+        list = list.filter(c => c.store_id.toString() === storeId.toString());
+      }
       if (search) {
         const q = search.toLowerCase();
         list = list.filter(c => c.customer_name.toLowerCase().includes(q) || c.customer_id.toString().includes(q));
@@ -309,42 +364,55 @@ const db = {
 
     const offset = (page - 1) * limit;
     if (isMockMode) {
-      let data = readMockFile('customers.json');
+      const data = readMockFile('customers.json');
+      list = data.map(c => {
+        const cId = parseInt(c.customer_id);
+        return {
+          customer_id: cId,
+          customer_name: c.customer_name || `Khách hàng #${cId}`,
+          age: c.age || 30,
+          gender: c.gender || 'Male',
+          country: c.country || 'United States',
+          store_id: c.store_id || (cId % 35) + 1
+        };
+      });
+
+      if (storeId && storeId !== 'null') {
+        list = list.filter(c => c.store_id.toString() === storeId.toString());
+      }
       if (search) {
-        data = data.filter(c => c.customer_name.toLowerCase().includes(search.toLowerCase()) || c.customer_id.toString().includes(search));
+        list = list.filter(c => c.customer_name.toLowerCase().includes(search.toLowerCase()) || c.customer_id.toString().includes(search));
       }
       if (gender) {
-        data = data.filter(c => c.gender.toLowerCase() === gender.toLowerCase());
+        list = list.filter(c => c.gender.toLowerCase() === gender.toLowerCase());
       }
-      const total = data.length;
-      return { data: data.slice(offset, offset + limit), total, page, limit };
+      const total = list.length;
+      return { data: list.slice(offset, offset + limit), total, page, limit };
     } else {
-      let query = 'SELECT * FROM customers WHERE 1=1';
-      const params = [];
-      let countQuery = 'SELECT COUNT(*) FROM customers WHERE 1=1';
-      const countParams = [];
+      const res = await pool.query('SELECT * FROM customers');
+      list = res.rows.map(c => {
+        const cId = parseInt(c.customer_id || c.id);
+        return {
+          customer_id: cId,
+          customer_name: c.customer_name || c.name || `Khách hàng #${cId}`,
+          age: c.age || 30,
+          gender: c.gender || 'Male',
+          country: c.country || 'United States',
+          store_id: c.store_id || (cId % 35) + 1
+        };
+      });
 
+      if (storeId && storeId !== 'null') {
+        list = list.filter(c => c.store_id.toString() === storeId.toString());
+      }
       if (search) {
-        params.push(`%${search}%`);
-        query += ` AND (customer_name ILIKE $${params.length} OR customer_id::text ILIKE $${params.length})`;
-        countParams.push(`%${search}%`);
-        countQuery += ` AND (customer_name ILIKE $${countParams.length} OR customer_id::text ILIKE $${countParams.length})`;
+        list = list.filter(c => c.customer_name.toLowerCase().includes(search.toLowerCase()) || c.customer_id.toString().includes(search));
       }
       if (gender) {
-        params.push(gender);
-        query += ` AND gender = $${params.length}`;
-        countParams.push(gender);
-        countQuery += ` AND gender = $${countParams.length}`;
+        list = list.filter(c => c.gender.toLowerCase() === gender.toLowerCase());
       }
-
-      const totalRes = await pool.query(countQuery, countParams);
-      const total = parseInt(totalRes.rows[0].count);
-
-      params.push(limit, offset);
-      query += ` ORDER BY customer_id ASC LIMIT $${params.length - 1} OFFSET $${params.length}`;
-      const dataRes = await pool.query(query, params);
-      
-      return { data: dataRes.rows, total, page, limit };
+      const total = list.length;
+      return { data: list.slice(offset, offset + limit), total, page, limit };
     }
   },
 
@@ -413,10 +481,11 @@ const db = {
 
   // --- Discounts ---
   getDiscounts: async (storeId = null) => {
+    let list = [];
     if (isApiMode) {
       let url = '/discounts?limit=1000';
       const res = await apiCall(url);
-      let list = (res.data || []).map(d => ({
+      list = (res.data || []).map(d => ({
         discount_id: parseInt(d.discount_id),
         store_id: parseInt(d.store_id),
         season_name: d.description || `Khuyến mãi #${d.discount_id}`,
@@ -428,22 +497,29 @@ const db = {
       if (storeId && storeId !== 'null') {
         list = list.filter(d => isNaN(d.store_id) || d.store_id === null || d.store_id.toString() === storeId.toString());
       }
-      return list;
     } else if (isMockMode) {
-      let data = readMockFile('discounts.json');
+      list = readMockFile('discounts.json');
       if (storeId) {
-        data = data.filter(d => !d.store_id || d.store_id === parseInt(storeId));
+        list = list.filter(d => !d.store_id || d.store_id === parseInt(storeId));
       }
-      return data;
     } else {
       if (storeId) {
-        const res = await pool.query('SELECT * FROM discounts WHERE store_id = $1 OR store_id IS NULL ORDER BY start_date DESC', [storeId]);
-        return res.rows;
+        const res = await pool.query('SELECT * FROM discounts WHERE store_id = $1 OR store_id IS NULL', [storeId]);
+        list = res.rows;
       } else {
-        const res = await pool.query('SELECT * FROM discounts ORDER BY start_date DESC');
-        return res.rows;
+        const res = await pool.query('SELECT * FROM discounts');
+        list = res.rows;
       }
     }
+
+    // Sort by end_date descending: latest first, earliest at the bottom
+    list.sort((a, b) => {
+      const dateA = new Date(a.end_date || a.valid_until || a.start_date || 0);
+      const dateB = new Date(b.end_date || b.valid_until || b.start_date || 0);
+      return dateB - dateA;
+    });
+
+    return list;
   },
 
   updateDiscountAvg: async (discountId, newDiscountAvg) => {
@@ -655,6 +731,17 @@ const db = {
   getProducts: async ({ storeId = null, category = '', search = '' }) => {
     if (isApiMode) {
       try {
+        const cacheKey = category || 'all';
+        const cached = productsCache[cacheKey];
+        if (cached && (Date.now() - cached.timestamp < PRODUCTS_CACHE_TTL)) {
+          let list = cached.data;
+          if (search) {
+            const q = search.toLowerCase();
+            list = list.filter(p => p.product_name.toLowerCase().includes(q) || p.description_en.toLowerCase().includes(q));
+          }
+          return list;
+        }
+
         let url = '/products?limit=100'; // reduced from 1000 to prevent server 500 error
         if (category) {
           url += `&category=${encodeURIComponent(category)}`;
@@ -710,6 +797,12 @@ const db = {
         } catch (err) {
           console.warn('Failed to load local created products in getProducts:', err.message);
         }
+
+        // Save in cache
+        productsCache[cacheKey] = {
+          data: list,
+          timestamp: Date.now()
+        };
 
         if (search) {
           const q = search.toLowerCase();
@@ -1400,12 +1493,13 @@ const db = {
     return true;
   },
 
-  updateUserMfa: async (userId, mfaData) => {
+  updateUserMfa: async (userIdOrUsername, mfaData) => {
     if (pool) {
       try {
+        const isNum = !isNaN(userIdOrUsername);
         const res = await pool.query(
-          'UPDATE users SET mfa_enabled = $1, mfa_secret = $2 WHERE id = $3',
-          [!!mfaData.mfa_enabled, mfaData.mfa_secret, parseInt(userId)]
+          'UPDATE users SET mfa_enabled = $1, mfa_secret = $2 WHERE id = $3 OR username = $4',
+          [!!mfaData.mfa_enabled, mfaData.mfa_secret, isNum ? parseInt(userIdOrUsername) : -1, userIdOrUsername.toString()]
         );
         return res.rowCount > 0;
       } catch (err) {
@@ -1413,7 +1507,10 @@ const db = {
       }
     }
     const users = readMockFile('users.json');
-    const uIndex = users.findIndex(u => u.id === parseInt(userId));
+    const uIndex = users.findIndex(u => 
+      u.id.toString() === userIdOrUsername.toString() || 
+      u.username.toLowerCase() === userIdOrUsername.toString().toLowerCase()
+    );
     if (uIndex === -1) return false;
     users[uIndex].mfa_enabled = mfaData.mfa_enabled;
     users[uIndex].mfa_secret = mfaData.mfa_secret;
@@ -1498,12 +1595,43 @@ const db = {
       };
 
       if (!storeId || storeId === 'null') {
-        let url = '/stock?limit=1000';
-        if (search && (search.toUpperCase().startsWith('CH') || search.toUpperCase().startsWith('MA') || search.toUpperCase().startsWith('FE') || search.toUpperCase().startsWith('SKU'))) {
-          url = `/stock?sku=${encodeURIComponent(search)}&limit=100`;
+        let stockList = [];
+        const limit = 1000;
+        let offset = 0;
+        let hasMore = true;
+        const batchSize = 3;
+
+        while (hasMore) {
+          const promises = [];
+          for (let i = 0; i < batchSize; i++) {
+            const currentOffset = offset + (i * limit);
+            let url = `/stock?limit=${limit}&offset=${currentOffset}`;
+            if (search && (search.toUpperCase().startsWith('CH') || search.toUpperCase().startsWith('MA') || search.toUpperCase().startsWith('FE') || search.toUpperCase().startsWith('SKU'))) {
+              url = `/stock?sku=${encodeURIComponent(search)}&limit=${limit}&offset=${currentOffset}`;
+            }
+            promises.push(apiCall(url).catch(err => {
+              console.error(`Failed to fetch stock batch at offset ${currentOffset}:`, err.message);
+              return { data: [] };
+            }));
+          }
+
+          const results = await Promise.all(promises);
+          let batchHasEmptyOrPartial = false;
+
+          for (let r = 0; r < results.length; r++) {
+            const pageData = results[r].data || [];
+            stockList = stockList.concat(pageData);
+            if (pageData.length < limit) {
+              batchHasEmptyOrPartial = true;
+            }
+          }
+
+          if (batchHasEmptyOrPartial) {
+            hasMore = false;
+          } else {
+            offset += batchSize * limit;
+          }
         }
-        const stockRes = await apiCall(url);
-        const stockList = stockRes.data || [];
         const localInventory = readMockFile('inventory.json');
 
         // Merge remote stock list with local inventory fallbacks

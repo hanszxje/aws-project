@@ -1177,5 +1177,392 @@
     "action": "PRODUCT_DELETE",
     "details": "Xóa sản phẩm #ID: 1783708969125",
     "ip": "::1"
+  },
+  {
+    "id": 1783761316384,
+    "timestamp": "2026-07-11T09:15:16.253Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783761957404,
+    "timestamp": "2026-07-11T09:25:56.842Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 177 thành 35.9%",
+    "ip": "::1"
+  },
+  {
+    "id": 1783761969330,
+    "timestamp": "2026-07-11T09:26:08.550Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783762984910,
+    "timestamp": "2026-07-11T09:43:04.255Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763049735,
+    "timestamp": "2026-07-11T09:44:08.883Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763115585,
+    "timestamp": "2026-07-11T09:45:15.470Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763318440,
+    "timestamp": "2026-07-11T09:48:37.594Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "MFA_ENABLE",
+    "details": "Bật xác thực 2 lớp thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763359818,
+    "timestamp": "2026-07-11T09:49:19.424Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763435277,
+    "timestamp": "2026-07-11T09:50:35.097Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763686440,
+    "timestamp": "2026-07-11T09:54:45.860Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763745108,
+    "timestamp": "2026-07-11T09:55:44.152Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_CREATE",
+    "details": "Tạo tài khoản mới: admin1 (Vai trò: IT Admin)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763786796,
+    "timestamp": "2026-07-11T09:56:26.308Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763960163,
+    "timestamp": "2026-07-11T09:59:20.070Z",
+    "username": "admin1",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763973995,
+    "timestamp": "2026-07-11T09:59:33.647Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783763982893,
+    "timestamp": "2026-07-11T09:59:42.782Z",
+    "username": "admin1",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764051700,
+    "timestamp": "2026-07-11T10:00:50.933Z",
+    "username": "admin1",
+    "role": "IT Admin",
+    "action": "USER_CREATE",
+    "details": "Tạo tài khoản mới: manager12 (Vai trò: Marketing Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764060052,
+    "timestamp": "2026-07-11T10:01:00.041Z",
+    "username": "manager12",
+    "role": "Marketing Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764074720,
+    "timestamp": "2026-07-11T10:01:13.960Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764085106,
+    "timestamp": "2026-07-11T10:01:24.970Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_UPDATE",
+    "details": "Cập nhật tài khoản #ID: 11 (Vai trò mới: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764096077,
+    "timestamp": "2026-07-11T10:01:35.181Z",
+    "username": "manager12",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764176881,
+    "timestamp": "2026-07-11T10:02:56.641Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764392129,
+    "timestamp": "2026-07-11T10:06:31.624Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764598232,
+    "timestamp": "2026-07-11T10:09:57.735Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "MFA_ENABLE",
+    "details": "Bật xác thực 2 lớp thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764619404,
+    "timestamp": "2026-07-11T10:10:18.451Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "MFA_ENABLE",
+    "details": "Bật xác thực 2 lớp thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764635485,
+    "timestamp": "2026-07-11T10:10:34.835Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN_MFA",
+    "details": "Đăng nhập thành công với xác thực 2 lớp (MFA)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764738095,
+    "timestamp": "2026-07-11T10:12:17.972Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "MFA_DISABLE",
+    "details": "Hủy xác thực 2 lớp thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764754272,
+    "timestamp": "2026-07-11T10:12:33.780Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783764773729,
+    "timestamp": "2026-07-11T10:12:52.950Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "MFA_ENABLE",
+    "details": "Bật xác thực 2 lớp thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765003465,
+    "timestamp": "2026-07-11T10:16:42.557Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765012092,
+    "timestamp": "2026-07-11T10:16:51.798Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765055062,
+    "timestamp": "2026-07-11T10:17:35.042Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765071057,
+    "timestamp": "2026-07-11T10:17:50.609Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "MFA_ENABLE",
+    "details": "Bật xác thực 2 lớp thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765078980,
+    "timestamp": "2026-07-11T10:17:58.861Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765082855,
+    "timestamp": "2026-07-11T10:18:02.650Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_MFA_RESET",
+    "details": "Reset MFA của tài khoản #ID: 6",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765124059,
+    "timestamp": "2026-07-11T10:18:43.138Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765161643,
+    "timestamp": "2026-07-11T10:19:21.602Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765419785,
+    "timestamp": "2026-07-11T10:23:39.562Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765691423,
+    "timestamp": "2026-07-11T10:28:11.073Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765737727,
+    "timestamp": "2026-07-11T10:28:56.877Z",
+    "username": "manager12",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783765960137,
+    "timestamp": "2026-07-11T10:32:39.197Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783767827173,
+    "timestamp": "2026-07-11T11:03:46.601Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783767827397,
+    "timestamp": "2026-07-11T11:03:46.744Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783768144585,
+    "timestamp": "2026-07-11T11:09:04.351Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
   }
 ]

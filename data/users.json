@@ -79,5 +79,23 @@
     "store_id": 2,
     "mfa_enabled": false,
     "mfa_secret": null
+  },
+  {
+    "id": 10,
+    "username": "admin1",
+    "password": "$2a$10$aGxf.9Gt9RlFID7Q7l1WduQW.lhcm9COzrshSy2MyiiX15vCLx5ou",
+    "role": "IT Admin",
+    "store_id": null,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 11,
+    "username": "manager12",
+    "password": "$2a$10$Khy3GdIMMx9JDLmkjKYfE.BAGisE9o3g6RKc5HWro1kTG1lZCIJwO",
+    "role": "Store Manager",
+    "store_id": 17,
+    "mfa_enabled": false,
+    "mfa_secret": null
   }
 ]

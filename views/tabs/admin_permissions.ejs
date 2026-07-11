@@ -1,18 +1,141 @@
-      <!-- ================= TAB CONTENT: ADMIN PERMISSIONS ================= -->
-      <section id="tab-admin-permissions" class="tab-content">
-        <div class="filter-bar">
-          <h3 style="margin: 0; color: var(--primary-light);"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="admin_perms_title">Thiết lập Phân quyền (Vai trò x Quyền hạn)</span></h3>
-          <button id="btn-save-permissions" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="admin_perms_btn_save">Lưu Cấu Hình Phân Quyền</span></button>
-        </div>
-        <div class="table-card full-width" style="overflow-x: auto;">
-          <table class="data-table" id="admin-permissions-table">
-            <thead>
-              <tr id="permissions-table-header">
-                <th>Quyền Hạn / Vai trò</th>
-              </tr>
-            </thead>
-            <tbody id="permissions-table-body">
-            </tbody>
-          </table>
-        </div>
-      </section>
+<!-- ================= TAB CONTENT: ADMIN PERMISSIONS ================= -->
+<section id="tab-admin-permissions" class="tab-content">
+  <style>
+    .permissions-container {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      margin-top: 15px;
+    }
+    
+    .role-selector-panel {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .role-select-card {
+      padding: 14px 18px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .role-select-card:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+    
+    .role-select-card.active {
+      background: rgba(139, 92, 246, 0.15) !important;
+      border-color: var(--primary-color) !important;
+      color: var(--primary-light) !important;
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.1);
+    }
+
+    .permissions-settings-panel {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Toggle Switch Style */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: .3s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background: var(--primary-gradient);
+      box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    @media (max-width: 900px) {
+      .permissions-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <div class="filter-bar" style="margin-bottom: 20px;">
+    <h3 style="margin: 0; color: var(--primary-light);"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="admin_perms_title">Thiết lập Phân quyền (Vai trò x Quyền hạn)</span></h3>
+    <button id="btn-save-permissions" class="btn-primary" style="margin-left: auto; height: 42px;"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="admin_perms_btn_save">Lưu Cấu Hình Phân Quyền</span></button>
+  </div>
+
+  <div class="permissions-container">
+    <!-- Left: Role List Selection -->
+    <div class="role-selector-panel">
+      <h4 style="margin: 0 0 8px 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;" data-i18n="admin_perms_select_role">Chọn Vai trò</h4>
+      <div id="role-selector-list" style="display: flex; flex-direction: column; gap: 8px;">
+        <!-- Dynamically populated roles -->
+      </div>
+    </div>
+
+    <!-- Right: Permissions Grouped Toggles -->
+    <div class="permissions-settings-panel">
+      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 10px;">
+        <h4 style="margin: 0; font-size: 16px; color: var(--text-main); font-family: 'Outfit', sans-serif;">
+          <span data-i18n="admin_perms_editing_role">Quyền hạn của vai trò:</span> 
+          <span id="editing-role-badge" class="badge" style="font-size: 13px; padding: 6px 12px; margin-left: 8px; background: var(--primary-color);">Store Manager</span>
+        </h4>
+        <button id="btn-toggle-all-perms" class="btn-secondary" style="font-size: 12px; padding: 6px 12px;"><i class="fa-solid fa-square-check"></i> <span data-i18n="admin_perms_toggle_all">Chọn tất cả</span></button>
+      </div>
+      
+      <div id="permissions-groups-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+        <!-- Dynamically populated permission cards -->
+      </div>
+    </div>
+  </div>
+</section>
