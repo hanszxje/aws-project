@@ -2,7 +2,10 @@
   "IT Admin": [
     "manage_users",
     "manage_permissions",
-    "view_audit_logs"
+    "view_audit_logs",
+    "view_inventory",
+    "manage_inventory",
+    "create_transaction"
   ],
   "Director": [
     "view_dashboard",
@@ -22,17 +25,21 @@
   "Finance/Auditor": [
     "view_all_stores",
     "view_discounts",
-    "view_transactions"
+    "view_transactions",
+    "view_inventory"
   ],
   "Inventory Manager": [
     "view_own_store",
     "view_products",
-    "edit_products"
+    "edit_products",
+    "view_inventory",
+    "manage_inventory"
   ],
   "Marketing Manager": [
     "view_all_stores",
     "view_discounts",
-    "edit_discounts"
+    "edit_discounts",
+    "view_inventory"
   ],
   "Store Manager": [
     "view_dashboard",
@@ -46,7 +53,9 @@
     "view_products",
     "edit_products",
     "view_transactions",
-    "view_inventory"
+    "view_inventory",
+    "manage_inventory",
+    "create_transaction"
   ],
   "Sales Staff": [
     "view_own_store",
@@ -54,6 +63,7 @@
     "create_customer",
     "view_products",
     "view_transactions",
-    "view_inventory"
+    "view_inventory",
+    "create_transaction"
   ]
 }
