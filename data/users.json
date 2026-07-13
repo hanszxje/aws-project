@@ -9,15 +9,6 @@
     "mfa_secret": null
   },
   {
-    "id": 2,
-    "username": "director",
-    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
-    "role": "Director",
-    "store_id": null,
-    "mfa_enabled": false,
-    "mfa_secret": null
-  },
-  {
     "id": 3,
     "username": "finance",
     "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
@@ -95,6 +86,591 @@
     "password": "$2a$10$Khy3GdIMMx9JDLmkjKYfE.BAGisE9o3g6RKc5HWro1kTG1lZCIJwO",
     "role": "Store Manager",
     "store_id": 17,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 13,
+    "username": "manager3",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 3,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 14,
+    "username": "sales4",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 4,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 15,
+    "username": "manager4",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 4,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 16,
+    "username": "sales5",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 5,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 17,
+    "username": "manager5",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 5,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 19,
+    "username": "sales10",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 10,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 20,
+    "username": "manager10",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 10,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 21,
+    "username": "sales11",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 11,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 22,
+    "username": "manager11",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 11,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 23,
+    "username": "sales12",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 12,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 24,
+    "username": "sales13",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 13,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 25,
+    "username": "manager13",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 13,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 26,
+    "username": "sales14",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 14,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 27,
+    "username": "manager14",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 14,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 28,
+    "username": "sales15",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 15,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 29,
+    "username": "manager15",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 15,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 30,
+    "username": "sales16",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 16,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 31,
+    "username": "manager16",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 16,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 32,
+    "username": "sales17",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 17,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 33,
+    "username": "manager17",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 17,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 34,
+    "username": "sales18",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 18,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 35,
+    "username": "manager18",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 18,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 36,
+    "username": "sales19",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 19,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 37,
+    "username": "manager19",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 19,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 38,
+    "username": "sales20",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 20,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 39,
+    "username": "manager20",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 20,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 40,
+    "username": "sales21",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 21,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 41,
+    "username": "manager21",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 21,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 42,
+    "username": "sales22",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 22,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 43,
+    "username": "manager22",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 22,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 44,
+    "username": "sales23",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 23,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 45,
+    "username": "manager23",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 23,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 46,
+    "username": "sales24",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 24,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 47,
+    "username": "manager24",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 24,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 48,
+    "username": "sales25",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 25,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 49,
+    "username": "manager25",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 25,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 50,
+    "username": "sales26",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 26,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 51,
+    "username": "manager26",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 26,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 52,
+    "username": "sales27",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 27,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 53,
+    "username": "manager27",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 27,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 54,
+    "username": "sales28",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 28,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 55,
+    "username": "manager28",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 28,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 56,
+    "username": "sales29",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 29,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 57,
+    "username": "manager29",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 29,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 58,
+    "username": "sales3",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 3,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 59,
+    "username": "sales30",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 30,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 60,
+    "username": "manager30",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 30,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 61,
+    "username": "sales31",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 31,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 62,
+    "username": "manager31",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 31,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 63,
+    "username": "sales32",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 32,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 64,
+    "username": "manager32",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 32,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 65,
+    "username": "sales33",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 33,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 66,
+    "username": "manager33",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 33,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 67,
+    "username": "sales34",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 34,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 68,
+    "username": "manager34",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 34,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 69,
+    "username": "sales35",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 35,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 70,
+    "username": "manager35",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 35,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 71,
+    "username": "manager6",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 6,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 72,
+    "username": "sales7",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 7,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 73,
+    "username": "manager7",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 7,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 74,
+    "username": "sales8",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 8,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 75,
+    "username": "manager8",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 8,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 76,
+    "username": "sales9",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 9,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 77,
+    "username": "manager9",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Store Manager",
+    "store_id": 9,
+    "mfa_enabled": false,
+    "mfa_secret": null
+  },
+  {
+    "id": 78,
+    "username": "sales6",
+    "password": "$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui",
+    "role": "Sales Staff",
+    "store_id": 1,
     "mfa_enabled": false,
     "mfa_secret": null
   }

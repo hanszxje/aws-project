@@ -7,7 +7,7 @@
   {
     "store_id": 1,
     "sku": "CHAC10010--",
-    "stock_quantity": 31
+    "stock_quantity": 30
   },
   {
     "store_id": 1,
@@ -33,21 +33,6 @@
     "store_id": 2,
     "sku": "CHAC1783682556410--",
     "stock_quantity": 55
-  },
-  {
-    "store_id": 1,
-    "sku": "CHAC100--",
-    "stock_quantity": 4
-  },
-  {
-    "store_id": 1,
-    "sku": "MAAC10000--",
-    "stock_quantity": 5
-  },
-  {
-    "store_id": 1,
-    "sku": "MAAC10001--",
-    "stock_quantity": 2
   },
   {
     "store_id": 1,
@@ -516,21 +501,6 @@
   },
   {
     "store_id": 2,
-    "sku": "CHAC100--",
-    "stock_quantity": 3
-  },
-  {
-    "store_id": 2,
-    "sku": "MAAC10000--",
-    "stock_quantity": 10
-  },
-  {
-    "store_id": 2,
-    "sku": "MAAC10001--",
-    "stock_quantity": 3
-  },
-  {
-    "store_id": 2,
     "sku": "MAAC10002--",
     "stock_quantity": 7
   },
@@ -993,21 +963,6 @@
     "store_id": 2,
     "sku": "CHAC10087--",
     "stock_quantity": 9
-  },
-  {
-    "store_id": 3,
-    "sku": "CHAC100--",
-    "stock_quantity": 6
-  },
-  {
-    "store_id": 3,
-    "sku": "MAAC10000--",
-    "stock_quantity": 5
-  },
-  {
-    "store_id": 3,
-    "sku": "MAAC10001--",
-    "stock_quantity": 4
   },
   {
     "store_id": 3,
@@ -1481,21 +1436,6 @@
   },
   {
     "store_id": 4,
-    "sku": "CHAC100--",
-    "stock_quantity": 3
-  },
-  {
-    "store_id": 4,
-    "sku": "MAAC10000--",
-    "stock_quantity": 3
-  },
-  {
-    "store_id": 4,
-    "sku": "MAAC10001--",
-    "stock_quantity": 10
-  },
-  {
-    "store_id": 4,
     "sku": "MAAC10002--",
     "stock_quantity": 5
   },
@@ -1958,21 +1898,6 @@
     "store_id": 4,
     "sku": "CHAC10087--",
     "stock_quantity": 5
-  },
-  {
-    "store_id": 5,
-    "sku": "CHAC100--",
-    "stock_quantity": 10
-  },
-  {
-    "store_id": 5,
-    "sku": "MAAC10000--",
-    "stock_quantity": 4
-  },
-  {
-    "store_id": 5,
-    "sku": "MAAC10001--",
-    "stock_quantity": 4
   },
   {
     "store_id": 5,
@@ -2793,5 +2718,540 @@
     "store_id": 35,
     "sku": "MAAC1783711113564--",
     "stock_quantity": 0
+  },
+  {
+    "store_id": 1,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 2,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 3,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 4,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 5,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 6,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 7,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 8,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 9,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 10,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 11,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 12,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 13,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 14,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 15,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 16,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 17,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 18,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 19,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 20,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 21,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 22,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 23,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 24,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 25,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 26,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 27,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 28,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 29,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 30,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 31,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 32,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 33,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 34,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 35,
+    "sku": "CHAC1783872681672--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 1,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 2,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 3,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 4,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 5,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 6,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 7,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 8,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 9,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 10,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 11,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 12,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 13,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 14,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 15,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 16,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 17,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 18,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 19,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 20,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 21,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 22,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 23,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 24,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 25,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 26,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 27,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 28,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 29,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 30,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 31,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 32,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 33,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 34,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 35,
+    "sku": "MAAC1783882039747--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 1,
+    "sku": "FEAC10010--",
+    "stock_quantity": 196
+  },
+  {
+    "store_id": 1,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 5
+  },
+  {
+    "store_id": 2,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 3,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 4,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 5,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 6,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 7,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 8,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 9,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 10,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 11,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 12,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 13,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 14,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 15,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 16,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 17,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 18,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 19,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 20,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 21,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 22,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 23,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 24,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 25,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 26,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 27,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 28,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 29,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 30,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 31,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 32,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 33,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 34,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 35,
+    "sku": "MAAC1783931420516--",
+    "stock_quantity": 0
+  },
+  {
+    "store_id": 1,
+    "sku": "MAAC1--",
+    "stock_quantity": 99
   }
 ]

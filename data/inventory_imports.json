@@ -4486,5 +4486,53 @@
     "quantity": 2,
     "import_date": "2026-07-10T19:13:54.237Z",
     "supplier": "a"
+  },
+  {
+    "import_id": 548,
+    "store_id": 1,
+    "sku": "FEAC10010--",
+    "quantity": 50,
+    "import_date": "2026-07-12T18:52:53.161Z",
+    "supplier": "Supplier CRUD Test"
+  },
+  {
+    "import_id": 549,
+    "store_id": 1,
+    "sku": "FEAC10010--",
+    "quantity": 50,
+    "import_date": "2026-07-12T19:32:49.041Z",
+    "supplier": "Supplier CRUD Test"
+  },
+  {
+    "import_id": 550,
+    "store_id": 1,
+    "sku": "MAAC1000--",
+    "quantity": 5,
+    "import_date": "2026-07-12T19:35:08.584Z",
+    "supplier": "1"
+  },
+  {
+    "import_id": 551,
+    "store_id": 1,
+    "sku": "FEAC10010--",
+    "quantity": 50,
+    "import_date": "2026-07-13T08:24:54.299Z",
+    "supplier": "Supplier CRUD Test"
+  },
+  {
+    "import_id": 552,
+    "store_id": 1,
+    "sku": "MAAC1783931420516--",
+    "quantity": 6,
+    "import_date": "2026-07-13T08:31:36.817Z",
+    "supplier": "x"
+  },
+  {
+    "import_id": 553,
+    "store_id": 1,
+    "sku": "FEAC10010--",
+    "quantity": 50,
+    "import_date": "2026-07-13T09:27:55.587Z",
+    "supplier": "Supplier CRUD Test"
   }
 ]

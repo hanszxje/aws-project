@@ -78,5 +78,35 @@
     "color_type": "Cor Unica",
     "description_en": "Ao khoac gio nam 2026",
     "image_url": "https://picsum.photos/seed/1783711113564/300/300"
+  },
+  {
+    "product_id": 1783872681672,
+    "sku": "CHAC1783872681672--",
+    "product_name": "quan tay nam",
+    "category": "Children",
+    "sub_category": "1",
+    "color_type": "Cor Unica",
+    "description_en": "quan tay nam",
+    "image_url": "https://picsum.photos/seed/1783872681672/300/300"
+  },
+  {
+    "product_id": 1783882039747,
+    "sku": "MAAC1783882039747--",
+    "product_name": "Test Product CRUD",
+    "category": "Masculine",
+    "sub_category": "T-Shirts",
+    "color_type": "Cor Unica",
+    "description_en": "Test Product CRUD",
+    "image_url": "https://picsum.photos/seed/1783882039747/300/300"
+  },
+  {
+    "product_id": 1783931420516,
+    "sku": "MAAC1783931420516--",
+    "product_name": "ao dep",
+    "category": "Masculine",
+    "sub_category": "ao dep",
+    "color_type": "black",
+    "description_en": "1",
+    "image_url": "https://picsum.photos/seed/1783931420516/300/300"
   }
 ]

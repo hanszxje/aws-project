@@ -1708,5 +1708,1670 @@
     "action": "EMPLOYEE_CREATE",
     "details": "Thêm nhân sự mới: HUY MANH (Store: 1, Vai trò: Store Manager)",
     "ip": "::1"
+  },
+  {
+    "id": 1783871262796,
+    "timestamp": "2026-07-12T15:47:42.054Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783871938523,
+    "timestamp": "2026-07-12T15:58:58.389Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783871955620,
+    "timestamp": "2026-07-12T15:59:14.828Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783872278314,
+    "timestamp": "2026-07-12T16:04:38.311Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783872668647,
+    "timestamp": "2026-07-12T16:11:07.889Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783872682194,
+    "timestamp": "2026-07-12T16:11:21.268Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: quan tay nam (#ID: 1783872681672)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882024468,
+    "timestamp": "2026-07-12T18:47:04.191Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882025354,
+    "timestamp": "2026-07-12T18:47:04.485Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: Test Customer CRUD (#ID: 1783882024925)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882032107,
+    "timestamp": "2026-07-12T18:47:11.137Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_DELETE",
+    "details": "Xóa khách hàng #ID: 1783882024925",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882031733,
+    "timestamp": "2026-07-12T18:47:11.269Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_CREATE",
+    "details": "Tạo khuyến mãi mới: Khuyến mãi mùa hè 2026 (Store: 1, Chiết khấu: 15%)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882031642,
+    "timestamp": "2026-07-12T18:47:11.312Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 1783882031668 thành 25%",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882031549,
+    "timestamp": "2026-07-12T18:47:11.356Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_DELETE",
+    "details": "Xóa khuyến mãi #ID: 1783882031668",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882031864,
+    "timestamp": "2026-07-12T18:47:11.490Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: Test Employee CRUD (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882031638,
+    "timestamp": "2026-07-12T18:47:11.535Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 1783882031458 (Tên: Test Employee CRUD Updated, Chức vụ: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882039246,
+    "timestamp": "2026-07-12T18:47:18.742Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1783882031458",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882039249,
+    "timestamp": "2026-07-12T18:47:18.917Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Test Product CRUD (#ID: 1783882039747)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882340649,
+    "timestamp": "2026-07-12T18:52:20.377Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882341505,
+    "timestamp": "2026-07-12T18:52:20.648Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: Test Customer CRUD (#ID: 1783882341045)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882347804,
+    "timestamp": "2026-07-12T18:52:27.286Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_DELETE",
+    "details": "Xóa khách hàng #ID: 1783882341045",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882347601,
+    "timestamp": "2026-07-12T18:52:27.406Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_CREATE",
+    "details": "Tạo khuyến mãi mới: Khuyến mãi mùa hè 2026 (Store: 1, Chiết khấu: 15%)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882348022,
+    "timestamp": "2026-07-12T18:52:27.451Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 1783882347448 thành 25%",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882348439,
+    "timestamp": "2026-07-12T18:52:27.494Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_DELETE",
+    "details": "Xóa khuyến mãi #ID: 1783882347448",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882348446,
+    "timestamp": "2026-07-12T18:52:27.628Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: Test Employee CRUD (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882348421,
+    "timestamp": "2026-07-12T18:52:27.669Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 1783882348365 (Tên: Test Employee CRUD Updated, Chức vụ: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882355194,
+    "timestamp": "2026-07-12T18:52:34.880Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1783882348365",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882355737,
+    "timestamp": "2026-07-12T18:52:35.045Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Test Product CRUD (#ID: 1783882355198)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882355885,
+    "timestamp": "2026-07-12T18:52:35.101Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 1783882355198 (Tên: Test Product CRUD Updated)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882363442,
+    "timestamp": "2026-07-12T18:52:42.498Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783882355198",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882373503,
+    "timestamp": "2026-07-12T18:52:53.163Z",
+    "username": "director",
+    "role": "Director",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU FEAC10010--, Số lượng: 50, Nhà CC: Supplier CRUD Test",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882381492,
+    "timestamp": "2026-07-12T18:53:00.533Z",
+    "username": "director",
+    "role": "Director",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882381336,
+    "timestamp": "2026-07-12T18:53:00.590Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882380878,
+    "timestamp": "2026-07-12T18:53:00.738Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_CREATE",
+    "details": "Tạo tài khoản mới: test_admin_user_crud (Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882381342,
+    "timestamp": "2026-07-12T18:53:00.746Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_UPDATE",
+    "details": "Cập nhật tài khoản #ID: 12 (Vai trò mới: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882381399,
+    "timestamp": "2026-07-12T18:53:00.756Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_MFA_RESET",
+    "details": "Reset MFA của tài khoản #ID: 12",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882380899,
+    "timestamp": "2026-07-12T18:53:00.766Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_DELETE",
+    "details": "Xóa tài khoản #ID: 12",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882381527,
+    "timestamp": "2026-07-12T18:53:00.778Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783882380793,
+    "timestamp": "2026-07-12T18:53:00.786Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783883349947,
+    "timestamp": "2026-07-12T19:09:09.473Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1783874206252",
+    "ip": "::1"
+  },
+  {
+    "id": 1783883354488,
+    "timestamp": "2026-07-12T19:09:14.334Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1783873699571",
+    "ip": "::1"
+  },
+  {
+    "id": 1783883457298,
+    "timestamp": "2026-07-12T19:10:56.926Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: a (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783883469975,
+    "timestamp": "2026-07-12T19:11:09.923Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1783883457253",
+    "ip": "::1"
+  },
+  {
+    "id": 1783883488955,
+    "timestamp": "2026-07-12T19:11:28.367Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: b (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783883501492,
+    "timestamp": "2026-07-12T19:11:40.563Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1783883488714",
+    "ip": "::1"
+  },
+  {
+    "id": 1783883942785,
+    "timestamp": "2026-07-12T19:19:02.006Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: kkk (#ID: 1783883942185)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884354383,
+    "timestamp": "2026-07-12T19:25:53.458Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783883942185",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884354526,
+    "timestamp": "2026-07-12T19:25:54.118Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783883942185",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884369654,
+    "timestamp": "2026-07-12T19:26:09.007Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: jjj (#ID: 1783884369718)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884398912,
+    "timestamp": "2026-07-12T19:26:38.324Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 1783884369718 (Tên: jjj)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884428340,
+    "timestamp": "2026-07-12T19:27:07.796Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783884369718",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884636974,
+    "timestamp": "2026-07-12T19:30:36.003Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884637037,
+    "timestamp": "2026-07-12T19:30:36.201Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 100 (Tên: Classic Gold Suede With Buttons Updated)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884726809,
+    "timestamp": "2026-07-12T19:32:05.930Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884726853,
+    "timestamp": "2026-07-12T19:32:06.129Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 100 (Tên: Classic Gold Suede With Buttons Updated)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884736151,
+    "timestamp": "2026-07-12T19:32:15.280Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884735852,
+    "timestamp": "2026-07-12T19:32:15.674Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: Test Customer CRUD (#ID: 1783884736305)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884743120,
+    "timestamp": "2026-07-12T19:32:22.290Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_DELETE",
+    "details": "Xóa khách hàng #ID: 1783884736305",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884742632,
+    "timestamp": "2026-07-12T19:32:22.427Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_CREATE",
+    "details": "Tạo khuyến mãi mới: Khuyến mãi mùa hè 2026 (Store: 1, Chiết khấu: 15%)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884743343,
+    "timestamp": "2026-07-12T19:32:22.476Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 1783884743198 thành 25%",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884742986,
+    "timestamp": "2026-07-12T19:32:22.524Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_DELETE",
+    "details": "Xóa khuyến mãi #ID: 1783884743198",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884743070,
+    "timestamp": "2026-07-12T19:32:22.670Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: Test Employee CRUD (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884743371,
+    "timestamp": "2026-07-12T19:32:22.718Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 1783884743134 (Tên: Test Employee CRUD Updated, Chức vụ: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884750142,
+    "timestamp": "2026-07-12T19:32:29.855Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1783884743134",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884750048,
+    "timestamp": "2026-07-12T19:32:30.039Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Test Product CRUD (#ID: 1783884750227)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884750817,
+    "timestamp": "2026-07-12T19:32:30.085Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 1783884750227 (Tên: Test Product CRUD Updated)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884757550,
+    "timestamp": "2026-07-12T19:32:37.538Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783884750227",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884769657,
+    "timestamp": "2026-07-12T19:32:49.042Z",
+    "username": "director",
+    "role": "Director",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU FEAC10010--, Số lượng: 50, Nhà CC: Supplier CRUD Test",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884777065,
+    "timestamp": "2026-07-12T19:32:56.242Z",
+    "username": "director",
+    "role": "Director",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884776338,
+    "timestamp": "2026-07-12T19:32:56.290Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884776674,
+    "timestamp": "2026-07-12T19:32:56.434Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_CREATE",
+    "details": "Tạo tài khoản mới: test_admin_user_crud (Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884777314,
+    "timestamp": "2026-07-12T19:32:56.446Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_UPDATE",
+    "details": "Cập nhật tài khoản #ID: 12 (Vai trò mới: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884777282,
+    "timestamp": "2026-07-12T19:32:56.459Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_MFA_RESET",
+    "details": "Reset MFA của tài khoản #ID: 12",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884776665,
+    "timestamp": "2026-07-12T19:32:56.472Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_DELETE",
+    "details": "Xóa tài khoản #ID: 12",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884776912,
+    "timestamp": "2026-07-12T19:32:56.485Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884776770,
+    "timestamp": "2026-07-12T19:32:56.492Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884834389,
+    "timestamp": "2026-07-12T19:33:53.652Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: b (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884844435,
+    "timestamp": "2026-07-12T19:34:03.961Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1783884833951",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884861455,
+    "timestamp": "2026-07-12T19:34:20.837Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 100 (Tên: Classic Gold Suede With Buttons)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884868761,
+    "timestamp": "2026-07-12T19:34:27.939Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 100 (Tên: Classic Gold Suede With Buttons)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884876542,
+    "timestamp": "2026-07-12T19:34:36.259Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 100 (Tên: Classic Gold Suede With Buttons)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884909547,
+    "timestamp": "2026-07-12T19:35:08.588Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU MAAC1000--, Số lượng: 5, Nhà CC: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884932931,
+    "timestamp": "2026-07-12T19:35:32.335Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1000",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884943302,
+    "timestamp": "2026-07-12T19:35:43.275Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1000",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884955376,
+    "timestamp": "2026-07-12T19:35:55.030Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1000",
+    "ip": "::1"
+  },
+  {
+    "id": 1783884961064,
+    "timestamp": "2026-07-12T19:36:00.827Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 10000",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885004065,
+    "timestamp": "2026-07-12T19:36:43.213Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885003674,
+    "timestamp": "2026-07-12T19:36:43.266Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Temp Del Product (#ID: 1783885003961)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885010838,
+    "timestamp": "2026-07-12T19:36:49.872Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783885003961",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885466510,
+    "timestamp": "2026-07-12T19:44:25.945Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1000",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885473638,
+    "timestamp": "2026-07-12T19:44:33.422Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 10001",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885485566,
+    "timestamp": "2026-07-12T19:44:45.077Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 100",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885817321,
+    "timestamp": "2026-07-12T19:50:17.105Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885817919,
+    "timestamp": "2026-07-12T19:50:17.195Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885818412,
+    "timestamp": "2026-07-12T19:50:17.521Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885855594,
+    "timestamp": "2026-07-12T19:50:54.906Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885855057,
+    "timestamp": "2026-07-12T19:50:54.980Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Ngưng hoạt động nhân sự #ID: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783885855806,
+    "timestamp": "2026-07-12T19:50:55.195Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_DELETE",
+    "details": "Ngừng kinh doanh sản phẩm #ID: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783886484474,
+    "timestamp": "2026-07-12T20:01:23.806Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Ngưng hoạt động nhân sự #ID: 11",
+    "ip": "::1"
+  },
+  {
+    "id": 1783886490843,
+    "timestamp": "2026-07-12T20:01:29.930Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Ngưng hoạt động nhân sự #ID: 12",
+    "ip": "::1"
+  },
+  {
+    "id": 1783887003066,
+    "timestamp": "2026-07-12T20:10:02.461Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Ngừng kinh doanh sản phẩm #ID: 1000",
+    "ip": "::1"
+  },
+  {
+    "id": 1783887012923,
+    "timestamp": "2026-07-12T20:10:12.014Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Ngừng kinh doanh sản phẩm #ID: 10000",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931045680,
+    "timestamp": "2026-07-13T08:24:05.140Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931046183,
+    "timestamp": "2026-07-13T08:24:05.191Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: sales6 (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931045914,
+    "timestamp": "2026-07-13T08:24:05.210Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 12 (Tên: sales6updated, Chức vụ: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931045406,
+    "timestamp": "2026-07-13T08:24:05.229Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 12",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931064342,
+    "timestamp": "2026-07-13T08:24:24.165Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931065459,
+    "timestamp": "2026-07-13T08:24:24.493Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: Test Customer CRUD (#ID: 1783931064895)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931071405,
+    "timestamp": "2026-07-13T08:24:31.145Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_DELETE",
+    "details": "Xóa khách hàng #ID: 1783931064895",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931071945,
+    "timestamp": "2026-07-13T08:24:31.293Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_CREATE",
+    "details": "Tạo khuyến mãi mới: Khuyến mãi mùa hè 2026 (Store: 1, Chiết khấu: 15%)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931071705,
+    "timestamp": "2026-07-13T08:24:31.347Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 1783931072090 thành 25%",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931071751,
+    "timestamp": "2026-07-13T08:24:31.396Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_DELETE",
+    "details": "Xóa khuyến mãi #ID: 1783931072090",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931071591,
+    "timestamp": "2026-07-13T08:24:31.420Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: Test Employee CRUD (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931071801,
+    "timestamp": "2026-07-13T08:24:31.436Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 19 (Tên: Test Employee CRUD Updated, Chức vụ: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931071926,
+    "timestamp": "2026-07-13T08:24:31.449Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 19",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931072036,
+    "timestamp": "2026-07-13T08:24:31.607Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Test Product CRUD (#ID: 1783931072513)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931071908,
+    "timestamp": "2026-07-13T08:24:31.659Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 1783931072513 (Tên: Test Product CRUD Updated)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931079945,
+    "timestamp": "2026-07-13T08:24:39.243Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783931072513",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931094829,
+    "timestamp": "2026-07-13T08:24:54.302Z",
+    "username": "director",
+    "role": "Director",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU FEAC10010--, Số lượng: 50, Nhà CC: Supplier CRUD Test",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931101986,
+    "timestamp": "2026-07-13T08:25:01.607Z",
+    "username": "director",
+    "role": "Director",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931101936,
+    "timestamp": "2026-07-13T08:25:01.655Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931102082,
+    "timestamp": "2026-07-13T08:25:01.815Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_CREATE",
+    "details": "Tạo tài khoản mới: test_admin_user_crud (Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931102748,
+    "timestamp": "2026-07-13T08:25:01.830Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_UPDATE",
+    "details": "Cập nhật tài khoản #ID: 19 (Vai trò mới: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931102089,
+    "timestamp": "2026-07-13T08:25:01.839Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_MFA_RESET",
+    "details": "Reset MFA của tài khoản #ID: 19",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931101973,
+    "timestamp": "2026-07-13T08:25:01.853Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_DELETE",
+    "details": "Xóa tài khoản #ID: 19",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931102464,
+    "timestamp": "2026-07-13T08:25:01.870Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931102762,
+    "timestamp": "2026-07-13T08:25:01.881Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931309422,
+    "timestamp": "2026-07-13T08:28:29.137Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931319129,
+    "timestamp": "2026-07-13T08:28:38.613Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 2",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931337856,
+    "timestamp": "2026-07-13T08:28:57.060Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "DISCOUNT_DELETE",
+    "details": "Xóa khuyến mãi #ID: 177",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931344192,
+    "timestamp": "2026-07-13T08:29:04.136Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 1783681539556 thành 70%",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931360246,
+    "timestamp": "2026-07-13T08:29:19.636Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "DISCOUNT_CREATE",
+    "details": "Tạo khuyến mãi mới: 1 (Store: 1, Chiết khấu: 18%)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931364490,
+    "timestamp": "2026-07-13T08:29:23.671Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "DISCOUNT_DELETE",
+    "details": "Xóa khuyến mãi #ID: 1783931359990",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931376796,
+    "timestamp": "2026-07-13T08:29:36.282Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_DELETE",
+    "details": "Ngừng kinh doanh sản phẩm #ID: 10001",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931421182,
+    "timestamp": "2026-07-13T08:30:20.415Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: ao dep (#ID: 1783931420516)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931496940,
+    "timestamp": "2026-07-13T08:31:36.821Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU MAAC1783931420516--, Số lượng: 6, Nhà CC: x",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931511191,
+    "timestamp": "2026-07-13T08:31:51.076Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: b (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931524349,
+    "timestamp": "2026-07-13T08:32:04.056Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 19 (Tên: sales5, Chức vụ: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931527122,
+    "timestamp": "2026-07-13T08:32:06.963Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 19",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931568348,
+    "timestamp": "2026-07-13T08:32:47.851Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931604245,
+    "timestamp": "2026-07-13T08:33:24.018Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1000405, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931752353,
+    "timestamp": "2026-07-13T08:35:52.147Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783931752741,
+    "timestamp": "2026-07-13T08:35:52.552Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783933769309,
+    "timestamp": "2026-07-13T09:09:28.336Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: Quang Tung (#ID: 1783933769030)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783933795071,
+    "timestamp": "2026-07-13T09:09:54.752Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783933810924,
+    "timestamp": "2026-07-13T09:10:10.764Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783933821475,
+    "timestamp": "2026-07-13T09:10:21.304Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783933821744,
+    "timestamp": "2026-07-13T09:10:21.343Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934367215,
+    "timestamp": "2026-07-13T09:19:27.042Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934575803,
+    "timestamp": "2026-07-13T09:22:55.246Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934575620,
+    "timestamp": "2026-07-13T09:22:55.273Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: sales6 (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934602847,
+    "timestamp": "2026-07-13T09:23:22.656Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934647091,
+    "timestamp": "2026-07-13T09:24:07.044Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 18",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934658737,
+    "timestamp": "2026-07-13T09:24:18.317Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934781708,
+    "timestamp": "2026-07-13T09:26:21.328Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934801997,
+    "timestamp": "2026-07-13T09:26:41.056Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934836819,
+    "timestamp": "2026-07-13T09:27:16.199Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934837213,
+    "timestamp": "2026-07-13T09:27:16.222Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934836458,
+    "timestamp": "2026-07-13T09:27:16.241Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934849620,
+    "timestamp": "2026-07-13T09:27:28.805Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934850071,
+    "timestamp": "2026-07-13T09:27:29.118Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: Test Customer CRUD (#ID: 1783934849515)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856261,
+    "timestamp": "2026-07-13T09:27:35.663Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_DELETE",
+    "details": "Xóa khách hàng #ID: 1783934849515",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856627,
+    "timestamp": "2026-07-13T09:27:35.810Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_CREATE",
+    "details": "Tạo khuyến mãi mới: Khuyến mãi mùa hè 2026 (Store: 1, Chiết khấu: 15%)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856803,
+    "timestamp": "2026-07-13T09:27:35.861Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 1783934856105 thành 25%",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856161,
+    "timestamp": "2026-07-13T09:27:35.916Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_DELETE",
+    "details": "Xóa khuyến mãi #ID: 1783934856105",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856434,
+    "timestamp": "2026-07-13T09:27:35.941Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: Test Employee CRUD (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856408,
+    "timestamp": "2026-07-13T09:27:35.955Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 79 (Tên: Test Employee CRUD Updated, Chức vụ: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856581,
+    "timestamp": "2026-07-13T09:27:35.966Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 79",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856960,
+    "timestamp": "2026-07-13T09:27:36.115Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Test Product CRUD (#ID: 1783934856416)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934856289,
+    "timestamp": "2026-07-13T09:27:36.165Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 1783934856416 (Tên: Test Product CRUD Updated)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934863852,
+    "timestamp": "2026-07-13T09:27:43.271Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783934856416",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934875756,
+    "timestamp": "2026-07-13T09:27:55.589Z",
+    "username": "director",
+    "role": "Director",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU FEAC10010--, Số lượng: 50, Nhà CC: Supplier CRUD Test",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934884613,
+    "timestamp": "2026-07-13T09:28:03.682Z",
+    "username": "director",
+    "role": "Director",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934883908,
+    "timestamp": "2026-07-13T09:28:03.729Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934884724,
+    "timestamp": "2026-07-13T09:28:03.916Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_CREATE",
+    "details": "Tạo tài khoản mới: test_admin_user_crud (Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934884866,
+    "timestamp": "2026-07-13T09:28:03.935Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_UPDATE",
+    "details": "Cập nhật tài khoản #ID: 79 (Vai trò mới: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934884943,
+    "timestamp": "2026-07-13T09:28:03.951Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_MFA_RESET",
+    "details": "Reset MFA của tài khoản #ID: 79",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934884443,
+    "timestamp": "2026-07-13T09:28:03.968Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_DELETE",
+    "details": "Xóa tài khoản #ID: 79",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934884742,
+    "timestamp": "2026-07-13T09:28:03.988Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783934884169,
+    "timestamp": "2026-07-13T09:28:04.000Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783935152944,
+    "timestamp": "2026-07-13T09:32:32.089Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783935186718,
+    "timestamp": "2026-07-13T09:33:05.746Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783935195951,
+    "timestamp": "2026-07-13T09:33:15.375Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783935195833,
+    "timestamp": "2026-07-13T09:33:15.388Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783935228821,
+    "timestamp": "2026-07-13T09:33:48.765Z",
+    "username": "sales1",
+    "role": "Sales Staff",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #100030, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783935254535,
+    "timestamp": "2026-07-13T09:34:14.107Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783935281627,
+    "timestamp": "2026-07-13T09:34:40.819Z",
+    "username": "manager1",
+    "role": "Store Manager",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 100 (Tên: Classic Gold Suede With Buttons)",
+    "ip": "::1"
   }
 ]

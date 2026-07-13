@@ -136,7 +136,12 @@ router.delete('/customers/:id', authenticateToken, authorizePermission('delete_c
     }
   } catch (err) {
     console.error('Error deleting customer:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = err.statusCode || 500;
+    let msg = err.detail || err.message || 'Internal server error';
+    if (msg.includes('referenced from table "transactions"')) {
+      msg = 'Không thể xóa khách hàng này vì đã có lịch sử giao dịch mua hàng liên kết với họ.';
+    }
+    res.status(status).json({ message: msg });
   }
 });
 
@@ -266,7 +271,9 @@ router.delete('/discounts/:id', authenticateToken, authorizePermission('edit_dis
     }
   } catch (err) {
     console.error('Error deleting discount:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = err.statusCode || 500;
+    const msg = err.detail || err.message || 'Internal server error';
+    res.status(status).json({ message: msg });
   }
 });
 
@@ -386,16 +393,21 @@ router.delete('/employees/:id', authenticateToken, authorizePermission('edit_emp
         username: req.user.username,
         role: req.user.role,
         action: 'EMPLOYEE_DELETE',
-        details: `Xóa nhân sự #ID: ${employeeId}`,
+        details: success.softDeleted ? `Ngưng hoạt động nhân sự #ID: ${employeeId}` : `Xóa nhân sự #ID: ${employeeId}`,
         ip: req.ip || '127.0.0.1'
       });
-      res.json({ message: 'Đã xóa nhân viên thành công!' });
+      res.json({ message: success.softDeleted ? 'Đã ngưng hoạt động nhân viên này thành công để bảo toàn lịch sử bán hàng!' : 'Đã xóa nhân viên thành công!' });
     } else {
       res.status(404).json({ message: 'Không tìm thấy nhân viên' });
     }
   } catch (err) {
     console.error('Error deleting employee:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = err.statusCode || 500;
+    let msg = err.detail || err.message || 'Internal server error';
+    if (msg.includes('referenced from table "transactions"')) {
+      msg = 'Không thể xóa nhân viên này vì đã có lịch sử giao dịch bán hàng liên kết với họ.';
+    }
+    res.status(status).json({ message: msg });
   }
 });
 
@@ -441,7 +453,9 @@ router.post('/products', authenticateToken, authorizePermission('edit_products')
     res.status(201).json({ message: 'Thêm sản phẩm mới thành công!', product: newProduct });
   } catch (err) {
     console.error('Error creating product:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = err.statusCode || 500;
+    const msg = err.detail || err.message || 'Internal server error';
+    res.status(status).json({ message: msg });
   }
 });
 
@@ -470,7 +484,9 @@ router.put('/products/:id', authenticateToken, authorizePermission('edit_product
     }
   } catch (err) {
     console.error('Error updating product:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = err.statusCode || 500;
+    const msg = err.detail || err.message || 'Internal server error';
+    res.status(status).json({ message: msg });
   }
 });
 
@@ -484,16 +500,25 @@ router.delete('/products/:id', authenticateToken, authorizePermission('edit_prod
         username: req.user.username,
         role: req.user.role,
         action: 'PRODUCT_DELETE',
-        details: `Xóa sản phẩm #ID: ${productId}`,
+        details: success.softDeleted ? `Ngừng kinh doanh sản phẩm #ID: ${productId}` : `Xóa sản phẩm #ID: ${productId}`,
         ip: req.ip || '127.0.0.1'
       });
-      res.json({ message: 'Đã xóa sản phẩm thành công!' });
+      res.json({ message: success.softDeleted ? 'Đã ngừng kinh doanh và ẩn sản phẩm này thành công để bảo toàn lịch sử đơn hàng!' : 'Đã xóa sản phẩm thành công!' });
     } else {
       res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
     }
   } catch (err) {
     console.error('Error deleting product:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    const status = err.statusCode || 500;
+    let msg = err.detail || err.message || 'Internal server error';
+    if (msg.includes('referenced from table "transactions"')) {
+      msg = 'Không thể xóa sản phẩm này vì đã có lịch sử giao dịch mua bán liên kết với sản phẩm.';
+    } else if (msg.includes('referenced from table "inventory"')) {
+      msg = 'Không thể xóa sản phẩm này vì hiện đang có số lượng hàng tồn kho tại các chi nhánh.';
+    } else if (msg.includes('referenced from table "stock_imports"')) {
+      msg = 'Không thể xóa sản phẩm này vì đã có phiếu nhập kho ghi nhận sản phẩm.';
+    }
+    res.status(status).json({ message: msg });
   }
 });
 

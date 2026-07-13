@@ -124,13 +124,18 @@ async function apiCall(endpoint, options = {}) {
 
     if (!response.ok) {
       let errMsg = `API error: ${response.status} ${response.statusText}`;
+      let detailMsg = '';
       try {
         const errBody = await response.json();
         if (errBody && errBody.detail) {
-          errMsg += ` - ${JSON.stringify(errBody.detail)}`;
+          detailMsg = typeof errBody.detail === 'string' ? errBody.detail : JSON.stringify(errBody.detail);
+          errMsg += ` - ${detailMsg}`;
         }
       } catch (_) {}
-      throw new Error(errMsg);
+      const error = new Error(errMsg);
+      error.statusCode = response.status;
+      error.detail = detailMsg;
+      throw error;
     }
     return await response.json();
   } catch (err) {
@@ -166,7 +171,7 @@ async function initDatabase() {
           } else if (file === 'permissions.json') {
             const defaultPerms = {
               "IT Admin": ["manage_users", "manage_permissions", "view_audit_logs", "view_inventory", "manage_inventory", "create_transaction"],
-              "Director": ["view_dashboard", "view_all_stores", "view_customers", "create_customer", "delete_customer", "view_discounts", "view_employees", "view_products", "view_transactions", "view_inventory", "manage_inventory", "create_transaction"],
+              "Director": ["view_dashboard", "view_all_stores", "view_customers", "create_customer", "delete_customer", "view_discounts", "edit_discounts", "view_employees", "edit_employees", "view_products", "view_transactions", "view_inventory", "manage_inventory", "create_transaction"],
               "Finance/Auditor": ["view_all_stores", "view_transactions", "view_discounts", "view_inventory"],
               "Inventory Manager": ["view_own_store", "view_products", "edit_products", "view_inventory", "manage_inventory"],
               "Marketing Manager": ["view_all_stores", "view_discounts", "edit_discounts", "view_inventory"],
@@ -359,6 +364,19 @@ const db = {
         console.warn('Failed to load local created customers:', err.message);
       }
 
+      // Filter out hidden customers
+      try {
+        const filePath = path.join(__dirname, '../data/hidden_customers.json');
+        if (fs.existsSync(filePath)) {
+          const hidden = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          if (Array.isArray(hidden)) {
+            list = list.filter(c => !hidden.includes(String(c.customer_id)));
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to filter hidden customers:', err.message);
+      }
+
       if (storeId && storeId !== 'null') {
         list = list.filter(c => c.store_id.toString() === storeId.toString());
       }
@@ -520,20 +538,38 @@ const db = {
 
   deleteCustomer: async (customerId) => {
     if (isApiMode) {
-      await apiCall(`/customers/${customerId}`, { method: 'DELETE' });
-      
-      // Also delete from local_created_customers.json if present
       try {
-        const localFile = path.join(DATA_DIR, 'local_created_customers.json');
-        if (fs.existsSync(localFile)) {
-          let localCusts = JSON.parse(fs.readFileSync(localFile, 'utf8') || '[]');
-          localCusts = localCusts.filter(c => c.customer_id.toString() !== customerId.toString());
-          fs.writeFileSync(localFile, JSON.stringify(localCusts, null, 2), 'utf8');
+        await apiCall(`/customers/${customerId}`, { method: 'DELETE' });
+        
+        // Also delete from local_created_customers.json if present
+        try {
+          const localFile = path.join(DATA_DIR, 'local_created_customers.json');
+          if (fs.existsSync(localFile)) {
+            let localCusts = JSON.parse(fs.readFileSync(localFile, 'utf8') || '[]');
+            localCusts = localCusts.filter(c => c.customer_id.toString() !== customerId.toString());
+            fs.writeFileSync(localFile, JSON.stringify(localCusts, null, 2), 'utf8');
+          }
+        } catch (err) {
+          console.error('Failed to update local customers after delete:', err.message);
         }
+        return true;
       } catch (err) {
-        console.error('Failed to update local customers after delete:', err.message);
+        if (err.message && err.message.includes('referenced from table')) {
+          const fs = require('fs');
+          const path = require('path');
+          const filePath = path.join(__dirname, '../data/hidden_customers.json');
+          let list = [];
+          if (fs.existsSync(filePath)) {
+            try { list = JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch (_) {}
+          }
+          if (!list.includes(String(customerId))) {
+            list.push(String(customerId));
+            fs.writeFileSync(filePath, JSON.stringify(list, null, 2));
+          }
+          return { softDeleted: true };
+        }
+        throw err;
       }
-      return true;
     } else if (isMockMode) {
       const customers = readMockFile('customers.json');
       const filtered = customers.filter(c => c.customer_id !== parseInt(customerId));
@@ -677,121 +713,121 @@ const db = {
     }
   },
 
-  // --- Employees ---
   getEmployees: async (storeId = null) => {
-    if (isApiMode) {
-      let url = '/employees?limit=1000';
-      const res = await apiCall(url);
-      let list = (res.data || []).map(e => ({
-        employee_id: parseInt(e.employee_id),
-        store_id: parseInt(e.store_id),
-        name: e.name || `Nhân viên #${e.employee_id}`,
-        role: e.position || 'Staff'
-      }));
-
-      if (storeId && storeId !== 'null') {
-        list = list.filter(e => e.store_id.toString() === storeId.toString());
-      }
-      return list;
-    } else if (isMockMode) {
-      let data = readMockFile('employees.json');
-      if (storeId) {
-        data = data.filter(e => e.store_id === parseInt(storeId));
-      }
-      return data;
-    } else {
-      if (storeId) {
-        const res = await pool.query('SELECT * FROM employees WHERE store_id = $1 ORDER BY employee_id ASC', [storeId]);
-        return res.rows;
-      } else {
-        const res = await pool.query('SELECT * FROM employees ORDER BY employee_id ASC');
-        return res.rows;
+    // Read from local system users to match the user accounts
+    let users = [];
+    if (pool) {
+      try {
+        const res = await pool.query('SELECT * FROM users ORDER BY id ASC');
+        users = res.rows.map(u => ({
+          employee_id: parseInt(u.id),
+          store_id: u.store_id ? parseInt(u.store_id) : 1,
+          name: u.username,
+          role: u.role || 'Staff'
+        }));
+      } catch (err) {
+        console.warn('PG getEmployees fallback to JSON:', err.message);
       }
     }
+    if (users.length === 0) {
+      const uList = readMockFile('users.json') || [];
+      users = uList.map(u => ({
+        employee_id: parseInt(u.id),
+        store_id: u.store_id ? parseInt(u.store_id) : 1,
+        name: u.username,
+        role: u.role || 'Staff'
+      }));
+    }
+
+    if (storeId && storeId !== 'null') {
+      users = users.filter(e => e.store_id.toString() === storeId.toString());
+    }
+    return users;
   },
 
   updateEmployee: async (employeeId, name, role) => {
-    if (isApiMode) {
-      await apiCall(`/employees/${employeeId}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          name,
-          position: role
-        })
-      });
-      return true;
-    } else if (isMockMode) {
-      const employees = readMockFile('employees.json');
-      const emp = employees.find(e => e.employee_id === parseInt(employeeId));
-      if (!emp) return false;
-      emp.name = name;
-      emp.role = role;
-      writeMockFile('employees.json', employees);
-      return true;
-    } else {
-      const res = await pool.query('UPDATE employees SET name = $1, role = $2 WHERE employee_id = $3', [name, role, employeeId]);
-      return res.rowCount > 0;
+    const username = name.toLowerCase().replace(/\s+/g, '');
+    if (pool) {
+      try {
+        await pool.query('UPDATE users SET username = $1, role = $2 WHERE id = $3', [username, role, parseInt(employeeId)]);
+        return true;
+      } catch (err) {
+        console.warn('PG updateEmployee failed, fallback to JSON:', err.message);
+      }
     }
+
+    const users = readMockFile('users.json');
+    const u = users.find(user => user.id === parseInt(employeeId));
+    if (u) {
+      u.username = username;
+      u.role = role;
+      writeMockFile('users.json', users);
+      return true;
+    }
+    return false;
   },
 
   addEmployee: async (employeeData) => {
-    if (isApiMode) {
-      const nextId = Date.now() + Math.floor(Math.random() * 1000);
+    const username = employeeData.name.toLowerCase().replace(/\s+/g, '');
+    const password = '$2a$10$B1QIzsQv868EDSu1SAA.QeJCa9Xsb/CQ8EO0Iuif30IpT18a6KJui'; // default 'password123'
+    const role = employeeData.role;
+    const store_id = employeeData.store_id ? parseInt(employeeData.store_id) : null;
 
-      const payload = {
-        employee_id: nextId.toString(),
-        store_id: employeeData.store_id.toString(),
-        name: employeeData.name,
-        position: employeeData.role
-      };
-
-      const res = await apiCall('/employees', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
-
-      const created = res.data || res;
-      return {
-        employee_id: parseInt(created.employee_id),
-        store_id: parseInt(created.store_id),
-        name: created.name,
-        role: created.position
-      };
-    } else if (isMockMode) {
-      const employees = readMockFile('employees.json');
-      const newId = employees.length > 0 ? Math.max(...employees.map(e => e.employee_id)) + 1 : 200;
-      const newEmployee = {
-        employee_id: newId,
-        store_id: parseInt(employeeData.store_id),
-        name: employeeData.name,
-        role: employeeData.role
-      };
-      employees.push(newEmployee);
-      writeMockFile('employees.json', employees);
-      return newEmployee;
-    } else {
-      const res = await pool.query(
-        'INSERT INTO employees (store_id, name, role) VALUES ($1, $2, $3) RETURNING *',
-        [employeeData.store_id, employeeData.name, employeeData.role]
-      );
-      return res.rows[0];
+    if (pool) {
+      try {
+        const res = await pool.query(
+          'INSERT INTO users (username, password, role, store_id, mfa_enabled, mfa_secret) VALUES ($1, $2, $3, $4, false, null) RETURNING *',
+          [username, password, role, store_id]
+        );
+        const created = res.rows[0];
+        return {
+          employee_id: parseInt(created.id),
+          store_id: created.store_id ? parseInt(created.store_id) : 1,
+          name: created.username,
+          role: created.role
+        };
+      } catch (err) {
+        console.warn('PG addEmployee failed, fallback to JSON:', err.message);
+      }
     }
+
+    const users = readMockFile('users.json');
+    const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
+    const newUser = {
+      id: newId,
+      username,
+      password,
+      role,
+      store_id,
+      mfa_enabled: false,
+      mfa_secret: null
+    };
+    users.push(newUser);
+    writeMockFile('users.json', users);
+
+    return {
+      employee_id: newId,
+      store_id: store_id || 1,
+      name: username,
+      role: role
+    };
   },
 
   deleteEmployee: async (employeeId) => {
-    if (isApiMode) {
-      await apiCall(`/employees/${employeeId}`, { method: 'DELETE' });
-      return true;
-    } else if (isMockMode) {
-      const employees = readMockFile('employees.json');
-      const filtered = employees.filter(e => e.employee_id !== parseInt(employeeId));
-      if (employees.length === filtered.length) return false;
-      writeMockFile('employees.json', filtered);
-      return true;
-    } else {
-      const res = await pool.query('DELETE FROM employees WHERE employee_id = $1', [employeeId]);
-      return res.rowCount > 0;
+    if (pool) {
+      try {
+        await pool.query('DELETE FROM users WHERE id = $1', [parseInt(employeeId)]);
+        return true;
+      } catch (err) {
+        console.warn('PG deleteEmployee failed, fallback to JSON:', err.message);
+      }
     }
+
+    const users = readMockFile('users.json');
+    const filtered = users.filter(u => u.id !== parseInt(employeeId));
+    if (users.length === filtered.length) return false;
+    writeMockFile('users.json', filtered);
+    return true;
   },
 
   // --- Products ---
@@ -804,7 +840,11 @@ const db = {
           let list = cached.data;
           if (search) {
             const q = search.toLowerCase();
-            list = list.filter(p => p.product_name.toLowerCase().includes(q) || p.description_en.toLowerCase().includes(q));
+            list = list.filter(p => 
+              p.product_name.toLowerCase().includes(q) || 
+              p.description_en.toLowerCase().includes(q) ||
+              (p.product_id && p.product_id.toString().includes(q))
+            );
           }
           return list;
         }
@@ -837,7 +877,7 @@ const db = {
             product_name: p.description_en || p.name_en || `Sản phẩm #${p.product_id}`,
             category: p.category || 'Children',
             sub_category: p.sub_category || 'Other',
-            color_type: p.color_type || 'Cor Unica',
+            color_type: p.color || p.color_type || 'Cor Unica',
             description_en: p.description_en || `Sản phẩm #${p.product_id}`,
             image_url: (p.image_url && !p.image_url.includes('picsum.photos')) ? p.image_url : getProductImageUrl(p.description_en || p.name_en, p.category, p.product_id)
           }))
@@ -865,6 +905,21 @@ const db = {
           console.warn('Failed to load local created products in getProducts:', err.message);
         }
 
+        // Filter out hidden products
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const filePath = path.join(__dirname, '../data/hidden_products.json');
+          if (fs.existsSync(filePath)) {
+            const hidden = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            if (Array.isArray(hidden)) {
+              list = list.filter(p => !hidden.includes(String(p.product_id)));
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to filter hidden products:', err.message);
+        }
+
         // Save in cache
         productsCache[cacheKey] = {
           data: list,
@@ -873,7 +928,11 @@ const db = {
 
         if (search) {
           const q = search.toLowerCase();
-          list = list.filter(p => p.product_name.toLowerCase().includes(q) || p.description_en.toLowerCase().includes(q));
+          list = list.filter(p => 
+            p.product_name.toLowerCase().includes(q) || 
+            p.description_en.toLowerCase().includes(q) ||
+            (p.product_id && p.product_id.toString().includes(q))
+          );
         }
         return list;
       } catch (err) {
@@ -893,7 +952,11 @@ const db = {
             }
             if (search) {
               const q = search.toLowerCase();
-              list = list.filter(p => p.product_name.toLowerCase().includes(q) || p.description_en.toLowerCase().includes(q));
+              list = list.filter(p => 
+                p.product_name.toLowerCase().includes(q) || 
+                p.description_en.toLowerCase().includes(q) ||
+                (p.product_id && p.product_id.toString().includes(q))
+              );
             }
             return list;
           }
@@ -913,7 +976,12 @@ const db = {
         productsList = productsList.filter(p => p.category.toLowerCase() === category.toLowerCase());
       }
       if (search) {
-        productsList = productsList.filter(p => p.product_name.toLowerCase().includes(search.toLowerCase()) || p.description_en.toLowerCase().includes(search.toLowerCase()));
+        const q = search.toLowerCase();
+        productsList = productsList.filter(p => 
+          p.product_name.toLowerCase().includes(q) || 
+          p.description_en.toLowerCase().includes(q) ||
+          (p.product_id && p.product_id.toString().includes(q))
+        );
       }
       return productsList;
     } else {
@@ -937,6 +1005,9 @@ const db = {
   },
 
   addProduct: async (productData) => {
+    // Clear products cache to force reload on next query
+    productsCache = {};
+
     if (isApiMode) {
       const nextId = Date.now() + Math.floor(Math.random() * 1000);
       
@@ -949,10 +1020,11 @@ const db = {
       const payload = {
         product_id: nextId.toString(),
         sku: `${skuPrefix}${nextId}--`,
-        description_en: productData.product_name || productData.description_en,
+        name_en: productData.product_name,
+        description_en: productData.description_en || productData.product_name,
         category: productData.category,
         sub_category: productData.sub_category,
-        color: 'NEUTRAL',
+        color: productData.color_type || 'NEUTRAL',
         size: 'M',
         price: 50.0,
         image_url: productData.image_url || getProductImageUrl(productData.product_name || productData.description_en, productData.category, nextId)
@@ -967,12 +1039,12 @@ const db = {
       const newProduct = {
         product_id: parseInt(created.product_id),
         sku: created.sku || `SKU-${created.product_id}`,
-        product_name: productData.product_name || created.description_en,
+        product_name: created.name_en || created.description_en || productData.product_name,
         category: created.category,
         sub_category: created.sub_category,
-        color_type: 'Cor Unica',
-        description_en: productData.product_name || created.description_en,
-        image_url: (created.image_url && !created.image_url.includes('picsum.photos')) ? created.image_url : getProductImageUrl(productData.product_name || created.description_en, created.category, created.product_id)
+        color_type: created.color || 'Cor Unica',
+        description_en: created.description_en,
+        image_url: (created.image_url && !created.image_url.includes('picsum.photos')) ? created.image_url : getProductImageUrl(created.name_en || created.description_en, created.category, created.product_id)
       };
 
       try {
@@ -1034,11 +1106,16 @@ const db = {
   },
 
   updateProduct: async (productId, productData) => {
+    // Clear products cache to force reload
+    productsCache = {};
+
     if (isApiMode) {
       const payload = {
-        description_en: productData.product_name || productData.description_en,
+        name_en: productData.product_name,
+        description_en: productData.description_en || productData.product_name,
         category: productData.category,
         sub_category: productData.sub_category,
+        color: productData.color_type || 'NEUTRAL',
         image_url: productData.image_url
       };
       const res = await apiCall(`/products/${productId}`, {
@@ -1048,10 +1125,10 @@ const db = {
       const updated = res.data || res;
       return {
         product_id: parseInt(updated.product_id),
-        product_name: updated.description_en,
+        product_name: updated.name_en || updated.description_en,
         category: updated.category,
         sub_category: updated.sub_category,
-        color_type: 'Cor Unica',
+        color_type: updated.color || 'Cor Unica',
         description_en: updated.description_en,
         image_url: updated.image_url
       };
@@ -1082,6 +1159,9 @@ const db = {
   },
 
   deleteProduct: async (productId) => {
+    // Clear products cache to force reload
+    productsCache = {};
+
     let sku = null;
 
     // Try to find the SKU of the product to delete
@@ -1127,13 +1207,27 @@ const db = {
         console.warn('Failed to delete locally created product file:', err.message);
       }
 
-      // 2. Call remote API. If it fails, ignore (since product is removed locally anyway)
+      // 2. Call remote API.
       try {
         await apiCall(`/products/${productId}`, { method: 'DELETE' });
+        return true;
       } catch (apiErr) {
-        console.warn(`Remote delete for product ${productId} failed:`, apiErr.message);
+        if (apiErr.message && apiErr.message.includes('referenced from table')) {
+          const fs = require('fs');
+          const path = require('path');
+          const filePath = path.join(__dirname, '../data/hidden_products.json');
+          let list = [];
+          if (fs.existsSync(filePath)) {
+            try { list = JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch (_) {}
+          }
+          if (!list.includes(String(productId))) {
+            list.push(String(productId));
+            fs.writeFileSync(filePath, JSON.stringify(list, null, 2));
+          }
+          return { softDeleted: true };
+        }
+        throw apiErr;
       }
-      return true;
     } else if (isMockMode) {
       const products = readMockFile('products.json');
       const filtered = products.filter(p => p.product_id !== parseInt(productId));
@@ -1180,8 +1274,22 @@ const db = {
         console.warn('Failed to fetch employees for transaction mapping:', err.message);
       }
 
+      // Load local salesperson mappings
+      let localSalespeople = {};
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const filePath = path.join(__dirname, '../data/transaction_salespeople.json');
+        if (fs.existsSync(filePath)) {
+          localSalespeople = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        }
+      } catch (err) {
+        console.warn('Failed to load local salesperson mapping:', err.message);
+      }
+
       let list = (res.data || []).map(t => {
         const emp = employees.find(e => e.employee_id.toString() === (t.employee_id || '').toString());
+        const mappedSalesperson = localSalespeople[t.transaction_id.toString()] || (emp ? resolveUsernameFromEmployee(emp) : (t.employee_id || 'System'));
         return {
           transaction_id: parseInt(t.transaction_id) || t.transaction_id,
           store_id: parseInt(t.store_id),
@@ -1191,7 +1299,7 @@ const db = {
           product_name: `Sản phẩm #${t.product_id}`,
           date: t.transaction_date ? t.transaction_date.split('T')[0] : new Date().toISOString().split('T')[0],
           timestamp: t.transaction_date || new Date().toISOString(),
-          salesperson: emp ? resolveUsernameFromEmployee(emp) : (t.employee_id || 'System'),
+          salesperson: mappedSalesperson,
           payment_method: t.payment_method || 'Cash',
           currency: t.currency || 'USD',
           local_price: t.unit_price || 0,
@@ -1300,6 +1408,24 @@ const db = {
       });
 
       const created = res.data || res;
+      
+      // Save salesperson mapping locally to resolve it on list retrieval
+      if (salesperson) {
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const filePath = path.join(__dirname, '../data/transaction_salespeople.json');
+          let mapping = {};
+          if (fs.existsSync(filePath)) {
+            try { mapping = JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch (_) {}
+          }
+          mapping[created.transaction_id.toString()] = salesperson;
+          fs.writeFileSync(filePath, JSON.stringify(mapping, null, 2));
+        } catch (err) {
+          console.error('Failed to save transaction salesperson mapping:', err);
+        }
+      }
+
       return {
         transaction_id: parseInt(created.transaction_id),
         store_id: parseInt(created.store_id),
@@ -1309,7 +1435,7 @@ const db = {
         product_name: `Sản phẩm #${created.product_id}`,
         date: created.transaction_date.split('T')[0],
         timestamp: created.transaction_date,
-        salesperson: created.employee_id,
+        salesperson: salesperson || created.employee_id,
         payment_method: created.payment_method,
         currency: created.currency,
         local_price: created.unit_price,
@@ -1759,6 +1885,24 @@ const db = {
           return ['Children', 'Masculine', 'Feminine'].includes(d.category);
         });
 
+        // Filter out stock items belonging to hidden products
+        try {
+          const fs = require('fs');
+          const filePath = path.join(__dirname, '../data/hidden_products.json');
+          if (fs.existsSync(filePath)) {
+            const hidden = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            if (Array.isArray(hidden) && hidden.length > 0) {
+              data = data.filter(d => {
+                const skuDigits = d.sku ? d.sku.match(/\d+/) : null;
+                const pId = skuDigits ? skuDigits[0] : null;
+                return !pId || !hidden.includes(String(pId));
+              });
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to filter hidden products in inventory:', err.message);
+        }
+
         if (search) {
           const query = search.toLowerCase();
           data = data.filter(d => 
@@ -1876,6 +2020,24 @@ const db = {
 
       // Only allow 3 categories: Children, Masculine, Feminine
       data = data.filter(d => ['Children', 'Masculine', 'Feminine'].includes(d.category));
+
+      // Filter out stock items belonging to hidden products
+      try {
+        const fs = require('fs');
+        const filePath = path.join(__dirname, '../data/hidden_products.json');
+        if (fs.existsSync(filePath)) {
+          const hidden = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          if (Array.isArray(hidden) && hidden.length > 0) {
+            data = data.filter(d => {
+              const skuDigits = d.sku ? d.sku.match(/\d+/) : null;
+              const pId = skuDigits ? skuDigits[0] : null;
+              return !pId || !hidden.includes(String(pId));
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to filter hidden products in inventory:', err.message);
+      }
 
       if (search) {
         const query = search.toLowerCase();

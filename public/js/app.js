@@ -100,6 +100,86 @@ const btnCancelProduct = document.getElementById('btn-cancel-product');
 const productForm = document.getElementById('product-form');
 const productModalTitle = document.getElementById('product-modal-title');
 
+// ================= GLOBAL TOAST NOTIFICATION =================
+function showToast(message, type = 'success') {
+  if (!document.getElementById('toast-injected-style')) {
+    const style = document.createElement('style');
+    style.id = 'toast-injected-style';
+    style.textContent = `
+      .custom-toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .custom-toast {
+        background: rgba(17, 24, 39, 0.9);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transform: translateY(100px);
+        opacity: 0;
+        animation: toast-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        transition: all 0.3s ease;
+      }
+      .custom-toast.hide {
+        transform: translateX(100px);
+        opacity: 0;
+      }
+      .custom-toast-success {
+        border-left: 4px solid var(--secondary);
+      }
+      .custom-toast-error {
+        border-left: 4px solid var(--danger-color);
+      }
+      @keyframes toast-slide-in {
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  let container = document.querySelector('.custom-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'custom-toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `custom-toast custom-toast-${type}`;
+  
+  const icon = type === 'success' ? '<i class="fa-solid fa-circle-check" style="color:var(--secondary);"></i>' : '<i class="fa-solid fa-circle-exclamation" style="color:var(--danger-color);"></i>';
+  toast.innerHTML = `${icon} <span>${message}</span>`;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('hide');
+    setTimeout(() => {
+      toast.remove();
+      if (container.children.length === 0) {
+        container.remove();
+      }
+    }, 300);
+  }, 3000);
+}
+window.showToast = showToast;
+
 // ================= API CALL HELPER =================
 async function fetchAPI(url, options = {}) {
   const headers = {
@@ -1322,6 +1402,7 @@ document.getElementById('btn-save-discount').addEventListener('click', async () 
     loadDiscountsTab();
   } catch (err) {
     console.error('Error updating discount:', err);
+    alert(err.message || 'Lỗi khi cập nhật khuyến mãi.');
   }
 });
 
@@ -1532,6 +1613,7 @@ document.getElementById('btn-save-employee').addEventListener('click', async () 
     loadEmployeesTab();
   } catch (err) {
     console.error('Error updating employee:', err);
+    alert(err.message || 'Lỗi khi cập nhật nhân viên.');
   }
 });
 
@@ -2692,12 +2774,41 @@ employeeCreateForm.addEventListener('submit', async (e) => {
 
 window.deleteEmployee = async function(id) {
   if (!confirm('Bạn có chắc chắn muốn xóa nhân viên này không?')) return;
+  
+  // Find and fade row optimistically
+  const rows = document.querySelectorAll('#employees-table tbody tr');
+  let targetRow = null;
+  for (const r of rows) {
+    if (r.textContent.includes(`#EMP-${id}`)) {
+      targetRow = r;
+      break;
+    }
+  }
+  if (targetRow) {
+    targetRow.style.opacity = '0.3';
+    targetRow.style.pointerEvents = 'none';
+  }
+
   try {
     const data = await fetchAPI(`/api/employees/${id}`, { method: 'DELETE' });
-    alert(data.message || 'Xóa nhân viên thành công!');
-    loadEmployeesTab();
+    showToast(data.message || 'Xóa nhân viên thành công!', 'success');
+    if (targetRow) {
+      targetRow.style.transform = 'scale(0.95)';
+      targetRow.style.opacity = '0';
+      setTimeout(() => {
+        targetRow.remove();
+        loadEmployeesTab();
+      }, 300);
+    } else {
+      loadEmployeesTab();
+    }
   } catch (err) {
     console.error('Error deleting employee:', err);
+    if (targetRow) {
+      targetRow.style.opacity = '1';
+      targetRow.style.pointerEvents = 'auto';
+    }
+    alert(err.message || 'Lỗi khi xóa nhân viên.');
   }
 };
 
@@ -2942,6 +3053,7 @@ const permissionTranslations = {
     'Thao tác Sản phẩm (CRUD)': 'Thao tác Sản phẩm (CRUD)',
     'Giao dịch': 'Giao dịch',
     'Xem lịch sử Giao dịch': 'Xem lịch sử Giao dịch',
+    'Thêm giao dịch mới (Bán hàng)': 'Thêm giao dịch mới (Bán hàng)',
     'Quản trị hệ thống (IT Admin)': 'Quản trị hệ thống (IT Admin)',
     'Quản lý Tài khoản': 'Quản lý Tài khoản',
     'Thiết lập Phân quyền': 'Thiết lập Phân quyền',
@@ -2973,6 +3085,7 @@ const permissionTranslations = {
     'Thao tác Sản phẩm (CRUD)': 'Manage Products (CRUD)',
     'Giao dịch': 'Transactions',
     'Xem lịch sử Giao dịch': 'View Transaction History',
+    'Thêm giao dịch mới (Bán hàng)': 'Create New Transaction',
     'Quản trị hệ thống (IT Admin)': 'System Admin (IT Admin)',
     'Quản lý Tài khoản': 'System User Management',
     'Thiết lập Phân quyền': 'RBAC Configuration',
@@ -3004,6 +3117,7 @@ const permissionTranslations = {
     'Thao tác Sản phẩm (CRUD)': '操作商品信息 (CRUD)',
     'Giao dịch': '交易历史',
     'Xem lịch sử Giao dịch': '查看交易历史记录',
+    'Thêm giao dịch mới (Bán hàng)': '创建新交易',
     'Quản trị hệ thống (IT Admin)': '系统管理 (IT Admin)',
     'Quản lý Tài khoản': '账户管理',
     'Thiết lập Phân quyền': '系统权限设置',
@@ -3133,7 +3247,8 @@ async function loadAdminPermissionsTab() {
         color: '#06b6d4',
         icon: 'fa-receipt',
         perms: [
-          { key: 'view_transactions', name: 'Xem lịch sử Giao dịch' }
+          { key: 'view_transactions', name: 'Xem lịch sử Giao dịch' },
+          { key: 'create_transaction', name: 'Thêm giao dịch mới (Bán hàng)' }
         ]
       },
       {
