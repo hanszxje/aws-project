@@ -833,11 +833,17 @@ function renderForecastChart(sku) {
     const actualVals = [];
     const upcomingVals = [];
 
-    dataPoints.forEach(d => {
+    dataPoints.forEach((d, idx) => {
       const act = d.actual === null ? 0 : d.actual;
       const pred = d.predicted;
       actualVals.push(act);
-      upcomingVals.push(Math.max(0, pred - act));
+      
+      const isFutureOrCurrent = (d.actual === null) || (idx === dataPoints.length - 1);
+      if (isFutureOrCurrent) {
+        upcomingVals.push(Math.max(0, pred - act));
+      } else {
+        upcomingVals.push(0);
+      }
     });
 
     traces = [

@@ -4534,5 +4534,13 @@
     "quantity": 50,
     "import_date": "2026-07-13T09:27:55.587Z",
     "supplier": "Supplier CRUD Test"
+  },
+  {
+    "import_id": 554,
+    "store_id": 1,
+    "sku": "FEAC10010--",
+    "quantity": 50,
+    "import_date": "2026-07-13T16:44:08.656Z",
+    "supplier": "Supplier CRUD Test"
   }
 ]

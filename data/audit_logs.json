@@ -3373,5 +3373,221 @@
     "action": "PRODUCT_UPDATE",
     "details": "Cập nhật sản phẩm #ID: 100 (Tên: Classic Gold Suede With Buttons)",
     "ip": "::1"
+  },
+  {
+    "id": 1783960968688,
+    "timestamp": "2026-07-13T16:42:48.472Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783960980001,
+    "timestamp": "2026-07-13T16:42:59.328Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961023666,
+    "timestamp": "2026-07-13T16:43:42.815Z",
+    "username": "director",
+    "role": "Director",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961023545,
+    "timestamp": "2026-07-13T16:43:43.118Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_CREATE",
+    "details": "Thêm khách hàng mới: Test Customer CRUD (#ID: 1783961023250)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961030198,
+    "timestamp": "2026-07-13T16:43:49.641Z",
+    "username": "director",
+    "role": "Director",
+    "action": "CUSTOMER_DELETE",
+    "details": "Xóa khách hàng #ID: 1783961023250",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961029835,
+    "timestamp": "2026-07-13T16:43:49.768Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_CREATE",
+    "details": "Tạo khuyến mãi mới: Khuyến mãi mùa hè 2026 (Store: 1, Chiết khấu: 15%)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961030795,
+    "timestamp": "2026-07-13T16:43:49.813Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 1783961029950 thành 25%",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961029899,
+    "timestamp": "2026-07-13T16:43:49.858Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_DELETE",
+    "details": "Xóa khuyến mãi #ID: 1783961029950",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961030280,
+    "timestamp": "2026-07-13T16:43:49.876Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_CREATE",
+    "details": "Thêm nhân sự mới: Test Employee CRUD (Store: 1, Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961030016,
+    "timestamp": "2026-07-13T16:43:49.885Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_UPDATE",
+    "details": "Cập nhật nhân viên #ID: 79 (Tên: Test Employee CRUD Updated, Chức vụ: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961030422,
+    "timestamp": "2026-07-13T16:43:49.894Z",
+    "username": "director",
+    "role": "Director",
+    "action": "EMPLOYEE_DELETE",
+    "details": "Xóa nhân sự #ID: 79",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961030195,
+    "timestamp": "2026-07-13T16:43:50.035Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_CREATE",
+    "details": "Tạo sản phẩm mới: Test Product CRUD (#ID: 1783961030136)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961030994,
+    "timestamp": "2026-07-13T16:43:50.078Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_UPDATE",
+    "details": "Cập nhật sản phẩm #ID: 1783961030136 (Tên: Test Product CRUD Updated)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961037799,
+    "timestamp": "2026-07-13T16:43:57.128Z",
+    "username": "director",
+    "role": "Director",
+    "action": "PRODUCT_DELETE",
+    "details": "Xóa sản phẩm #ID: 1783961030136",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961048712,
+    "timestamp": "2026-07-13T16:44:08.658Z",
+    "username": "director",
+    "role": "Director",
+    "action": "INVENTORY_IMPORT",
+    "details": "Nhập hàng mới cho store #1: SKU FEAC10010--, Số lượng: 50, Nhà CC: Supplier CRUD Test",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961055989,
+    "timestamp": "2026-07-13T16:44:15.742Z",
+    "username": "director",
+    "role": "Director",
+    "action": "TRANSACTION_CREATE",
+    "details": "Tạo giao dịch bán hàng mới: Cửa hàng #1, Khách hàng #1, Số lượng mặt hàng: 1",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961055804,
+    "timestamp": "2026-07-13T16:44:15.787Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "LOGIN",
+    "details": "Đăng nhập thành công",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961056761,
+    "timestamp": "2026-07-13T16:44:15.937Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_CREATE",
+    "details": "Tạo tài khoản mới: test_admin_user_crud (Vai trò: Sales Staff)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961056567,
+    "timestamp": "2026-07-13T16:44:15.951Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_UPDATE",
+    "details": "Cập nhật tài khoản #ID: 79 (Vai trò mới: Store Manager)",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961056638,
+    "timestamp": "2026-07-13T16:44:15.961Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_MFA_RESET",
+    "details": "Reset MFA của tài khoản #ID: 79",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961056599,
+    "timestamp": "2026-07-13T16:44:15.976Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "USER_DELETE",
+    "details": "Xóa tài khoản #ID: 79",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961056605,
+    "timestamp": "2026-07-13T16:44:15.998Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961056505,
+    "timestamp": "2026-07-13T16:44:16.013Z",
+    "username": "admin",
+    "role": "IT Admin",
+    "action": "PERMISSIONS_UPDATE",
+    "details": "Cập nhật ma trận phân quyền động",
+    "ip": "::1"
+  },
+  {
+    "id": 1783961646979,
+    "timestamp": "2026-07-13T16:54:06.965Z",
+    "username": "director",
+    "role": "Director",
+    "action": "DISCOUNT_UPDATE",
+    "details": "Cập nhật chiết khấu trung bình của khuyến mãi #ID: 1783681539556 thành 78%",
+    "ip": "::1"
   }
 ]
